@@ -3,7 +3,11 @@ import { randomId } from 'src/utils/randomId';
 import { sign, decode, JWT_SECRET, JWT_EXPIRES_IN } from '../../utils/jwt';
 import { wait } from 'src/utils/wait';
 
-import axios from 'axios';
+import axios from 'axios';//ECHASIN
+import React, { useState } from 'react';//ECHASIN
+
+// const [data, setData] = useState(0);
+
 
 const users = [
   {
@@ -40,6 +44,9 @@ class AuthApi1 {
         console.log('Promise: ',Promise);
         const user = users.find((ABC) => ABC.username === username);  
         console.log('user: ',user); //ECHASIN
+        
+
+        
 
          //ECHASIN POST to authenication api
          axios.post('http://localhost:8080/api/authenticate', {
@@ -47,14 +54,14 @@ class AuthApi1 {
           "password": "admin",
         }).then(function (response) {
           console.log('response.data:', response.data);
-          const test = response.data
-          console.log('test:', test)
+          const data= response.data
+          console.log('test:',data)
         })
         .catch(function (error) {
           console.log(error);
         });
         
-             
+      
         //ECHASIN this is hardcoded validation
         if (!user || user.username !== username) {
           reject(new Error('User name does not exist'));
@@ -161,3 +168,7 @@ class AuthApi1 {
 }
 
 export const authApi1 = new AuthApi1();
+function fetchData() {
+  throw new Error('Function not implemented.');
+}
+
