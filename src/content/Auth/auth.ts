@@ -33,33 +33,33 @@ class AuthApi1 {
  
   async login({ username, email, password }): Promise<string> {  //ECHASIN added username to login 
     console.log("In src/content/Auth/auth.ts - async login:", username);  //ECHASIN getting instance of Login
-    await wait(500);
+    await wait(10);
 
+        axios.post('http://localhost:8080/api/authenticate', {
+      "username": username,
+      "password": password,
+    }).then(function (response) {
+      const data= response.data
+      console.log('response.data:', data);
+      const bearerToken = response?.headers?.authorization;
+      console.log('bearerToken:', bearerToken);   
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+    
     return new Promise((resolve, reject) => {
+      console.log('In return new Promise')
+      console.log('Promise: ', Promise.resolve.toString);
+      console.log("login:", this.login)
+    
       try {
         //ECHASIN looking up Users from users array by username
         //ECHASIN .find is used to find a value in a array
         //ECHASIN _user is parameter name, it can be name anything
-        //ECHASIN The Promise object represents the eventual completion (or failure) of an asynchronous operation and its resulting value.
-        console.log('Promise: ',Promise);
+        //ECHASIN The Promise object represents the eventual completion (or failure) of an asynchronous operation and its resulting value     
         const user = users.find((ABC) => ABC.username === username);  
         console.log('user: ',user); //ECHASIN
-        
-
-        
-
-         //ECHASIN POST to authenication api
-         axios.post('http://localhost:8080/api/authenticate', {
-          "username": username,
-          "password": "admin",
-        }).then(function (response) {
-          console.log('response.data:', response.data);
-          const data= response.data
-          console.log('test:',data)
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
         
       
         //ECHASIN this is hardcoded validation
