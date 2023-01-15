@@ -9,8 +9,10 @@ const calendarTranspile = require('next-transpile-modules')([
 const withImages = require('next-images');
 
 const redirects = {
+  
   async redirects() {
     return [
+
       {
         source: '/dashboards/healthcare',
         destination: '/dashboards/healthcare/doctor'

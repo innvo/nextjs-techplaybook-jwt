@@ -1,6 +1,7 @@
 import { FC, ReactNode, createContext, useEffect, useReducer } from 'react';
 import type { User } from 'src/models/user';
-import { authApi } from 'src/mocks/auth';
+//import { authApi } from 'src/mocks/auth';  ECHASIN original Mock implementation
+import { authApi1 } from '../../src/content/Auth/auth';
 import PropTypes from 'prop-types';
 
 interface AuthState {
@@ -69,8 +70,11 @@ const handlers: Record<
     };
   },
   LOGIN: (state: AuthState, action: LoginAction): AuthState => {
+    console.info('In JWTAuthContext.tsx LOGIN:'); //ECHASIN
+  
     const { user } = action.payload;
-
+    console.log('user: ', {user})
+    
     return {
       ...state,
       isAuthenticated: true,
@@ -114,7 +118,7 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
         const accessToken = window.localStorage.getItem('accessToken');
 
         if (accessToken) {
-          const user = await authApi.me(accessToken);
+          const user = await authApi1.me(accessToken);
 
           dispatch({
             type: 'INITIALIZE',
@@ -148,8 +152,8 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
   }, []);
 
   const login = async (username: string, email: string, password: string): Promise<void> => {   //ECHASIN
-    const accessToken = await authApi.login({ username, email, password });                     //ECHASIN authApi.login is calling src/mock/auth.ts
-    const user = await authApi.me(accessToken);
+    const accessToken = await authApi1.login({ username, email, password });                     //ECHASIN authApi.login is calling src/mock/auth.ts
+    const user = await authApi1.me(accessToken);
 
     localStorage.setItem('accessToken', accessToken);
 
@@ -171,8 +175,8 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
     name: string,
     password: string
   ): Promise<void> => {
-    const accessToken = await authApi.register({ email, name, password });
-    const user = await authApi.me(accessToken);
+    const accessToken = await authApi1.register({ email, name, password });
+    const user = await authApi1.me(accessToken);
 
     localStorage.setItem('accessToken', accessToken);
 

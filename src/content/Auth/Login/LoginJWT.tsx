@@ -57,8 +57,7 @@ export const LoginJWT: FC = (props) => {
       try {
         await login(values.username, values.email, values.password); //ECHASIN
         if (isMountedRef()) {
-          const backTo =
-            (router.query.backTo as string) || '/dashboards/reports';
+          const backTo = (router.query.backTo as string) || '/dashboards/reports'; //ECHASIN router.query.backTo
           router.push(backTo);
         }
       } catch (err) {

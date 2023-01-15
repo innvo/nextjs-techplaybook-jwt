@@ -19,7 +19,7 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import useScrollTop from 'src/hooks/useScrollTop';
 import { SnackbarProvider } from 'notistack';
-import { AuthConsumer, AuthProvider } from 'src/contexts/JWTAuthContext';//ECHASIN
+import { AuthConsumer, AuthProvider } from 'src/contexts/JWTAuthContext';//ECHASIN JWT implementation
 
 const clientSideEmotionCache = createEmotionCache();
 

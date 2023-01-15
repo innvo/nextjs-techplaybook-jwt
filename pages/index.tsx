@@ -34,7 +34,7 @@ function Overview() {
   const { t }: { t: any } = useTranslation();
 
   return (
-    <OverviewWrapper>
+     <OverviewWrapper>
       <Head>
         <title>Tokyo NextJS Typescript Admin Dashboard</title>
       </Head>
