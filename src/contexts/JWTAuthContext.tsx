@@ -11,7 +11,7 @@ interface AuthState {
 
 interface AuthContextValue extends AuthState {
   method: 'JWT';
-  login: (email: string, password: string) => Promise<void>;
+  login: (username: string, email: string, password: string) => Promise<void>; //ECHASIN added username attribute
   logout: () => Promise<void>;
   register: (email: string, name: string, password: string) => Promise<void>;
 }
@@ -147,8 +147,8 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
     initialize();
   }, []);
 
-  const login = async (email: string, password: string): Promise<void> => {
-    const accessToken = await authApi.login({ email, password });
+  const login = async (username: string, email: string, password: string): Promise<void> => {   //ECHASIN
+    const accessToken = await authApi.login({ username, email, password });                     //ECHASIN
     const user = await authApi.me(accessToken);
 
     localStorage.setItem('accessToken', accessToken);

@@ -26,17 +26,24 @@ export const LoginJWT: FC = (props) => {
 
   const formik = useFormik({
     initialValues: {
+      username: '',
       email: 'demo@example.com',
-      password: 'TokyoPass1@',
+      password: '',
       terms: true,
       submit: null
     },
     validationSchema: Yup.object({
-      email: Yup.string()
+        // ECHASIN
+        username: Yup.string()
+        .max(50)
+        .required(t('The username field is required')),
+      
+         email: Yup.string()
         .email(t('The email provided should be a valid email address'))
         .max(255)
         .required(t('The email field is required')),
-      password: Yup.string()
+
+         password: Yup.string()
         .max(255)
         .required(t('The password field is required')),
       terms: Yup.boolean().oneOf(
@@ -45,8 +52,10 @@ export const LoginJWT: FC = (props) => {
       )
     }),
     onSubmit: async (values, helpers): Promise<void> => {
+      console.log("LoginJWT.tsx onSubmit") //ECHASIN
+      console.log("login:", login) //ECHASIN
       try {
-        await login(values.email, values.password);
+        await login(values.username, values.email, values.password); //ECHASIN
 
         if (isMountedRef()) {
           const backTo =
@@ -66,7 +75,22 @@ export const LoginJWT: FC = (props) => {
 
   return (
     <form noValidate onSubmit={formik.handleSubmit} {...props}>
+      
       <TextField
+        error={Boolean(formik.touched.username && formik.errors.username)}// ECHASIN adds validation to input
+        fullWidth
+        margin="normal"
+        autoFocus
+        helperText={formik.touched.username && formik.errors.username} 
+        label={t('username')}
+        name="username"
+        onBlur={formik.handleBlur}
+        onChange={formik.handleChange}
+        type="username"
+        value={formik.values.username}
+        variant="outlined"
+      />
+      {/* <TextField
         error={Boolean(formik.touched.email && formik.errors.email)}
         fullWidth
         margin="normal"
@@ -79,7 +103,7 @@ export const LoginJWT: FC = (props) => {
         type="email"
         value={formik.values.email}
         variant="outlined"
-      />
+      /> */}
       <TextField
         error={Boolean(formik.touched.password && formik.errors.password)}
         fullWidth

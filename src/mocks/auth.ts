@@ -12,7 +12,7 @@ const users = [
     email: 'demo@example.com',
     name: 'Rachael Simons',
     jobtitle: 'Lead Developer',
-    password: 'TokyoPass1@',
+    password: 'admin',
     role: 'admin',
     posts: '27',
     coverImg: '/static/images/placeholders/covers/5.jpg',
@@ -22,13 +22,14 @@ const users = [
 ];
 
 class AuthApi {
-  async login({ email, password }): Promise<string> {
+  async login({ email, password }): Promise<string> { 
     await wait(500);
 
     return new Promise((resolve, reject) => {
       try {
         const user = users.find((_user) => _user.email === email);
 
+        //ECHASIN this is hardcoded validation
         if (!user || user.password !== password) {
           reject(new Error('Email and password combination does not match'));
           return;
