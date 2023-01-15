@@ -148,7 +148,7 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
   }, []);
 
   const login = async (username: string, email: string, password: string): Promise<void> => {   //ECHASIN
-    const accessToken = await authApi.login({ username, email, password });                     //ECHASIN
+    const accessToken = await authApi.login({ username, email, password });                     //ECHASIN authApi.login is calling src/mock/auth.ts
     const user = await authApi.me(accessToken);
 
     localStorage.setItem('accessToken', accessToken);

@@ -22,12 +22,26 @@ const users = [
 ];
 
 class AuthApi {
-  async login({ email, password }): Promise<string> { 
+ 
+  async login({ username, email, password }): Promise<string> {  //ECHASIN added username to login 
+    console.log("In mocks/auth.ts - async login:", this.login);  //ECHASIN getting instance of L
     await wait(500);
 
     return new Promise((resolve, reject) => {
       try {
-        const user = users.find((_user) => _user.email === email);
+        //ECHASIN looking up Users from users array by username
+        //ECHASIN .find is used to find a value in a array
+        //ECHASIN _user is parameter name, it can be name anything
+        //ECHASIN The Promise object represents the eventual completion (or failure) of an asynchronous operation and its resulting value.
+        console.log('Promise: ',Promise);
+        const user = users.find((ABC) => ABC.username === username);  
+        console.log('user: ',user); //ECHASIN
+
+         //ECHASIN this is hardcoded validation
+        if (!user || user.username !== username) {
+          reject(new Error('User name does not exist'));
+          return;
+        }
 
         //ECHASIN this is hardcoded validation
         if (!user || user.password !== password) {
@@ -93,7 +107,11 @@ class AuthApi {
     return new Promise((resolve, reject) => {
       try {
         const { userId } = decode(accessToken) as any;
-
+        //ECHASIN Returns mock JWT token
+        console.log('me(accessToken)', accessToken);
+        console.log('decode(accessToken)', {userId});
+        
+        //ECHASIN Check is us
         const user = users.find((_user) => _user.id === userId);
 
         if (!user) {

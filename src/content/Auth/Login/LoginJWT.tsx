@@ -52,11 +52,10 @@ export const LoginJWT: FC = (props) => {
       )
     }),
     onSubmit: async (values, helpers): Promise<void> => {
-      console.log("LoginJWT.tsx onSubmit") //ECHASIN
-      console.log("login:", login) //ECHASIN
+      console.log("LoginJWT.tsx onSubmit");//ECHASIN
+      console.log("values", values); //ECHASIN
       try {
         await login(values.username, values.email, values.password); //ECHASIN
-
         if (isMountedRef()) {
           const backTo =
             (router.query.backTo as string) || '/dashboards/reports';
