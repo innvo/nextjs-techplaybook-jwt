@@ -33,15 +33,16 @@ class AuthApi1 {
  
   async login({ username, email, password }): Promise<string> {  //ECHASIN added username to login 
     console.log("In src/content/Auth/auth.ts - async login:", username);  //ECHASIN getting instance of Login
-    await wait(10);
+    await wait(500);
 
-        axios.post('http://localhost:8080/api/authenticate', {
-      "username": username,
-      "password": password,
+      axios.post('https://dummyjson.com/auth/login', {
+      "username": 'kminchelle',
+      "password": '0lelplR',
     }).then(function (response) {
       const data= response.data
       console.log('response.data:', data);
-      const bearerToken = response?.headers?.authorization;
+      // const bearerToken = response?.headers?.authorization;
+      const bearerToken = data.token;
       console.log('bearerToken:', bearerToken);   
     })
     .catch(function (error) {
@@ -51,7 +52,10 @@ class AuthApi1 {
     return new Promise((resolve, reject) => {
       console.log('In return new Promise')
       console.log('Promise: ', Promise.resolve.toString);
-      console.log("login:", this.login)
+    
+      //CHARLES -  I NEED TO GET THE ATTRIBUTES FROM THE TOKEN SO I CAN USE IN THE BELOW ACTIONS
+      //IT RETURNING THE HARDED CODE VALUES THAT Line 12
+
     
       try {
         //ECHASIN looking up Users from users array by username
