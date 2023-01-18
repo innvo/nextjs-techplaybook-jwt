@@ -3,8 +3,9 @@ import { randomId } from 'src/utils/randomId';
 import { sign, decode, JWT_SECRET, JWT_EXPIRES_IN } from '../../utils/jwt';
 import { wait } from 'src/utils/wait';
 
-import axios from 'axios';//ECHASIN
-import React, { useState } from 'react';//ECHASIN
+import axiosInt from 'src/utils/axios';//ali
+
+//import React, { useState } from 'react';//ECHASIN
 
 // const [data, setData] = useState(0);
 
@@ -33,63 +34,70 @@ class AuthApi1 {
  
   async login({ username, email, password }): Promise<string> {  //ECHASIN added username to login 
     console.log("In src/content/Auth/auth.ts - async login:", username);  //ECHASIN getting instance of Login
+
     await wait(500);
 
-      axios.post('https://dummyjson.com/auth/login', {
-      "username": 'kminchelle',
-      "password": '0lelplR',
-    }).then(function (response) {
-      const data= response.data
-      console.log('response.data:', data);
-      // const bearerToken = response?.headers?.authorization;
-      const bearerToken = data.token;
-      console.log('bearerToken:', bearerToken);   
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-    
+    //Ali add auth api to return token string
+
     return new Promise((resolve, reject) => {
-      console.log('In return new Promise')
-      console.log('Promise: ', Promise.resolve.toString);
+      axiosInt.post('/api/authenticate', {
+      //Ali  "username": 'kminchelle', 
+      //Ali  "password": '0lelplR',
+         "email": username,
+         "password": password,
+      }).then(function (response) {
+        const data= response.data
+        console.log('response.data:', data);
+        // const bearerToken = response?.headers?.authorization;
+        const bearerToken = data.id_token; //Ali
+        
+        console.log('bearerToken:', bearerToken);   
+        resolve(bearerToken); //Ali
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+     //Ali console.log('In return new Promise')
+     //Ali console.log('Promise: ', Promise.resolve.toString);
     
       //CHARLES -  I NEED TO GET THE ATTRIBUTES FROM THE TOKEN SO I CAN USE IN THE BELOW ACTIONS
       //IT RETURNING THE HARDED CODE VALUES THAT Line 12
-
     
-      try {
+     //Ali try {
         //ECHASIN looking up Users from users array by username
         //ECHASIN .find is used to find a value in a array
         //ECHASIN _user is parameter name, it can be name anything
         //ECHASIN The Promise object represents the eventual completion (or failure) of an asynchronous operation and its resulting value     
-        const user = users.find((ABC) => ABC.username === username);  
-        console.log('user: ',user); //ECHASIN
-        
+      //Ali  const user = users.find((ABC) => ABC.username === username);  
+       //Ali console.log('user: ',user); //ECHASIN
       
         //ECHASIN this is hardcoded validation
-        if (!user || user.username !== username) {
-          reject(new Error('User name does not exist'));
-          return;
-        }
+       //Ali if (!user || user.username !== username) {
+       //Ali   reject(new Error('User name does not exist'));
+       //Ali   return;
+       //Ali }
 
         //ECHASIN this is hardcoded validation
-        if (!user || user.password !== password) {
-          reject(new Error('Email and password combination does not match'));
-          return;
-        }
+       //Ali if (!user || user.password !== password) {
+       //Ali   reject(new Error('Email and password combination does not match'));
+       //Ali   return;
+       //Ali }
 
-        const accessToken = sign({ userId: user.id }, JWT_SECRET, {
-          expiresIn: JWT_EXPIRES_IN
-        });
+       //Ali const accessToken = sign({ userId: user.id }, JWT_SECRET, {
+       //Ali   expiresIn: JWT_EXPIRES_IN
+       //Ali });
 
   
-        resolve(accessToken);
-      } catch (err) {
-        console.error(err);
-        reject(new Error('Internal server error'));
-      }
+      //  resolve(accessToken);
+  //Ali    } catch (err) {
+      //Ali  console.error(err);
+      //Ali  reject(new Error('Internal server error'));
+    //Ali  }
     });
+  
   }
+
 
   async register({ email, name, password }): Promise<string> {
     await wait(1000);
@@ -136,33 +144,48 @@ class AuthApi1 {
   me(accessToken): Promise<User> {
     return new Promise((resolve, reject) => {
       try {
-        const { userId } = decode(accessToken) as any;
-        //ECHASIN Returns mock JWT token
-        console.log('me(accessToken)', accessToken);
-        console.log('decode(accessToken)', {userId});
-        
-        //ECHASIN Check is us
-        const user = users.find((_user) => _user.id === userId);
-
-        if (!user) {
-          reject(new Error('Invalid authorization token'));
-          return;
+       // const { userId } = decode(accessToken) as any;
+      
+       //Ali create configuration to add  Authorization header
+       let config = {
+        headers: {
+          Authorization: 'Bearer ' + accessToken,
         }
+      }
+      axiosInt.get('/api/account', config)// Ali add api to get current logged user
+        .then(function (response) {
+            const data= response.data
+            console.log('response.data:', data);
+            const user = response.data;
 
-        resolve({
-          id: user.id,
-          avatar: user.avatar,
-          jobtitle: user.jobtitle,
-          email: user.email,
-          name: user.name,
-          location: user.location,
-          username: user.username,
-          role: user.role,
-          posts: user.posts,
-          coverImg: user.coverImg,
-          followers: user.followers,
-          description: user.description
+            if (!user) {
+              reject(new Error('Invalid authorization token'));
+              return;
+            }
+    
+            resolve({
+              id: user.id,
+              avatar: user.avatar,
+              jobtitle: user.jobtitle,
+              email: user.email,
+              name: user.name,
+              location: user.location,
+              username: user.username,
+              role: user.role,
+              posts: user.posts,
+              coverImg: user.coverImg,
+              followers: user.followers,
+              description: user.description
+            });
+          })
+          .catch(function (error) {
+            console.log(error);
         });
+
+        //ECHASIN Returns mock JWT token
+      //  console.log('me(accessToken)', accessToken);
+      //  console.log('decode(accessToken)', {userId});
+       
       } catch (err) {
         console.error(err);
         reject(new Error('Internal server error'));
