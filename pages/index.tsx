@@ -1,5 +1,5 @@
 import {
-  Box, Button,
+  Box,
   Card,
   Tooltip,
   Typography,
@@ -7,403 +7,284 @@ import {
   Alert,
   styled
 } from '@mui/material';
-import type { ReactElement } from 'react';
-import BaseLayout from 'src/layouts/BaseLayout';
-
-import Link from 'src/components/Link';
 import Head from 'next/head';
-import { useTranslation } from 'react-i18next';
-import Logo from 'src/components/LogoSign';
-import Hero from 'src/content/Overview/Hero';
-import Highlights from 'src/content/Overview/Highlights';
-import LanguageSwitcher from 'src/layouts/BoxedSidebarLayout/Header/Buttons/LanguageSwitcher';
-import Footer from 'src/components/Footer';
-
-
 import { useAuth } from 'src/hooks/useAuth';
 import { Guest } from 'src/components/Guest';
 import { LoginAuth0 } from 'src/content/Auth/Login/LoginAuth0';
 import { LoginFirebaseAuth } from 'src/content/Auth/Login/LoginFirebaseAuth';
 import { LoginJWT } from 'src/content/Auth/Login/LoginJWT';
 import { LoginAmplify } from 'src/content/Auth/Login/LoginAmplify';
+import BaseLayout from 'src/layouts/BaseLayout';
+import Link from 'src/components/Link';
 import { useRouter } from 'next/router';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-}));
+import { useTranslation } from 'react-i18next';
+import Logo from 'src/components/Logo';
+import Scrollbar from 'src/components/Scrollbar';
 
-//ECHASIN
 const icons = {
   Auth0: '/static/images/logo/auth0.svg',
   FirebaseAuth: '/static/images/logo/firebase.svg',
   JWT: '/static/images/logo/jwt.svg',
   Amplify: '/static/images/logo/amplify.svg'
 };
-//ECHASIN
+
+const Content = styled(Box)(
+  () => `
+    display: flex;
+    flex: 1;
+    width: 100%;
+`
+);
+
+const MainContent = styled(Box)(
+  ({ theme }) => `
+  @media (min-width: ${theme.breakpoints.values.md}px) {
+    padding: 0 0 0 440px;
+  }
+  width: 100%;
+  display: flex;
+  align-items: center;
+`
+);
+
+const SidebarWrapper = styled(Box)(
+  ({ theme }) => `
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: ${theme.colors.alpha.white[100]};
+    width: 440px;
+`
+);
+
+const SidebarContent = styled(Box)(
+  ({ theme }) => `
+  display: flex;
+  flex-direction: column;
+  padding: ${theme.spacing(6)};
+`
+);
+
 const CardImg = styled(Card)(
   ({ theme }) => `
-    width: 90px;
-    height: 80px;
+    border-radius: 100%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    background: ${theme.colors.alpha.white[100]};
-    margin: 0 ${theme.spacing(1)};
     border: 1px solid ${theme.colors.alpha.black[10]};
-    transition: ${theme.transitions.create(['all'])};
+    transition: ${theme.transitions.create(['border'])};
+    position: absolute;
 
     &:hover {
       border-color: ${theme.colors.primary.main};
     }
 `
 );
-const HeaderWrapper = styled(Card)(
+
+const TypographyH1 = styled(Typography)(
   ({ theme }) => `
-  width: 100%;
-  display: flex;
-  align-items: center;
-  height: ${theme.spacing(10)};
-  margin-bottom: ${theme.spacing(10)};
+    font-size: ${theme.typography.pxToRem(33)};
 `
 );
 
-const OverviewWrapper = styled(Box)(
-  ({ theme }) => `
-    overflow: auto;
-    background: ${theme.palette.common.white};
-    flex: 1;
-    overflow-x: hidden;
-`
-);
-
-const BottomWrapper = styled(Box)(
-  ({ theme }) => `
-    padding: ${theme.spacing(3)};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`
-);
-
-const TopWrapper = styled(Box)(
-  () => `
-  display: flex;
-  width: 100%;
-  flex: 1;
-  padding: 20px;
-`
-);
-
-const MainContent = styled(Box)(
-  () => `
-    height: 100%;
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-`
-);
-
-// function Overview() {
-//   const { t }: { t: any } = useTranslation();
-
-//   return (
-//      <OverviewWrapper>
-//       <Head>
-//         <title>Tokyo NextJS Typescript Admin Dashboard</title>
-//       </Head>
-//       <HeaderWrapper>
-//         <Container maxWidth="lg">
-//           <Box display="flex" alignItems="center">
-//             <Logo />
-//             <Box
-//               display="flex"
-//               alignItems="center"
-//               justifyContent="space-between"
-//               flex={1}
-//             >
-//               <Box />
-//               <Box>
-//                 <LanguageSwitcher />
-//                 <Button
-//                   component={Link}
-//                   href="/dashboards/reports"
-//                   variant="contained"
-//                   sx={{ ml: 2 }}
-//                 >
-//                   {t('Live Preview')}
-//                 </Button>
-//               </Box>
-//             </Box>
-//           </Box>
-//         </Container>
-//       </HeaderWrapper>
-//       <Hero />
-//       <Highlights />
-//       <Footer />
-//     </OverviewWrapper>
-//   );
-// }
-
-// export default Overview;
-
-// Overview.getLayout = function getLayout(page: ReactElement) {
-//   return <BaseLayout>{page}</BaseLayout>;
-// };
-function LoginBasic() {
+function LoginCover() {
   const { method } = useAuth() as any;
   const { t }: { t: any } = useTranslation();
+
   const router = useRouter();
   const { demo } = router.query;
 
   return (
     <>
       <Head>
-        <title>Login - Basic</title>
+        <title>Login - Cover</title>
       </Head>
-      <OverviewWrapper>
-        <HeaderWrapper>
-          <Container maxWidth="lg">
-            <Box display="flex" alignItems="center">
-              {/* <Logo /> */}
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="space-between"
-                flex={1}
-              >
-                <Box />
-                <Box>
-                  <LanguageSwitcher />
-                  {/* <Button
-                    component={Link}
-                    href="/dashboards/reports"
-                    variant="contained"
-                    sx={{ ml: 2 }}
-                  >
-                    {t('Live Preview')}
-                  </Button> */}
-                </Box>
-              </Box>
-            </Box>
-          </Container>
-        </HeaderWrapper>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Item>
-        
-              </Item>
-          </Grid>
-          <Grid item xs={6}>
-            <Item>   <MainContent>
-              <TopWrapper>
-                <Container maxWidth="sm">
-                  <Logo />
-                  <Card
-                    sx={{
-                      mt: 3,
-                      px: 4,
-                      pt: 5,
-                      pb: 3
-                    }}
-                  >
-                    <Box>
-                      <Typography
-                        variant="h2"
-                        sx={{
-                          mb: 1
-                        }}
-                      >
-                        {t('Sign in')}
-                      </Typography>
-                      <Typography
-                        variant="h4"
-                        color="text.secondary"
-                        fontWeight="normal"
-                        sx={{
-                          mb: 3
-                        }}
-                      >
-                        {t('Fill in the fields below to sign into your account.')}
-                      </Typography>
-                    </Box>
-                    {method === 'Auth0' && <LoginAuth0 />}
-                    {method === 'FirebaseAuth' && <LoginFirebaseAuth />}
-                    {method === 'JWT' && <LoginJWT />}
-                    {method === 'Amplify' && <LoginAmplify />}
-                    <Box my={4}>
-                      <Typography
-                        component="span"
-                        variant="subtitle2"
-                        color="text.primary"
-                        fontWeight="bold"
-                      >
-                        {t('Don’t have an account, yet?')}
-                      </Typography>{' '}
-                      <Link
-                        href={
-                          demo
-                            ? `/auth/register/basic?demo=${demo}`
-                            : '/auth/register/basic'
-                        }
-                      >
-                        <b>Sign up here</b>
-                      </Link>
-                    </Box>
-                    {method !== 'Auth0' && (
-                      <Tooltip
-                        title={t('Used only for the live preview demonstration !')}
-                      >
-                        <Alert severity="warning">
-                          Use <b>demo@example.com</b> and password <b>TokyoPass1@</b>
-                        </Alert>
-                      </Tooltip>
-                    )}
-                  </Card>
-                  <BottomWrapper>
-                    <Tooltip arrow placement="top" title="Auth0">
-                      <CardImg>
-                        <img height={50} alt="Auth0" src={icons['Auth0']} />
-                      </CardImg>
-                    </Tooltip>
-                    <Tooltip arrow placement="top" title="Firebase">
-                      <CardImg>
-                        <img height={50} alt="Firebase" src={icons['FirebaseAuth']} />
-                      </CardImg>
-                    </Tooltip>
-                    <Tooltip arrow placement="top" title="JSON Web Token">
-                      <CardImg>
-                        <img height={50} alt="JSON Web Token" src={icons['JWT']} />
-                      </CardImg>
-                    </Tooltip>
-                    <Tooltip arrow placement="top" title="Amplify">
-                      <CardImg>
-                        <img height={50} alt="Amplify" src={icons['Amplify']} />
-                      </CardImg>
-                    </Tooltip>
-                  </BottomWrapper>
-
-                  <Alert severity="error">
-                    {t(
-                      'Learn how to switch between auth methods by reading the section we’ve prepared in the documentation.'
-                    )}
-                  </Alert>
-                </Container>
-              </TopWrapper>
-            </MainContent></Item>
-          </Grid>
-        </Grid>
-        <MainContent>
-          <TopWrapper>
-            <Container maxWidth="sm">
+      <Content>
+        <SidebarWrapper
+          sx={{
+            display: { xs: 'none', md: 'flex' }
+          }}
+        >
+          <Scrollbar>
+            <SidebarContent>
               <Logo />
-              <Card
-                sx={{
-                  mt: 3,
-                  px: 4,
-                  pt: 5,
-                  pb: 3
-                }}
-              >
-                <Box>
-                  <Typography
-                    variant="h2"
-                    sx={{
-                      mb: 1
-                    }}
-                  >
-                    {t('Sign in')}
-                  </Typography>
-                  <Typography
-                    variant="h4"
-                    color="text.secondary"
-                    fontWeight="normal"
-                    sx={{
-                      mb: 3
-                    }}
-                  >
-                    {t('Fill in the fields below to sign into your account.')}
-                  </Typography>
-                </Box>
-                {method === 'Auth0' && <LoginAuth0 />}
-                {method === 'FirebaseAuth' && <LoginFirebaseAuth />}
-                {method === 'JWT' && <LoginJWT />}
-                {method === 'Amplify' && <LoginAmplify />}
-                <Box my={4}>
-                  <Typography
-                    component="span"
-                    variant="subtitle2"
-                    color="text.primary"
-                    fontWeight="bold"
-                  >
-                    {t('Don’t have an account, yet?')}
-                  </Typography>{' '}
-                  <Link
-                    href={
-                      demo
-                        ? `/auth/register/basic?demo=${demo}`
-                        : '/auth/register/basic'
-                    }
-                  >
-                    <b>Sign up here</b>
-                  </Link>
-                </Box>
-                {method !== 'Auth0' && (
-                  <Tooltip
-                    title={t('Used only for the live preview demonstration !')}
-                  >
-                    <Alert severity="warning">
-                      Use <b>demo@example.com</b> and password <b>TokyoPass1@</b>
-                    </Alert>
+              <Box mt={6}>
+                <TypographyH1
+                  variant="h1"
+                  sx={{
+                    mb: 7
+                  }}
+                >
+                  {t('Multiple auth methods included')}
+                </TypographyH1>
+                <Box
+                  sx={{
+                    position: 'relative',
+                    width: 300,
+                    height: 120
+                  }}
+                >
+                  <Tooltip arrow placement="top" title="Auth0">
+                    <CardImg
+                      sx={{
+                        width: 80,
+                        height: 80,
+                        left: -20,
+                        top: -40
+                      }}
+                    >
+                      <img width={40} alt="Auth0" src={icons['Auth0']} />
+                    </CardImg>
                   </Tooltip>
-                )}
-              </Card>
-              <BottomWrapper>
-                <Tooltip arrow placement="top" title="Auth0">
-                  <CardImg>
-                    <img height={50} alt="Auth0" src={icons['Auth0']} />
-                  </CardImg>
+                  <Tooltip arrow placement="top" title="Firebase">
+                    <CardImg
+                      sx={{
+                        width: 90,
+                        height: 90,
+                        left: 70
+                      }}
+                    >
+                      <img
+                        width={50}
+                        alt="Firebase"
+                        src={icons['FirebaseAuth']}
+                      />
+                    </CardImg>
+                  </Tooltip>
+                  <Tooltip arrow placement="top" title="JSON Web Token">
+                    <CardImg
+                      sx={{
+                        width: 110,
+                        height: 110,
+                        top: -30,
+                        left: 170
+                      }}
+                    >
+                      <img width={80} alt="JSON Web Token" src={icons['JWT']} />
+                    </CardImg>
+                  </Tooltip>
+                  <Tooltip arrow placement="top" title="AWS Amplify">
+                    <CardImg
+                      sx={{
+                        width: 70,
+                        height: 70,
+                        bottom: 0,
+                        right: -55
+                      }}
+                    >
+                      <img width={50} alt="Amplify" src={icons['Amplify']} />
+                    </CardImg>
+                  </Tooltip>
+                </Box>
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    my: 3
+                  }}
+                >
+                  {t(
+                    'Choose between JSON Web Token, Firebase, AWS Amplify or Auth0. Regular login/register functionality is also available.'
+                  )}
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  color="text.primary"
+                  fontWeight="bold"
+                >
+                  {t('Want to switch auth methods?')}
+                </Typography>
+                <Typography variant="subtitle1">
+                  {t(
+                    'It only takes seconds. There is a documentation section showing how to do exactly that'
+                  )}
+                  . <Link href="/docs">Read docs</Link>
+                </Typography>
+              </Box>
+            </SidebarContent>
+          </Scrollbar>
+        </SidebarWrapper>
+        <MainContent>
+          <Container
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              flexDirection: 'column'
+            }}
+            maxWidth="sm"
+          >
+            <Card
+              sx={{
+                p: 4,
+                my: 4
+              }}
+            >
+              <Box textAlign="center">
+                <Typography
+                  variant="h2"
+                  sx={{
+                    mb: 1
+                  }}
+                >
+                  {t('Sign in')}
+                </Typography>
+                <Typography
+                  variant="h4"
+                  color="text.secondary"
+                  fontWeight="normal"
+                  sx={{
+                    mb: 3
+                  }}
+                >
+                  {t('Fill in the fields below to sign into your account.')}
+                </Typography>
+              </Box>
+              {method === 'Auth0' && <LoginAuth0 />}
+              {method === 'FirebaseAuth' && <LoginFirebaseAuth />}
+              {method === 'JWT' && <LoginJWT />}
+              {method === 'Amplify' && <LoginAmplify />}
+              <Box my={4}>
+                <Typography
+                  component="span"
+                  variant="subtitle2"
+                  color="text.primary"
+                  fontWeight="bold"
+                >
+                  {t('Don’t have an account, yet?')}
+                </Typography>{' '}
+                <Link
+                  href={
+                    demo
+                      ? `/auth/register/cover?demo=${demo}`
+                      : '/auth/register/cover'
+                  }
+                >
+                  <b>Sign up here</b>
+                </Link>
+              </Box>
+              {method !== 'Auth0' && (
+                <Tooltip
+                  title={t('Used only for the live preview demonstration !')}
+                >
+                  <Alert severity="warning">
+                    Use <b>demo@example.com</b> and password <b>TokyoPass1@</b>
+                  </Alert>
                 </Tooltip>
-                <Tooltip arrow placement="top" title="Firebase">
-                  <CardImg>
-                    <img height={50} alt="Firebase" src={icons['FirebaseAuth']} />
-                  </CardImg>
-                </Tooltip>
-                <Tooltip arrow placement="top" title="JSON Web Token">
-                  <CardImg>
-                    <img height={50} alt="JSON Web Token" src={icons['JWT']} />
-                  </CardImg>
-                </Tooltip>
-                <Tooltip arrow placement="top" title="Amplify">
-                  <CardImg>
-                    <img height={50} alt="Amplify" src={icons['Amplify']} />
-                  </CardImg>
-                </Tooltip>
-              </BottomWrapper>
-
-              <Alert severity="error">
-                {t(
-                  'Learn how to switch between auth methods by reading the section we’ve prepared in the documentation.'
-                )}
-              </Alert>
-            </Container>
-          </TopWrapper>
+              )}
+            </Card>
+          </Container>
         </MainContent>
-      </OverviewWrapper>
+      </Content>
     </>
   );
 }
 
-LoginBasic.getLayout = (page) => (
+LoginCover.getLayout = (page) => (
   <Guest>
     <BaseLayout>{page}</BaseLayout>
   </Guest>
 );
 
-export default LoginBasic;
+export default LoginCover;
