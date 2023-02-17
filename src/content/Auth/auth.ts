@@ -43,7 +43,7 @@ class AuthApi1 {
       axiosInt.post('/api/authenticate', {
       //Ali  "username": 'kminchelle', 
       //Ali  "password": '0lelplR',
-         "email": username,
+         "username": username,
          "password": password,
       }).then(function (response) {
         const data= response.data
