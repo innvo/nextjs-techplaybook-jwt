@@ -12,31 +12,58 @@ import { Grid } from '@mui/material';
 import { useRefMounted } from 'src/hooks/useRefMounted';
 
 import type { User } from 'src/models/user';
-import { usersApi } from 'src/mocks/users';
+//import { usersApi } from 'src/mocks/users';
 
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 
 import Results from 'src/content/Management/Users/Results';
 
+import axios from 'axios'; //ECHASIN
+import axiosInt from 'src/utils/axios';//ECHASIN
 function ManagementUsers() {
+  console.log('In users-management/index.ts');
+
+
   const isMountedRef = useRefMounted();
   const [users, setUsers] = useState<User[]>([]);
 
-  const getUsers = useCallback(async () => {
-    try {
-      const response = await usersApi.getUsers();
-
-      if (isMountedRef()) {
-        setUsers(response);
-      }
-    } catch (err) {
+  const response = axiosInt.get('http://localhost:8080/api/users')
+    .then(response => {
+      // Handle response
+      console.log('response.data:', response.data);
+    })
+    .catch(err => {
+      // Handle errors
       console.error(err);
-    }
-  }, [isMountedRef]);
+    });
 
-  useEffect(() => {
-    getUsers();
-  }, [getUsers]);
+  console.log('response:', response)
+
+
+
+  // const getUsers = useCallback(async () => {
+  //   try {
+  //     //const response = await usersApi.getUsers();
+  //     const response = axiosInt.get('http://localhost:8080/api/users')
+  //     .then(response => {
+  //       // Handle response
+  //       console.log('response.data:', response.data);
+  //     })
+  //     .catch(err => {
+  //       // Handle errors
+  //       console.error(err);
+  //     });
+  //     if (isMountedRef()) {
+  //       setUsers(response);
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }, [isMountedRef]);
+
+  // useEffect(() => {
+  //   getUsers();
+  // }, [getUsers]);
 
   return (
     <>
@@ -56,7 +83,7 @@ function ManagementUsers() {
         spacing={3}
       >
         <Grid item xs={12}>
-          <Results users={users} />
+          {/* <Results users={users} /> */}
         </Grid>
       </Grid>
       <Footer />
