@@ -18,52 +18,49 @@ import PageTitleWrapper from 'src/components/PageTitleWrapper';
 
 import Results from 'src/content/Management/Users/Results';
 
-import axios from 'axios'; //ECHASIN
+import axios, { AxiosResponse } from 'axios'; //ECHASIN
 import axiosInt from 'src/utils/axios';//ECHASIN
 function ManagementUsers() {
   console.log('In users-management/index.ts');
 
 
   const isMountedRef = useRefMounted();
+  //const [users, setUsers] = useState<User[]>([]);
+  //const [users, setUsers] = useState<AxiosResponse | null>(null);// ECHASIN FIXES ERROR
   const [users, setUsers] = useState<User[]>([]);
-
-  const response = axiosInt.get('http://localhost:8080/api/users')
-    .then(response => {
-      // Handle response
-      console.log('response.data:', response.data);
-    })
-    .catch(err => {
-      // Handle errors
-      console.error(err);
-    });
-
-  console.log('response:', response)
-
-
-
-  // const getUsers = useCallback(async () => {
-  //   try {
-  //     //const response = await usersApi.getUsers();
-  //     const response = axiosInt.get('http://localhost:8080/api/users')
-  //     .then(response => {
-  //       // Handle response
-  //       console.log('response.data:', response.data);
-  //     })
-  //     .catch(err => {
-  //       // Handle errors
-  //       console.error(err);
-  //     });
-  //     if (isMountedRef()) {
-  //       setUsers(response);
-  //     }
-  //   } catch (err) {
+  // TO BE REMOVED
+  // const response = axiosInt.get('http://localhost:8080/api/users')
+  //   .then(response => {
+  //     // Handle response
+  //     console.log('response.data:', response.data);
+  //     const users = response.data;
+  //   })
+  //   .catch(err => {
+  //     // Handle errors
   //     console.error(err);
-  //   }
-  // }, [isMountedRef]);
+  //   });
 
-  // useEffect(() => {
-  //   getUsers();
-  // }, [getUsers]);
+  const getUsers = useCallback(async () => {
+    try {
+      //const response = await usersApi.getUsers(); ECHASIN MOCK API
+      console.log('In getUsers')
+      const response = await axiosInt.get('http://localhost:8080/api/users')
+      if (isMountedRef()) {
+        const users = response.data;
+        //this.setState({ users });
+        setUsers(response.data);
+        console.log('getUsers-response.data:', response.data)
+        console.log('users;', users)
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [isMountedRef]);
+
+  useEffect(() => {
+    getUsers();
+  }, [getUsers]);
+
 
   return (
     <>
@@ -83,6 +80,10 @@ function ManagementUsers() {
         spacing={3}
       >
         <Grid item xs={12}>
+          <h1>Return Data Here</h1>
+          
+            {users.map(user => <li>{user.id}</li>)}
+          
           {/* <Results users={users} /> */}
         </Grid>
       </Grid>
