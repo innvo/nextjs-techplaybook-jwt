@@ -8,7 +8,7 @@ import { Authenticated } from 'src/components/Authenticated';
 import PageHeader from 'src/content/Management/Users/PageHeader';
 import Footer from 'src/components/Footer';
 
-import { Grid,  TableRow, } from '@mui/material';
+import { Grid, useForkRef } from '@mui/material';
 import { useRefMounted } from 'src/hooks/useRefMounted';
 
 import type { User } from 'src/models/user';
@@ -20,10 +20,6 @@ import Results from 'src/content/Management/Users/Results';
 
 import axios, { AxiosResponse } from 'axios'; //ECHASIN
 import axiosInt from 'src/utils/axios';//ECHASIN
-
-
-
-
 function ManagementUsers() {
   console.log('In users-management/index.ts');
 
@@ -48,7 +44,7 @@ function ManagementUsers() {
     try {
       //const response = await usersApi.getUsers(); ECHASIN MOCK API
       console.log('In getUsers')
-      const response = await axiosInt.get('/api/users')
+      const response = await axiosInt.get('http://localhost:8080/api/users')
       if (isMountedRef()) {
         const users = response.data;
         //this.setState({ users });
@@ -64,7 +60,6 @@ function ManagementUsers() {
   useEffect(() => {
     getUsers();
   }, [getUsers]);
-
 
   return (
     <>
@@ -86,13 +81,7 @@ function ManagementUsers() {
         <Grid item xs={12}>
           <h1>Return Data Here</h1>
           
-            {users.map(user => <li>{user.id}</li>)}
-
-            {users.map((user) => user.id)}
-
-            <TableRow hover key={user.id} >
-            
-            </TableRow>
+            {users.map(user => <li key={user.id}>{user.id} {user.login}</li>)}
           
           {/* <Results users={users} /> */}
         </Grid>
