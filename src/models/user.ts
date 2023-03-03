@@ -3,7 +3,8 @@ export interface User {
   login: string;
   // avatar: string;
   // email: string;
-  // name: string;
+  firstName: string;
+  lastName: string;
   // jobtitle: string;
   // username: string;
   // location: string;
