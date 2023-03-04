@@ -128,7 +128,7 @@ const TabsWrapper = styled(Tabs)(
 );
 
 //Dynamic Link
-//const router = useRouter();
+
 
 interface ResultsProps {
   users: User[];
@@ -214,6 +214,14 @@ const applyPagination = (
 };
 
 const Results: FC<ResultsProps> = ({ users }) => {
+  //ECHASIN Results is the functional component
+  const router = useRouter();
+  const editUserProfile = (id: string) => {
+    router.push({ pathname: '/techplaybook/user-management/profile/[id]', query: { id: id } });
+  };
+
+
+
   const [selectedItems, setSelectedUsers] = useState<string[]>([]);
   const { t }: { t: any } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
@@ -432,7 +440,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                   <TableBody>
                     {paginatedUsers.map((user) => {
                       const isUserSelected = selectedItems.includes(user.id);
-                      
+
                       return (
                         <TableRow hover key={user.id} selected={isUserSelected}>
                           <TableCell padding="checkbox">
@@ -455,14 +463,14 @@ const Results: FC<ResultsProps> = ({ users }) => {
                                 sx={{
                                   mr: 1
                                 }}
-                                // src={user.avatar}
+                              // src={user.avatar}
                               />
                               <Box>
                                 <Link
                                   variant="h5"
                                   href={"/management/users/single/?"}
-                                >                                 
-                                   {user.firstName} {user.lastName}
+                                >
+                                  {user.firstName} {user.lastName}
                                 </Link>
                                 <Typography noWrap variant="subtitle2">
                                   {/* {user.jobtitle} */}
@@ -493,12 +501,17 @@ const Results: FC<ResultsProps> = ({ users }) => {
                                 </IconButton>
                               </Tooltip>
                               <Tooltip title={t('Delete')} arrow>
-                                <IconButton
+                                {/* <IconButton
                                   onClick={handleConfirmDelete}
                                   color="primary"
                                 >
                                   <DeleteTwoToneIcon fontSize="small" />
-                                </IconButton>
+                                </IconButton> */}
+                                <Button
+                                  variant="contained"
+                                  onClick={(e) => editUserProfile(user.id)}>
+                                  Edit
+                                </Button>
                               </Tooltip>
                             </Typography>
                           </TableCell>
@@ -637,7 +650,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                                 height: 50,
                                 mr: 2
                               }}
-                              // src={user.avatar}
+                            // src={user.avatar}
                             />
                             <Box>
                               <Box>
