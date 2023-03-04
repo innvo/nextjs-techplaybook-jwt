@@ -24,6 +24,23 @@ export interface MenuItems {
 
 const menuItems: MenuItems[] = [
   {
+    heading: 'Techplaybook',
+    items: [
+      {
+        name: 'Management',
+        icon: BackupTableTwoToneIcon,
+        items: [
+          {
+            name: 'User Management',
+            link: '/techplaybook/user-management',
+            badgeTooltip: 'Add, update, and delete users'
+          },
+        ]
+      }
+    ]
+  }, 
+ //=============================
+  {
     heading: 'General',
     items: [
       {
@@ -149,87 +166,213 @@ const menuItems: MenuItems[] = [
       }
     ]
   },
-  {
-    heading: 'Extra Pages',
-    items: [
       {
-        name: 'Auth Pages',
-        icon: VpnKeyTwoToneIcon,
+        heading: 'General',
         items: [
           {
-            name: 'Login',
+            name: 'Blueprints',
+            icon: BackupTableTwoToneIcon,
             items: [
               {
-                name: 'Basic',
-                link: '/auth/login/basic?demo=true'
+                name: 'Extended Sidebar',
+                link: '/dashboards/reports',
+                badgeTooltip: 'Added in version 3.0'
               },
               {
-                name: 'Cover',
-                link: '/auth/login/cover?demo=true'
+                name: 'Accent Header',
+                link: '/blueprints/accent-header/dashboards/reports',
+                badge: '',
+                badgeTooltip: 'Updated'
+              },
+              {
+                name: 'Accent Sidebar',
+                link: '/blueprints/accent-sidebar/dashboards/reports'
+              },
+              {
+                name: 'Boxed Sidebar',
+                link: '/blueprints/boxed-sidebar/dashboards/reports'
+              },
+              {
+                name: 'Collapsed Sidebar',
+                link: '/blueprints/collapsed-sidebar/dashboards/reports'
+              },
+              {
+                name: 'Bottom Navigation',
+                link: '/blueprints/bottom-navigation/dashboards/reports'
+              },
+              {
+                name: 'Top Navigation',
+                link: '/blueprints/top-navigation/dashboards/reports'
               }
             ]
           },
           {
-            name: 'Register',
+            name: 'Dashboards',
+            icon: SmartToyTwoToneIcon,
+            link: '/blueprints/accent-sidebar/dashboards',
             items: [
               {
-                name: 'Basic',
-                link: '/auth/register/basic?demo=true'
+                name: 'Reports',
+                link: '/blueprints/accent-sidebar/dashboards/reports',
+                badge: '',
+                badgeTooltip: 'Dot indicator with example tooltip'
               },
               {
-                name: 'Cover',
-                link: '/auth/register/cover?demo=true'
+                name: 'Expenses',
+                link: '/blueprints/accent-sidebar/dashboards/expenses',
+                badge: ''
               },
               {
-                name: 'Wizard',
-                link: '/auth/register/wizard?demo=true'
+                name: 'Products',
+                link: '/blueprints/accent-sidebar/dashboards/products'
+              },
+              {
+                name: 'Statistics',
+                link: '/blueprints/accent-sidebar/dashboards/statistics'
+              },
+              {
+                name: 'Automation',
+                link: '/blueprints/accent-sidebar/dashboards/automation'
+              },
+              {
+                name: 'Analytics',
+                link: '/blueprints/accent-sidebar/dashboards/analytics'
+              },
+              {
+                name: 'Banking',
+                link: '/blueprints/accent-sidebar/dashboards/banking'
+              },
+              {
+                name: 'Commerce',
+                link: '/blueprints/accent-sidebar/dashboards/commerce'
+              },
+              {
+                name: 'Crypto',
+                link: '/blueprints/accent-sidebar/dashboards/crypto'
+              },
+              {
+                name: 'Finance',
+                link: '/blueprints/accent-sidebar/dashboards/finance'
+              },
+              {
+                name: 'Fitness',
+                link: '/blueprints/accent-sidebar/dashboards/fitness'
+              },
+              {
+                name: 'Healthcare',
+                link: '/blueprints/accent-sidebar/dashboards/healthcare',
+                items: [
+                  {
+                    name: 'Doctors',
+                    link: '/blueprints/accent-sidebar/dashboards/healthcare/doctor'
+                  },
+                  {
+                    name: 'Hospital',
+                    link: '/blueprints/accent-sidebar/dashboards/healthcare/hospital'
+                  }
+                ]
+              },
+              {
+                name: 'Helpdesk',
+                link: '/blueprints/accent-sidebar/dashboards/helpdesk'
+              },
+              {
+                name: 'Learning',
+                link: '/blueprints/accent-sidebar/dashboards/learning'
+              },
+              {
+                name: 'Monitoring',
+                link: '/blueprints/accent-sidebar/dashboards/monitoring'
+              },
+              {
+                name: 'Tasks',
+                link: '/blueprints/accent-sidebar/dashboards/tasks'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        heading: 'Extra Pages',
+        items: [
+          {
+            name: 'Auth Pages',
+            icon: VpnKeyTwoToneIcon,
+            items: [
+              {
+                name: 'Login',
+                items: [
+                  {
+                    name: 'Basic',
+                    link: '/auth/login/basic?demo=true'
+                  },
+                  {
+                    name: 'Cover',
+                    link: '/auth/login/cover?demo=true'
+                  }
+                ]
+              },
+              {
+                name: 'Register',
+                items: [
+                  {
+                    name: 'Basic',
+                    link: '/auth/register/basic?demo=true'
+                  },
+                  {
+                    name: 'Cover',
+                    link: '/auth/register/cover?demo=true'
+                  },
+                  {
+                    name: 'Wizard',
+                    link: '/auth/register/wizard?demo=true'
+                  }
+                ]
+              },
+              {
+                name: 'Recover Password',
+                link: '/auth/recover-password?demo=true'
               }
             ]
           },
           {
-            name: 'Recover Password',
-            link: '/auth/recover-password?demo=true'
+            name: 'Status',
+            icon: ErrorTwoToneIcon,
+            items: [
+              {
+                name: 'Error 404',
+                link: '/status/404'
+              },
+              {
+                name: 'Error 500',
+                link: '/status/500'
+              },
+              {
+                name: 'Maintenance',
+                link: '/status/maintenance'
+              },
+              {
+                name: 'Coming Soon',
+                link: '/status/coming-soon'
+              }
+            ]
           }
         ]
       },
       {
-        name: 'Status',
-        icon: ErrorTwoToneIcon,
+        heading: 'Foundation',
         items: [
           {
-            name: 'Error 404',
-            link: '/status/404'
+            name: 'Overview',
+            link: '/',
+            icon: DesignServicesTwoToneIcon
           },
           {
-            name: 'Error 500',
-            link: '/status/500'
-          },
-          {
-            name: 'Maintenance',
-            link: '/status/maintenance'
-          },
-          {
-            name: 'Coming Soon',
-            link: '/status/coming-soon'
+            name: 'Documentation',
+            icon: SupportTwoToneIcon,
+            link: '/docs'
           }
         ]
       }
-    ]
-  },
-  {
-    heading: 'Foundation',
-    items: [
-      {
-        name: 'Overview',
-        link: '/',
-        icon: DesignServicesTwoToneIcon
-      },
-      {
-        name: 'Documentation',
-        icon: SupportTwoToneIcon,
-        link: '/docs'
-      }
-    ]
-  }
-];
-export default menuItems;
+    ];
+    export default menuItems;

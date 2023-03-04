@@ -30,6 +30,23 @@ export interface MenuItems {
 
 const menuItems: MenuItems[] = [
   {
+    heading: 'Techplaybook',
+    items: [
+      {
+        name: 'Management',
+        icon: BackupTableTwoToneIcon,
+        items: [
+          {
+            name: 'User Management',
+            link: '/techplaybook/user-management',
+            badgeTooltip: 'Add, update, and delete users'
+          },
+        ]
+      }
+    ]
+  }, 
+  //============================= 
+  {
     heading: 'General',
     items: [
       {
