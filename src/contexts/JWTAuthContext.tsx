@@ -3,6 +3,7 @@ import type { User } from 'src/models/user';
 //import { authApi } from 'src/mocks/auth';  ECHASIN original Mock implementation
 import { authApi1 } from '../../src/content/Auth/auth';
 import PropTypes from 'prop-types';
+import axiosInt from '@/utils/axios';
 
 interface AuthState {
   isInitialized: boolean;
@@ -112,20 +113,40 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialAuthState);
 
-  useEffect(() => {
+  useEffect(() => { //ALI new code to refresh token
     const initialize = async (): Promise<void> => {
       try {
         const accessToken = window.localStorage.getItem('accessToken');
-
         if (accessToken) {
-          const user = await authApi1.me(accessToken);
-
-          dispatch({
-            type: 'INITIALIZE',
-            payload: {
-              isAuthenticated: true,
-              user
+          //const user = await authApi1.me(accessToken);
+          let config = {
+            headers: {
+              Authorization: 'Bearer ' + accessToken,
             }
+          }
+          axiosInt.get('/api/account', config)
+          .then(function (response) {
+              const data= response.data
+              console.log('response.data:', data);
+              const user = response.data;
+              dispatch({
+                type: 'INITIALIZE',
+                payload: {
+                  isAuthenticated: true,
+                  user: user
+                }
+              });
+             
+            })
+            .catch(function (error) {
+              dispatch({
+                type: 'INITIALIZE',
+                payload: {
+                  isAuthenticated: false,
+                  user: null
+                }
+              });
+              console.log(error);
           });
         } else {
           dispatch({
