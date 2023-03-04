@@ -55,6 +55,7 @@ import TableRowsTwoToneIcon from '@mui/icons-material/TableRowsTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import { useSnackbar } from 'notistack';
 import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
+import { useRouter } from 'next/router';
 
 const DialogWrapper = styled(Dialog)(
   () => `
@@ -125,6 +126,9 @@ const TabsWrapper = styled(Tabs)(
     }
     `
 );
+
+//Dynamic Link
+//const router = useRouter();
 
 interface ResultsProps {
   users: User[];
@@ -456,7 +460,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                               <Box>
                                 <Link
                                   variant="h5"
-                                  href="/management/users/single/1"
+                                  href={"/management/users/single/?"}
                                 >                                 
                                    {user.firstName} {user.lastName}
                                 </Link>
