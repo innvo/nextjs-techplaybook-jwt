@@ -478,7 +478,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                             </Box>
                           </TableCell>
                           <TableCell>
-                            {/* <Typography>{user.email}</Typography> */}
+                            <Typography>{user.email}</Typography>
                           </TableCell>
                           <TableCell align="center">
                             <Typography fontWeight="bold">
