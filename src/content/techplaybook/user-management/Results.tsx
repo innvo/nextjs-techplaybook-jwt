@@ -431,7 +431,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                       <TableCell>{t('Id')}</TableCell>
                       <TableCell>{t('Name')}</TableCell>
                       <TableCell>{t('Email')}</TableCell>
-                      <TableCell align="center">{t('Posts')}</TableCell>
+                      <TableCell align="center">{t('Language')}</TableCell>
                       <TableCell>{t('Location')}</TableCell>
                       <TableCell>{t('Role')}</TableCell>
                       <TableCell align="center">{t('Actions')}</TableCell>
@@ -482,7 +482,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                           </TableCell>
                           <TableCell align="center">
                             <Typography fontWeight="bold">
-                              {/* {user.posts} */}
+                              {user.langKey}
                             </Typography>
                           </TableCell>
                           <TableCell>

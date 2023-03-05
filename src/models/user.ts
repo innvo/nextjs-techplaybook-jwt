@@ -5,6 +5,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
+  langKey: string;
   // jobtitle: string;
   // username: string;
   // location: string;
