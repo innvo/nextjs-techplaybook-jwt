@@ -467,10 +467,9 @@ const Results: FC<ResultsProps> = ({ users }) => {
                               />
                               <Box>
                                 <Link
-                                  variant="h5"
-                                  href={"/management/users/single/?"}
-                                >
-                                  {user.firstName} {user.lastName}
+                                    variant="h5"
+                                    onClick={(e) => editUserProfile(user.id)} href={''}>
+                                   {user.firstName} {user.lastName}
                                 </Link>
                                 <Typography noWrap variant="subtitle2">
                                   {/* {user.jobtitle} */}
@@ -501,17 +500,12 @@ const Results: FC<ResultsProps> = ({ users }) => {
                                 </IconButton>
                               </Tooltip>
                               <Tooltip title={t('Delete')} arrow>
-                                {/* <IconButton
+                                <IconButton
                                   onClick={handleConfirmDelete}
                                   color="primary"
                                 >
                                   <DeleteTwoToneIcon fontSize="small" />
-                                </IconButton> */}
-                                <Button
-                                  variant="contained"
-                                  onClick={(e) => editUserProfile(user.id)}>
-                                  Edit
-                                </Button>
+                                </IconButton>
                               </Tooltip>
                             </Typography>
                           </TableCell>
