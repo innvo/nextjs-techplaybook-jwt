@@ -216,13 +216,13 @@ const applyPagination = (
 const Results: FC<ResultsProps> = ({ users }) => {
   //ECHASIN Results is the functional component
   const router = useRouter();
-  const editUserProfile = (id: string) => {
+  const editUserProfile = (id: number) => {
     router.push({ pathname: '/techplaybook/user-management/profile/[id]', query: { id: id } });
   };
 
 
 
-  const [selectedItems, setSelectedUsers] = useState<string[]>([]);
+  const [selectedItems, setSelectedUsers] = useState<number[]>([]);
   const { t }: { t: any } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -277,7 +277,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
 
   const handleSelectOneUser = (
     _event: ChangeEvent<HTMLInputElement>,
-    userId: string
+    userId: number
   ): void => {
     if (!selectedItems.includes(userId)) {
       setSelectedUsers((prevSelected) => [...prevSelected, userId]);
