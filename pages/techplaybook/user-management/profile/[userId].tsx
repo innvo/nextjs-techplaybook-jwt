@@ -26,6 +26,8 @@ import EditProfileTab from 'src/content/Management/Users/single/EditProfileTab';
 import NotificationsTab from 'src/content/Management/Users/single/NotificationsTab';
 import SecurityTab from 'src/content/Management/Users/single/SecurityTab';
 
+import { useRouter } from 'next/router'
+
 const TabsWrapper = styled(Tabs)(
   () => `
     .MuiTabs-scrollableX {
@@ -35,6 +37,13 @@ const TabsWrapper = styled(Tabs)(
 );
 
 function ManagementUsersView() {
+
+    //ECHASIN
+    const router = useRouter(); 
+    var id = router.query.id;
+    console.log("router.query.id:", id)
+
+
   const isMountedRef = useRefMounted();
   const [user, setUser] = useState<User | null>(null);
   const { t }: { t: any } = useTranslation();
