@@ -25,6 +25,10 @@ import AccountBoxTwoToneIcon from '@mui/icons-material/AccountBoxTwoTone';
 import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
 import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
 
+//ECHASIN
+import type { User } from 'src/models/user';
+
+
 const MenuUserBox = styled(Box)(
   ({ theme }) => `
     background: ${theme.colors.alpha.black[5]};

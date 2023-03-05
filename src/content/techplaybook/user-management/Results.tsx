@@ -133,7 +133,7 @@ const TabsWrapper = styled(Tabs)(
 
 const ChipWrapper = styled(Chip)(
   ({ theme }) => `
-      background: ${theme.colors.alpha.black[10]};
+      ackground: ${theme.colors.alpha.black[10]};
       margin: ${theme.spacing(0.1)};
       padding: ${theme.spacing(0.1)};
       font-size: ${theme.typography.pxToRem(10)};
@@ -159,26 +159,26 @@ const Transition = forwardRef(function Transition(
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const getUserRoleLabel = (userRole: string): JSX.Element => {
-  const map = {
-    admin: {
-      text: 'Administrator',
-      color: 'error'
-    },
-    customer: {
-      text: 'Customer',
-      color: 'info'
-    },
-    subscriber: {
-      text: 'Subscriber',
-      color: 'warning'
-    }
-  };
+// const getUserRoleLabel = (userRole: string): JSX.Element => {
+//   const map = {
+//     admin: {
+//       text: 'Administrator',
+//       color: 'error'
+//     },
+//     customer: {
+//       text: 'Customer',
+//       color: 'info'
+//     },
+//     subscriber: {
+//       text: 'Subscriber',
+//       color: 'warning'
+//     }
+//   };
 
-  const { text, color }: any = map[userRole];
+//   const { text, color }: any = map[userRole];
 
-  return <Label color={color}>{text}</Label>;
-};
+//   return <Label color={color}>{text}</Label>;
+// };
 
 const applyFilters = (
   users: User[],
@@ -235,8 +235,9 @@ const Results: FC<ResultsProps> = ({ users }) => {
   };
 
   const [selectedItems, setSelectedUsers] = useState<number[]>([]);
-  const { t }: { t: any } = useTranslation();
+  const { t }: { t: any; } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
+
 
   const tabs = [
     {
@@ -244,16 +245,16 @@ const Results: FC<ResultsProps> = ({ users }) => {
       label: t('All users')
     },
     {
-      value: 'customer',
-      label: t('Customers')
-    },
-    {
       value: 'admin',
       label: t('Administrators')
     },
     {
-      value: 'subscriber',
-      label: t('Subscribers')
+      value: 'members',
+      label: t('Team Members')
+    },
+    {
+      value: 'visitors',
+      label: t('Visitors')
     }
   ];
 
@@ -266,8 +267,16 @@ const Results: FC<ResultsProps> = ({ users }) => {
   const handleTabsChange = (_event: SyntheticEvent, tabsValue: unknown) => {
     let value = null;
 
+
     if (tabsValue !== 'all') {
+      //ECHASIN
       value = tabsValue;
+      console.log('value:', value);
+    }
+
+    if (value == 'visitors') {
+      //ECHASIN
+      console.log('ZZZ', value)
     }
 
     setFilters((prevFilters) => ({
@@ -294,8 +303,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
     if (!selectedItems.includes(userId)) {
       setSelectedUsers((prevSelected) => [...prevSelected, userId]);
     } else {
-      setSelectedUsers((prevSelected) =>
-        prevSelected.filter((id) => id !== userId)
+      setSelectedUsers((prevSelected) => prevSelected.filter((id) => id !== userId)
       );
     }
   };
@@ -311,8 +319,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
   const filteredUsers = applyFilters(users, query, filters);
   const paginatedUsers = applyPagination(filteredUsers, page, limit);
   const selectedBulkActions = selectedItems.length > 0;
-  const selectedSomeUsers =
-    selectedItems.length > 0 && selectedItems.length < users.length;
+  const selectedSomeUsers = selectedItems.length > 0 && selectedItems.length < users.length;
   const selectedAllUsers = selectedItems.length === users.length;
 
   const [toggleView, setToggleView] = useState<string | null>('table_view');
@@ -405,8 +412,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                 size="small"
                 fullWidth
                 margin="normal"
-                variant="outlined"
-              />
+                variant="outlined" />
             )}
             {selectedBulkActions && <BulkActions />}
           </Box>
@@ -437,8 +443,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                         <Checkbox
                           checked={selectedAllUsers}
                           indeterminate={selectedSomeUsers}
-                          onChange={handleSelectAllUsers}
-                        />
+                          onChange={handleSelectAllUsers} />
                       </TableCell>
                       <TableCell>{t('Id')}</TableCell>
                       <TableCell>{t('Name')}</TableCell>
@@ -458,11 +463,8 @@ const Results: FC<ResultsProps> = ({ users }) => {
                           <TableCell padding="checkbox">
                             <Checkbox
                               checked={isUserSelected}
-                              onChange={(event) =>
-                                handleSelectOneUser(event, user.id)
-                              }
-                              value={isUserSelected}
-                            />
+                              onChange={(event) => handleSelectOneUser(event, user.id)}
+                              value={isUserSelected} />
                           </TableCell>
                           <TableCell>
                             <Typography variant="h5">
@@ -474,9 +476,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                               <Avatar
                                 sx={{
                                   mr: 1
-                                }}
-                              // src={user.avatar}
-                              />
+                                }} />
                               <Box>
                                 <Link
                                   variant="h5"
@@ -498,8 +498,8 @@ const Results: FC<ResultsProps> = ({ users }) => {
                             </Typography>
                           </TableCell>
                           {/* <TableCell>
-                            <Typography>{user.location}</Typography>
-                          </TableCell> */}
+                                              <Typography>{user.location}</Typography>
+                                            </TableCell> */}
                           {/* <TableCell>{getUserRoleLabel(user.role)}</TableCell> */}
                           <TableCell>
                             <Box display="flex" justifyContent="flex-start" alignItems="flex-start">
@@ -508,20 +508,19 @@ const Results: FC<ResultsProps> = ({ users }) => {
 
                                   <ChipWrapper
                                     key={value}
-                                    size="small" 
-                                    variant="outlined"  
-                                    color="error"
-                                    label={value}
-                                  />
-                          
+                                    size="small"
+                                    variant="outlined"
+                                    label={value} />
+
+
                                 );
                               })}
                             </Box>
                           </TableCell>
-                           <TableCell>
-                            <Typography fontSize={12}>
-                              <Moment format="YYYY/MM/DD" >
-                              {user.lastModifiedDate}
+                          <TableCell>
+                            <Typography fontSize={14}>
+                              <Moment format="MM/DD/YYYY">
+                                {user.lastModifiedDate}
                               </Moment>
                             </Typography>
                           </TableCell>
@@ -559,8 +558,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                   onRowsPerPageChange={handleLimitChange}
                   page={page}
                   rowsPerPage={limit}
-                  rowsPerPageOptions={[5, 10, 15]}
-                />
+                  rowsPerPageOptions={[5, 10, 15]} />
               </Box>
             </>
           )}
@@ -590,8 +588,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                       <Checkbox
                         checked={selectedAllUsers}
                         indeterminate={selectedSomeUsers}
-                        onChange={handleSelectAllUsers}
-                      />
+                        onChange={handleSelectAllUsers} />
                     </Tooltip>
                   </Box>
                   {selectedBulkActions && (
@@ -620,8 +617,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                   value={query}
                   size="small"
                   margin="normal"
-                  variant="outlined"
-                />
+                  variant="outlined" />
               )}
             </Box>
           </Card>
@@ -679,23 +675,20 @@ const Results: FC<ResultsProps> = ({ users }) => {
                                 width: 50,
                                 height: 50,
                                 mr: 2
-                              }}
-                            // src={user.avatar}
-                            />
+                              }} />
                             <Box>
                               <Box>
                                 <Link
                                   variant="h5"
                                   href="/management/users/single/1"
                                 >
-                                  {/* {user.name} */}
+                                  {user.firstName} {user.lastName}
                                 </Link>{' '}
                                 <Typography
                                   component="span"
                                   variant="body2"
                                   color="text.secondary"
                                 >
-                                  {/* ({user.username}) */}
                                 </Typography>
                               </Box>
                               <Typography
@@ -704,7 +697,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                                 }}
                                 variant="subtitle2"
                               >
-                                {/* {user.jobtitle} */}
+                                Language: {user.langKey}
                               </Typography>
                               <Typography
                                 sx={{
@@ -712,7 +705,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                                 }}
                                 variant="h6"
                               >
-                                {/* {user.email} */}
+                                Email: {user.email}
                               </Typography>
                             </Box>
                           </Box>
@@ -726,15 +719,25 @@ const Results: FC<ResultsProps> = ({ users }) => {
                             justifyContent="space-between"
                           >
                             <Typography>
+                              <Box display="flex" justifyContent="flex-start" alignItems="flex-start">
+                                {user.authorities.map((value) => {
+                                  return (
+
+                                    <ChipWrapper
+                                      key={value}
+                                      size="small"
+                                      variant="outlined"
+                                      label={value} />
+                                  );
+                                })}
+                              </Box>
+
                               {/* <b>{user.posts}</b> {t('posts')} */}
                             </Typography>
                             <Checkbox
                               checked={isUserSelected}
-                              onChange={(event) =>
-                                handleSelectOneUser(event, user.id)
-                              }
-                              value={isUserSelected}
-                            />
+                              onChange={(event) => handleSelectOneUser(event, user.id)}
+                              value={isUserSelected} />
                           </Box>
                         </Box>
                       </CardWrapper>
@@ -766,8 +769,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                   page={page}
                   rowsPerPage={limit}
                   labelRowsPerPage=""
-                  rowsPerPageOptions={[5, 10, 15]}
-                />
+                  rowsPerPageOptions={[5, 10, 15]} />
               </Card>
             </>
           )}
@@ -866,3 +868,4 @@ Results.defaultProps = {
 };
 
 export default Results;
+
