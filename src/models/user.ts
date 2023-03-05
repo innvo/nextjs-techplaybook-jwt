@@ -6,6 +6,8 @@ export interface User {
   firstName: string;
   lastName: string;
   langKey: string;
+  authorities: any[];
+  lastModifiedDate: string;
   // jobtitle: string;
   // username: string;
   // location: string;

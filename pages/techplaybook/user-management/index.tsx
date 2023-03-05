@@ -12,7 +12,7 @@ import Footer from 'src/components/Footer';
 import PageHeader from 'src/content/techplaybook/user-management/PageHeader';
 import Results from 'src/content/techplaybook/user-management/Results';
 
-import { Grid, useForkRef } from '@mui/material';
+import { Grid} from '@mui/material';
 import { useRefMounted } from 'src/hooks/useRefMounted';
 
 import type { User } from 'src/models/user';

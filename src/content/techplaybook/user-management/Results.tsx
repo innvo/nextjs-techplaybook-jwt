@@ -14,6 +14,7 @@ import {
   Avatar,
   Box,
   Card,
+  Chip,
   Checkbox,
   Grid,
   Slide,
@@ -37,7 +38,7 @@ import {
   Typography,
   Dialog,
   Zoom,
-  styled
+  styled,
 } from '@mui/material';
 import Link from 'src/components/Link';
 
@@ -56,6 +57,9 @@ import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import { useSnackbar } from 'notistack';
 import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
 import { useRouter } from 'next/router';
+import Moment from 'react-moment';
+import 'moment-timezone';
+
 
 const DialogWrapper = styled(Dialog)(
   () => `
@@ -127,7 +131,17 @@ const TabsWrapper = styled(Tabs)(
     `
 );
 
-//Dynamic Link
+const ChipWrapper = styled(Chip)(
+  ({ theme }) => `
+      background: ${theme.colors.alpha.black[10]};
+      margin: ${theme.spacing(0.1)};
+      padding: ${theme.spacing(0.1)};
+      font-size: ${theme.typography.pxToRem(10)};
+      height: 20px;
+      line-height: 28px;
+      font-weight: bold;
+`
+);
 
 
 interface ResultsProps {
@@ -219,8 +233,6 @@ const Results: FC<ResultsProps> = ({ users }) => {
   const editUserProfile = (id: number) => {
     router.push({ pathname: '/techplaybook/user-management/profile/[id]', query: { id: id } });
   };
-
-
 
   const [selectedItems, setSelectedUsers] = useState<number[]>([]);
   const { t }: { t: any } = useTranslation();
@@ -432,8 +444,8 @@ const Results: FC<ResultsProps> = ({ users }) => {
                       <TableCell>{t('Name')}</TableCell>
                       <TableCell>{t('Email')}</TableCell>
                       <TableCell align="center">{t('Language')}</TableCell>
-                      <TableCell>{t('Location')}</TableCell>
                       <TableCell>{t('Role')}</TableCell>
+                      <TableCell>{t('Last Modified')}</TableCell>
                       <TableCell align="center">{t('Actions')}</TableCell>
                     </TableRow>
                   </TableHead>
@@ -467,9 +479,9 @@ const Results: FC<ResultsProps> = ({ users }) => {
                               />
                               <Box>
                                 <Link
-                                    variant="h5"
-                                    onClick={(e) => editUserProfile(user.id)} href={''}>
-                                   {user.firstName} {user.lastName}
+                                  variant="h5"
+                                  onClick={(e) => editUserProfile(user.id)} href={''}>
+                                  {user.firstName} {user.lastName}
                                 </Link>
                                 <Typography noWrap variant="subtitle2">
                                   {/* {user.jobtitle} */}
@@ -481,14 +493,38 @@ const Results: FC<ResultsProps> = ({ users }) => {
                             <Typography>{user.email}</Typography>
                           </TableCell>
                           <TableCell align="center">
-                            <Typography fontWeight="bold">
+                            <Typography>
                               {user.langKey}
                             </Typography>
                           </TableCell>
-                          <TableCell>
-                            {/* <Typography>{user.location}</Typography> */}
-                          </TableCell>
+                          {/* <TableCell>
+                            <Typography>{user.location}</Typography>
+                          </TableCell> */}
                           {/* <TableCell>{getUserRoleLabel(user.role)}</TableCell> */}
+                          <TableCell>
+                            <Box display="flex" justifyContent="flex-start" alignItems="flex-start">
+                              {user.authorities.map((value) => {
+                                return (
+
+                                  <ChipWrapper
+                                    key={value}
+                                    size="small" 
+                                    variant="outlined"  
+                                    color="error"
+                                    label={value}
+                                  />
+                          
+                                );
+                              })}
+                            </Box>
+                          </TableCell>
+                           <TableCell>
+                            <Typography fontSize={12}>
+                              <Moment format="YYYY/MM/DD" >
+                              {user.lastModifiedDate}
+                              </Moment>
+                            </Typography>
+                          </TableCell>
                           <TableCell align="center">
                             <Typography noWrap>
                               <Tooltip title={t('View')} arrow>
