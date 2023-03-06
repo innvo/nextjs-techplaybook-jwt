@@ -74,7 +74,7 @@ function SidebarTopSection() {
 
   const user = {
     avatar: '/static/images/avatars/1.jpg',
-    name: 'Rachael Simons',
+    name: 'Rachael Y Simons',
     jobtitle: 'Lead Developer'
   };
 

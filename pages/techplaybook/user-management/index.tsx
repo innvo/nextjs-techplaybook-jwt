@@ -42,7 +42,7 @@ function ManagementUsers() {
     try {
       //const response = await usersApi.getUsers(); ECHASIN MOCK API
       console.log('In getUsers')
-      const response = await axiosInt.get('/api/users')
+      const response = await axiosInt.get('/api/users/')
       if (isMountedRef()) {
         const users = response.data;
         //this.setState({ users });

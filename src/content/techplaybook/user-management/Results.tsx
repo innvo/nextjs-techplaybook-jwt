@@ -509,6 +509,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                                   <ChipWrapper
                                     key={value}
                                     size="small"
+                                    color='warning'
                                     variant="outlined"
                                     label={value} />
 

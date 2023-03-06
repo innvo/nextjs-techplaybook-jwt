@@ -120,7 +120,7 @@ function HeaderUserbox() {
 
   const user = {
     avatar: '/static/images/avatars/1.jpg',
-    name: 'Rachael Simons',
+    name: 'Rachael  X Simons',
     jobtitle: 'Lead Developer'
   };
 
