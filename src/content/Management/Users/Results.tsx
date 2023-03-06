@@ -475,7 +475,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                           <TableCell>
                             <Typography>{user.location}</Typography>
                           </TableCell>
-                          <TableCell>{getUserRoleLabel(user.role)}</TableCell>
+                          <TableCell>z{getUserRoleLabel(user.role)}</TableCell>
                           <TableCell align="center">
                             <Typography noWrap>
                               <Tooltip title={t('View')} arrow>

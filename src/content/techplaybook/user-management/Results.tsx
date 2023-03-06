@@ -509,7 +509,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                                   <ChipWrapper
                                     key={value}
                                     size="small"
-                                    color='warning'
+                                    color={value === 'ROLE_ADMIN' ? 'primary' : 'warning'}  //ALI 20230305
                                     variant="outlined"
                                     label={value} />
 
