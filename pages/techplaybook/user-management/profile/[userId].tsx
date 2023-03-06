@@ -10,18 +10,10 @@ import Footer from 'src/components/Footer';
 import { Box, Tabs, Tab, Grid, styled } from '@mui/material';
 
 import type { User } from 'src/models/user';
-import { usersApi } from 'src/mocks/users';
 
 import { useRefMounted } from 'src/hooks/useRefMounted';
 import { useTranslation } from 'react-i18next';
 
-import ProfileCover from 'src/content/Management/Users/single/ProfileCover';
-import RecentActivity from 'src/content/Management/Users/single/RecentActivity';
-import Feed from 'src/content/Management/Users/single/Feed';
-import PopularTags from 'src/content/Management/Users/single/PopularTags';
-import MyCards from 'src/content/Management/Users/single/MyCards';
-import Addresses from 'src/content/Management/Users/single/Addresses';
-import ActivityTab from 'src/content/Management/Users/single/ActivityTab';
 import EditProfileTab from 'src/content/techplaybook/user-management/profile/EditProfileTab';
 import NotificationsTab from 'src/content/Management/Users/single/NotificationsTab';
 import SecurityTab from 'src/content/Management/Users/single/SecurityTab';
@@ -46,8 +38,8 @@ function ManagementUsersView() {
   //ECHASIN Url Info
     const router = useRouter(); 
     var id = router.query.userId;
-    console.log("router:", router)
-    console.log("router.query.id:", id)
+   // console.log("router:", router)
+    //console.log("router.query.id:", id)
 
   const isMountedRef = useRefMounted();
   const [user, setUser] = useState<User | null>(null);
@@ -72,7 +64,7 @@ function ManagementUsersView() {
       //ECHASIN
       console.log('In getUser')
       //API retreiving by login needs to be changed
-      const response = await axiosInt.get('/api/admin/users/user');
+      const response = await axiosInt.get('/api/admin/users/id/' + id);   //ALI 20230305
 
       if (isMountedRef()) {
         console.log("response.data", response.data)
@@ -85,12 +77,11 @@ function ManagementUsersView() {
 
   useEffect(() => {
     getUser();
-  }, [getUser]);
+  }, [id]);  //ALI 20230305
 
   if (!user) {
     return null;
   }
-
   return (
     <>
       <Head>
@@ -141,7 +132,7 @@ function ManagementUsersView() {
           <Grid item xs={12}>
             {/* //ECHASIN */}
             {/* {currentTab === 'activity' && <ActivityTab />} */}
-            {currentTab === 'edit_profile' && <EditProfileTab />}
+            {currentTab === 'edit_profile' && <EditProfileTab user={user}/>}
             {currentTab === 'notifications' && <NotificationsTab />}
             {currentTab === 'security' && <SecurityTab />}
           </Grid>

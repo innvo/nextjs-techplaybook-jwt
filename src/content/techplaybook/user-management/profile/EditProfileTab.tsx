@@ -16,28 +16,20 @@ import Label from 'src/components/Label';
 // import { User } from '@auth0/auth0-spa-js';
 import type { User } from 'src/models/user';
 // import { User } from '@auth0/auth0-spa-js';
-// import {
-//   FC
-// } from 'react';
+ import { FC } from 'react';
 
 // //ECHASIN
 interface ResultsProps {
   user: User
 }
 
-// const Results: FC<ResultsProps> = ({ user }) => {
+ const EditProfileTab: FC<ResultsProps> = ({ user }) => {  //ALI 20230305
 //   //ECHASIN Results is the functional component
-//   console.log('user', user)
-//   console.log('Results', Results)
-
 // }
 
-
-
-
-function EditProfileTab(): JSX.Element {
+//function EditProfileTab(): JSX.Element {
   //ECHASIN
-  console.log('In EditProfileTab')
+ // console.log('In EditProfileTab')
   // console.log('props:', {props})
 
 
@@ -75,27 +67,27 @@ function EditProfileTab(): JSX.Element {
               <Grid container spacing={0}>
                 <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }}>
                   <Box pr={3} pb={2}>
-                    {t('Name')}:
+                    {t('Login')}:
                   </Box>
                 </Grid>
                 <Grid item xs={12} sm={8} md={9}>
                   <Text color="black">
-                    <b>xxxx</b>
+                    <b>{user.login}</b>
                   </Text>
                 </Grid>
                 <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }}>
                   <Box pr={3} pb={2}>
-                    {t('Date of birth')}:
+                    {t('First Name')}:
                   </Box>
                 </Grid>
                 <Grid item xs={12} sm={8} md={9}>
                   <Text color="black">
-                    <b>15 March 1977</b>
+                    <b>{user.firstName}</b>
                   </Text>
                 </Grid>
                 <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }}>
                   <Box pr={3} pb={2}>
-                    {t('Address')}:
+                    {t('Last Name')}:
                   </Box>
                 </Grid>
                 <Grid item xs={12} sm={8} md={9}>
@@ -105,8 +97,7 @@ function EditProfileTab(): JSX.Element {
                     }}
                   >
                     <Text color="black">
-                      1749 High Meadow Lane, SEQUOIA NATIONAL PARK, California,
-                      93262
+                    {user.lastName}
                     </Text>
                   </Box>
                 </Grid>
@@ -214,21 +205,11 @@ function EditProfileTab(): JSX.Element {
                 </Grid>
                 <Grid item xs={12} sm={8} md={9}>
                   <Text color="black">
-                    <b>example@demo.com</b>
+                    <b>{user.email}</b>
                   </Text>
                   <Box pl={1} component="span">
                     <Label color="success">{t('Primary')}</Label>
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }}>
-                  <Box pr={3} pb={2}>
-                    {t('Email ID')}:
-                  </Box>
-                </Grid>
-                <Grid item xs={12} sm={8} md={9}>
-                  <Text color="black">
-                    <b>demo@example.com</b>
-                  </Text>
+                  </Box>                
                 </Grid>
               </Grid>
             </Typography>
