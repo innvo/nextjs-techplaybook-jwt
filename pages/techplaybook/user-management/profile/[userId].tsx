@@ -59,7 +59,7 @@ function ManagementUsersView() {
     setCurrentTab(value);
   };
 
-  const getUser = useCallback(async () => {
+  const getUsers = useCallback(async () => {   //ALI 20230305
     try {
       //ECHASIN
       console.log('In getUser')
@@ -67,7 +67,6 @@ function ManagementUsersView() {
       const response = await axiosInt.get('/api/admin/users/id/' + id);   //ALI 20230305
 
       if (isMountedRef()) {
-        console.log("response.data", response.data)
         setUser(response.data);
       }
     } catch (err) {
@@ -76,7 +75,7 @@ function ManagementUsersView() {
   }, [isMountedRef]);
 
   useEffect(() => {
-    getUser();
+    getUsers();
   }, [id]);  //ALI 20230305
 
   if (!user) {

@@ -19,8 +19,6 @@ import type { User } from 'src/models/user';
 //import { usersApi } from 'src/mocks/users';
 
 function ManagementUsers() {
-  console.log('In users-management/index.ts');
-
 
   const isMountedRef = useRefMounted();
   //const [users, setUsers] = useState<User[]>([]);
@@ -41,15 +39,11 @@ function ManagementUsers() {
   const getUsers = useCallback(async () => {
     try {
       //const response = await usersApi.getUsers(); ECHASIN MOCK API
-      console.log('In getUsers')
       const response = await axiosInt.get('/api/users/')
       if (isMountedRef()) {
         const users = response.data;
         //this.setState({ users });
         setUsers(response.data);
-        console.log('getUsers-response.data:', response.data)
-        console.log('users;', users)
-
       }
     } catch (err) {
       console.error(err);

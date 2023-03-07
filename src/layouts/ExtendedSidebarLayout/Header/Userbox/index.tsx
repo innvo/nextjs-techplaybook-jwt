@@ -118,11 +118,7 @@ function HeaderUserbox() {
 
   const { logout } = useAuth();
 
-  const user = {
-    avatar: '/static/images/avatars/1.jpg',
-    name: 'Rachael  X Simons',
-    jobtitle: 'Lead Developer'
-  };
+  const { user }  = useAuth();
 
   const ref = useRef<any>(null);
   const [isOpen, setOpen] = useState<boolean>(false);
@@ -216,7 +212,7 @@ function HeaderUserbox() {
   return (
     <>
       <UserBoxButton color="primary" ref={ref} onClick={handleOpen}>
-        <UserAvatar alt={user.name} src={user.avatar} />
+        <UserAvatar alt={user.login} src={user.login} />
       </UserBoxButton>
       <Popover
         disableScrollLock
@@ -238,11 +234,11 @@ function HeaderUserbox() {
           }}
           display="flex"
         >
-          <Avatar variant="rounded" alt={user.name} src={user.avatar} />
+          <Avatar variant="rounded" alt={user.login} src={user.login} />
           <UserBoxText>
-            <UserBoxLabel variant="body1">{user.name}</UserBoxLabel>
+            <UserBoxLabel variant="body1">{user.firstName}</UserBoxLabel>
             <UserBoxDescription variant="body2">
-              {user.jobtitle}
+              {user.lastName}
             </UserBoxDescription>
           </UserBoxText>
         </MenuUserBox>

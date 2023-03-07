@@ -73,9 +73,7 @@ const handlers: Record<
   LOGIN: (state: AuthState, action: LoginAction): AuthState => {
     console.info('In JWTAuthContext.tsx LOGIN:'); //ECHASIN
   
-    const { user } = action.payload;
-    console.log('user: ', {user})
-    
+    const { user } = action.payload;    
     return {
       ...state,
       isAuthenticated: true,
@@ -113,6 +111,7 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialAuthState);
 
+   //ALI 20230305
   useEffect(() => { //ALI new code to refresh token
     const initialize = async (): Promise<void> => {
       try {
@@ -126,8 +125,6 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
           }
           axiosInt.get('/api/account', config)
           .then(function (response) {
-              const data= response.data
-              console.log('response.data:', data);
               const user = response.data;
               dispatch({
                 type: 'INITIALIZE',

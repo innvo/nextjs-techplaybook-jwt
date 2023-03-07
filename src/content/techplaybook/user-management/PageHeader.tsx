@@ -22,11 +22,13 @@ import {
   Avatar,
   Autocomplete,
   IconButton,
-  Button
+  Button,
+  Select
 } from '@mui/material';
 import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
 import { useSnackbar } from 'notistack';
 import CloudUploadTwoToneIcon from '@mui/icons-material/CloudUploadTwoTone';
+import axiosInt from '@/utils/axios';
 
 const Input = styled('input')({
   display: 'none'
@@ -68,17 +70,11 @@ const ButtonUploadWrapper = styled(Box)(
 `
 );
 
-const roles = [
-  { label: 'Administrator', value: 'admin' },
-  { label: 'Subscriber', value: 'subscriber' },
-  { label: 'Customer', value: 'customer' }
-];
 
 function PageHeader() {
   const { t }: { t: any } = useTranslation();
   const [open, setOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const { user } = useAuth();
 
   const [publicProfile, setPublicProfile] = useState({
     public: true
@@ -99,18 +95,23 @@ function PageHeader() {
     setOpen(false);
   };
 
-  const handleCreateUserSuccess = () => {
-    enqueueSnackbar(t('The user account was created successfully'), {
-      variant: 'success',
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'right'
-      },
-      TransitionComponent: Zoom
+  const handleCreateUserSuccess = (user: any) => { //ALI 20230305
+    try {
+      axiosInt.post('/api/admin/users' , user).then(data => {   //ALI 20230305
+      setOpen(false);  
+      enqueueSnackbar(t('The user account was created successfully'), {
+        variant: 'success',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        },
+        TransitionComponent: Zoom
+      });
     });
-
-    setOpen(false);
-  };
+    } catch (err) {
+      console.error(err);
+    }
+}
 
   return (
     <>
@@ -160,30 +161,29 @@ function PageHeader() {
         </DialogTitle>
         <Formik
           initialValues={{
+            id: '',
+            login: '',
+            firstName: '',
+            lastName: '',
             email: '',
-            username: '',
-            first_name: '',
-            last_name: '',
-            password: '',
+            langKey: 'English',
+            authorities: null,
             submit: null
           }}
           validationSchema={Yup.object().shape({
-            username: Yup.string()
+            login: Yup.string()
               .max(255)
               .required(t('The username field is required')),
-            first_name: Yup.string()
+            firstName: Yup.string()
               .max(255)
               .required(t('The first name field is required')),
-            last_name: Yup.string()
+            lastName: Yup.string()
               .max(255)
               .required(t('The last name field is required')),
             email: Yup.string()
               .email(t('The email provided should be a valid email address'))
               .max(255)
-              .required(t('The email field is required')),
-            password: Yup.string()
-              .max(255)
-              .required(t('The password field is required'))
+              .required(t('The email field is required'))
           })}
           onSubmit={async (
             _values,
@@ -194,7 +194,7 @@ function PageHeader() {
               resetForm();
               setStatus({ success: true });
               setSubmitting(false);
-              handleCreateUserSuccess();
+              handleCreateUserSuccess(_values);
             } catch (err) {
               console.error(err);
               setStatus({ success: false });
@@ -224,42 +224,42 @@ function PageHeader() {
                     <Grid container spacing={3}>
                       <Grid item xs={12}>
                         <TextField
-                          error={Boolean(touched.username && errors.username)}
+                          error={Boolean(touched.login && errors.login)}
                           fullWidth
-                          helperText={touched.username && errors.username}
-                          label={t('Username')}
-                          name="username"
+                          helperText={touched.login && errors.login}
+                          label={t('Login')}
+                          name="login"
                           onBlur={handleBlur}
                           onChange={handleChange}
-                          value={values.username}
+                          value={values.login}
                           variant="outlined"
                         />
                       </Grid>
                       <Grid item xs={12} md={6}>
                         <TextField
                           error={Boolean(
-                            touched.first_name && errors.first_name
+                            touched.firstName && errors.firstName
                           )}
                           fullWidth
-                          helperText={touched.first_name && errors.first_name}
+                          helperText={touched.firstName && errors.firstName}
                           label={t('First name')}
-                          name="first_name"
+                          name="firstName"
                           onBlur={handleBlur}
                           onChange={handleChange}
-                          value={values.first_name}
+                          value={values.firstName}
                           variant="outlined"
                         />
                       </Grid>
                       <Grid item xs={12} md={6}>
                         <TextField
-                          error={Boolean(touched.last_name && errors.last_name)}
+                          error={Boolean(touched.lastName && errors.lastName)}
                           fullWidth
-                          helperText={touched.last_name && errors.last_name}
+                          helperText={touched.lastName && errors.lastName}
                           label={t('Last name')}
-                          name="last_name"
+                          name="lastName"
                           onBlur={handleBlur}
                           onChange={handleChange}
-                          value={values.last_name}
+                          value={values.lastName}
                           variant="outlined"
                         />
                       </Grid>
@@ -278,32 +278,42 @@ function PageHeader() {
                         />
                       </Grid>
                       <Grid item xs={12}>
-                        <TextField
-                          error={Boolean(touched.password && errors.password)}
-                          fullWidth
-                          margin="normal"
-                          helperText={touched.password && errors.password}
-                          label={t('Password')}
-                          name="password"
-                          onBlur={handleBlur}
-                          onChange={handleChange}
-                          type="password"
-                          value={values.password}
-                          variant="outlined"
-                        />
+                        <Select
+                                  native
+                                  fullWidth
+                                  onBlur={handleBlur}
+                                  onChange={handleChange}
+                                  value={values.langKey}
+                                  name='langKey'
+                                  inputProps={{
+                                    id: 'select-multiple-native',
+                                  }}
+                                >                                      
+                                  <option key="English" value="English">
+                                      English
+                                  </option>
+                               
+                        </Select>
                       </Grid>
                       <Grid item xs={12} md={6}>
-                        <Autocomplete
-                          disablePortal
-                          options={roles}
-                          renderInput={(params) => (
-                            <TextField
-                              fullWidth
-                              {...params}
-                              label={t('User role')}
-                            />
-                          )}
-                        />
+                        <Select
+                                  multiple
+                                  native
+                                  onBlur={handleBlur}
+                                  onChange={handleChange}
+                                  value={values.authorities}
+                                  name='authorities'
+                                  inputProps={{
+                                    id: 'select-multiple-native',
+                                  }}
+                                >
+                                  <option key="ADMIN" value="ROLE_ADMIN">
+                                      ADMIN
+                                  </option>
+                                  <option key="USER" value="ROLE_USER">
+                                      USER
+                                  </option>
+                              </Select>
                       </Grid>
                     </Grid>
                   </Grid>

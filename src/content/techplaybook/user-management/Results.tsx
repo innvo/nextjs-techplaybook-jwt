@@ -40,7 +40,6 @@ import {
   Zoom,
   styled,
 } from '@mui/material';
-import Link from 'src/components/Link';
 
 import { TransitionProps } from '@mui/material/transitions';
 import CloseIcon from '@mui/icons-material/Close';
@@ -59,6 +58,7 @@ import MoreVertTwoToneIcon from '@mui/icons-material/MoreVertTwoTone';
 import { useRouter } from 'next/router';
 import Moment from 'react-moment';
 import 'moment-timezone';
+import Link from 'next/link';
 
 
 const DialogWrapper = styled(Dialog)(
@@ -229,10 +229,7 @@ const applyPagination = (
 
 const Results: FC<ResultsProps> = ({ users }) => {
   //ECHASIN Results is the functional component
-  const router = useRouter();
-  const editUserProfile = (id: number) => {
-    router.push({ pathname: '/techplaybook/user-management/profile/[id]', query: { id: id } });
-  };
+  //ALI 20230305
 
   const [selectedItems, setSelectedUsers] = useState<number[]>([]);
   const { t }: { t: any; } = useTranslation();
@@ -479,9 +476,8 @@ const Results: FC<ResultsProps> = ({ users }) => {
                                 }} />
                               <Box>
                                 <Link
-                                  variant="h5"
-                                  onClick={(e) => editUserProfile(user.id)} href={''}>
-                                  {user.firstName} {user.lastName}
+                                  href={'/techplaybook/user-management/profile/' + user.id}>
+                                  <a>{user.firstName} {user.lastName}</a>
                                 </Link>
                                 <Typography noWrap variant="subtitle2">
                                   {/* {user.jobtitle} */}
@@ -680,7 +676,6 @@ const Results: FC<ResultsProps> = ({ users }) => {
                             <Box>
                               <Box>
                                 <Link
-                                  variant="h5"
                                   href="/management/users/single/1"
                                 >
                                   {user.firstName} {user.lastName}
