@@ -101,7 +101,7 @@ interface ResultsProps {
           ) => {
             try {
               await wait(1000);
-              resetForm();
+           //   resetForm();
               setStatus({ success: true });
               handleUpdateUserSuccess(_values);
             } catch (err) {
