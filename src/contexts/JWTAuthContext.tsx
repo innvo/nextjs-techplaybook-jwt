@@ -111,7 +111,7 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialAuthState);
 
-   //ALI 20230305
+   //ALI 20230305 
   useEffect(() => { //ALI new code to refresh token
     const initialize = async (): Promise<void> => {
       try {
