@@ -50,7 +50,7 @@ interface ResultsProps {
       try {
         axiosInt.put('/api/admin/users' , user).then(data => {   //ALI 20230305
 
-        console.log(data.data)
+        console.log("data.data", data.data)
         user=data.data;
         console.log(user)
         enqueueSnackbar(t('The user was updated successfully'), {
@@ -69,6 +69,7 @@ interface ResultsProps {
 
    //ALI 20230305
   return (
+
     <Formik
           initialValues={{
             id: user.id,
@@ -77,6 +78,9 @@ interface ResultsProps {
             lastName: user.lastName,
             email: user.email,
             langKey: user.langKey,
+            //ECHASIN
+            jobtitle: user.jobtitle,
+            avatar: user.avatar,
             authorities: user.authorities,
             submit: null
           }}
@@ -125,6 +129,8 @@ interface ResultsProps {
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   <Card>
+                    <p>{values.avatar}</p>
+                    <img src={`data:image/jpg;base64,${values.avatar}`}/>
                     <Box
                       p={3}
                       display="flex"
