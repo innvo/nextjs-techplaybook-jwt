@@ -166,9 +166,11 @@ function PageHeader() {
             login: '',
             firstName: '',
             lastName: '',
-            avatar: '',
             email: '',
             langKey: 'English',
+            activated: true,
+            jobtitle: '',
+            avatar: '',
             authorities: null,
             submit: null
           }}
@@ -300,28 +302,28 @@ function PageHeader() {
 
                         </Select>
                       </Grid>
-                      <Grid item xs={12} md={12}> 
-                          <Select
-                            multiple
-                            fullWidth
-                            native
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            value={values.authorities}
-                            name='authorities'
-                            inputProps={{
-                              id: 'select-multiple-native',
-                            }}
-                          >
-                            {/* ECHASIN this need to be retrieved from database */}
-                            <option key="ADMIN" value="ROLE_ADMIN">
-                              ADMIN
-                            </option>
-                            <option key="USER" value="ROLE_USER">
-                              USER
-                            </option>
-                          </Select>
-                     
+                      <Grid item xs={12} md={12}>
+                        <Select
+                          multiple
+                          fullWidth
+                          native
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          value={values.authorities}
+                          name='authorities'
+                          inputProps={{
+                            id: 'select-multiple-native',
+                          }}
+                        >
+                          {/* ECHASIN this need to be retrieved from database */}
+                          <option key="ADMIN" value="ROLE_ADMIN">
+                            ADMIN
+                          </option>
+                          <option key="USER" value="ROLE_USER">
+                            USER
+                          </option>
+                        </Select>
+
                       </Grid>
                     </Grid>
                   </Grid>
@@ -336,8 +338,8 @@ function PageHeader() {
                       <AvatarWrapper>
                         <Avatar
                           variant="rounded"
-                        // alt={user.name}
-                        src={values.avatar}
+                          // alt={user.name}
+                          src={values.avatar}
                         />
                         <ButtonUploadWrapper>
                           <Input
@@ -371,6 +373,28 @@ function PageHeader() {
                             pb: 1
                           }}
                         >
+                          {t('Active User')}
+                        </Typography>
+                        <Switch
+                          checked={values.activated}
+                          onChange={handleChange}
+                          name="activated"
+                          color="primary"
+                        />
+                      </Box>
+
+                      {/* <Box
+                        display="flex"
+                        alignItems="center"
+                        flexDirection="column"
+                        justifyContent="space-between"
+                      >
+                        <Typography
+                          variant="h4"
+                          sx={{
+                            pb: 1
+                          }}
+                        >
                           {t('Public Profile')}
                         </Typography>
                         <Switch
@@ -379,7 +403,7 @@ function PageHeader() {
                           name="public"
                           color="primary"
                         />
-                      </Box>
+                      </Box> */}
                     </Box>
                   </Grid>
                 </Grid>
