@@ -1,10 +1,10 @@
 export interface User {
   id: number;
   login: string;
-  // avatar: string;
   email: string;
   firstName: string;
   lastName: string;
+  activated: boolean;
   langKey: string;
   jobtitle: string;
   avatar: string;

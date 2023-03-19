@@ -1,60 +1,107 @@
 import {
+  Avatar,
+  Button,
   Grid,
   Typography,
-  CardContent,
   Card,
-  CardHeader,
-  CardMedia,
   Box,
   Divider,
-  Button,
+  IconButton,
   TextField,
   CircularProgress,
+  styled,
+  Switch,
   Zoom,
-  Select
+  Select,
+  DialogActions
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import DoneTwoToneIcon from '@mui/icons-material/DoneTwoTone';
-import Text from 'src/components/Text';
-import Label from 'src/components/Label';
-//ECHASIN
-// import { User } from '@auth0/auth0-spa-js';
+
 import type { User } from 'src/models/user';
-// import { User } from '@auth0/auth0-spa-js';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { wait } from '@/utils/wait';
 import { useSnackbar } from 'notistack';
 import axiosInt from '@/utils/axios';
+import CloudUploadTwoToneIcon from '@mui/icons-material/CloudUploadTwoTone';
+import { useRouter } from 'next/router';
 
 
-// //ECHASIN
+//ECHASIN
 interface ResultsProps {
   user: User
 }
 
-const EditProfileTab: FC<ResultsProps> = ({ user }) => {  //ALI 20230305
-  //   //ECHASIN Results is the functional component
-  // }
+//ECHASIN
+const AvatarWrapper = styled(Box)(
+  ({ theme }) => `
 
-  //function EditProfileTab(): JSX.Element {
-  //ECHASIN
-  // console.log('In EditProfileTab')
-  // console.log('props:', {props})
+    position: relative;
 
+    .MuiAvatar-root {
+      width: ${theme.spacing(16)};
+      height: ${theme.spacing(16)};
+    }
+`
+);
+
+//ECHASIN
+const ButtonUploadWrapper = styled(Box)(
+  ({ theme }) => `
+    position: absolute;
+    width: ${theme.spacing(6)};
+    height: ${theme.spacing(6)};
+    bottom: -${theme.spacing(2)};
+    right: -${theme.spacing(2)};
+
+    .MuiIconButton-root {
+      border-radius: 100%;
+      background: ${theme.colors.primary.main};
+      color: ${theme.palette.primary.contrastText};
+      box-shadow: ${theme.colors.shadows.primary};
+      width: ${theme.spacing(6)};
+      height: ${theme.spacing(6)};
+      padding: 0;
+  
+      &:hover {
+        background: ${theme.colors.primary.dark};
+      }
+    }
+`
+);
+
+//ECHASIN
+const Input = styled('input')({
+  display: 'none'
+});
+
+
+
+const EditProfileTab: FC<ResultsProps> = ({ user }) => {
+  // Results is the functional component
+  //ECHASIN  added userRouter to support cancel back function
+  const router = useRouter()
+ 
+  const [publicProfile, setPublicProfile] = useState({
+    public: true
+  });
+
+  const handlePublicProfile = (event) => {
+    setPublicProfile({
+      ...publicProfile,
+      [event.target.name]: event.target.checked
+    });
+  };
 
   const { t }: { t: any } = useTranslation();
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const handleUpdateUserSuccess = (user: any) => { //ALI 20230305
+  const handleUpdateUserSuccess = (user: any) => {
     try {
-      axiosInt.put('/api/admin/users', user).then(data => {   //ALI 20230305
-
-        console.log("data.data", data.data)
+      axiosInt.put('/api/admin/users', user).then(data => {
         user = data.data;
-        console.log(user)
         enqueueSnackbar(t('The user was updated successfully'), {
           variant: 'success',
           anchorOrigin: {
@@ -69,7 +116,6 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {  //ALI 20230305
     }
   }
 
-  //ALI 20230305
   return (
 
     <Formik
@@ -80,7 +126,7 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {  //ALI 20230305
         lastName: user.lastName,
         email: user.email,
         langKey: user.langKey,
-        //ECHASIN
+        activated: user.activated,
         jobtitle: user.jobtitle,
         avatar: user.avatar,
         authorities: user.authorities,
@@ -129,24 +175,8 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {  //ALI 20230305
       }) => (
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
-
-            <Grid item xs={12}>
-            <Card sx={{ maxWidth: 345 }}>
-                  <CardMedia
-                    component="img"
-                    src={`data:image/jpg;base64,${values.avatar}`}
-                    height="80"
-                    width="80"
-                  />
-                  </Card>
-             
-            </Grid>
             <Grid item xs={12}>
               <Card>
-                <p>{values.avatar}</p>
-
-
-                {/* <img src={`data:image/jpg;base64,${values.avatar}`}/> */}
                 <Box
                   p={3}
                   display="flex"
@@ -162,171 +192,200 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {  //ALI 20230305
                     </Typography>
                   </Box>
                 </Box>
-                <Divider />
-                <CardContent
-                  sx={{
-                    p: 4
-                  }}
-                >
-                  <Typography variant="subtitle2">
-                    <Grid container spacing={0}>
-                      <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }} sx={{ p: 2 }}>
-                        <Box pr={3} pb={2}>
-                          {t('Login')}:
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12} sm={8} md={9} sx={{ p: 1 }}>
-                        <Text color="black">
+                <Box ml={2}>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} lg={7}>
+                      <Grid container spacing={3}>
+                        <Grid item xs={12}>
                           <TextField
                             error={Boolean(touched.login && errors.login)}
                             fullWidth
                             helperText={touched.login && errors.login}
+                            label={t('Login')}
                             name="login"
                             onBlur={handleBlur}
                             onChange={handleChange}
                             value={values.login}
                             variant="outlined"
                           />
-                        </Text>
-                      </Grid>
-                      <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }} sx={{ p: 2 }}>
-                        <Box pr={3} pb={2}>
-                          {t('First Name')}:
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12} sm={8} md={9} sx={{ p: 1 }}>
-                        <Text color="black">
+                        </Grid>
+                        <Grid item xs={12} md={6}>
                           <TextField
-                            error={Boolean(touched.firstName && errors.firstName)}
+                            error={Boolean(
+                              touched.firstName && errors.firstName
+                            )}
                             fullWidth
                             helperText={touched.firstName && errors.firstName}
+                            label={t('First name')}
                             name="firstName"
                             onBlur={handleBlur}
                             onChange={handleChange}
                             value={values.firstName}
                             variant="outlined"
                           />
-                        </Text>
-                      </Grid>
-                      <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }} sx={{ p: 2 }}>
-                        <Box pr={3} pb={2}>
-                          {t('Last Name')}:
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12} sm={8} md={9} sx={{ p: 1 }}>
-                        <Box
-                          sx={{
-                            maxWidth: { xs: 'auto', sm: 300 }
-                          }}
-                        >
-                          <Text color="black">
-                            <TextField
-                              error={Boolean(touched.lastName && errors.lastName)}
-                              fullWidth
-                              helperText={touched.lastName && errors.lastName}
-                              name="lastName"
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                              value={values.lastName}
-                              variant="outlined"
-                            />
-                          </Text>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }} sx={{ p: 2 }}>
-                        <Box pr={3} pb={2}>
-                          {t('Email')}:
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12} sm={8} md={9} sx={{ p: 1 }}>
-                        <Box
-                          sx={{
-                            maxWidth: { xs: 'auto', sm: 300 }
-                          }}
-                        >
-                          <Text color="black">
-                            <TextField
-                              error={Boolean(touched.email && errors.email)}
-                              fullWidth
-                              helperText={touched.email && errors.email}
-                              name="email"
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                              value={values.email}
-                              variant="outlined"
-                            />
-                          </Text>
-                        </Box>
-                      </Grid>
-
-                      <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }} sx={{ p: 2 }}>
-                        <Box pr={3} pb={2}>
-                          {t('Roles')}:
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12} sm={8} md={9} sx={{ p: 1 }}>
-                        <Select
-                          native
-                          fullWidth
-                          onBlur={handleBlur}
-                          onChange={handleChange}
-                          value={values.langKey}
-                          name='langKey'
-                          inputProps={{
-                            id: 'select-multiple-native',
-                          }}
-                        >
-                          <option key="English" value="English">
-                            English
-                          </option>
-
-                        </Select>
-                      </Grid>
-
-                      <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }} sx={{ p: 2 }}>
-                        <Box pr={3} pb={2}>
-                          {t('Roles')}:
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12} sm={8} md={9} sx={{ p: 1 }}>
-                        <Box
-                          sx={{
-                            maxWidth: { xs: 'auto', sm: 300 }
-                          }}
-                        >
-                          <Select
-                            multiple
-                            native
-                            name='authorities'
-                            key='authorities'
-                            value={values.authorities}
-                            // @ts-ignore Typings are not considering `native`
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <TextField
+                            error={Boolean(touched.lastName && errors.lastName)}
+                            fullWidth
+                            helperText={touched.lastName && errors.lastName}
+                            label={t('Last name')}
+                            name="lastName"
                             onBlur={handleBlur}
                             onChange={handleChange}
+                            value={values.lastName}
+                            variant="outlined"
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <TextField
+                            error={Boolean(touched.email && errors.email)}
+                            fullWidth
+                            helperText={touched.email && errors.email}
+                            label={t('Email address')}
+                            name="email"
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            type="email"
+                            value={values.email}
+                            variant="outlined"
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Select
+                            native
+                            fullWidth
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            value={values.langKey}
+                            name='langKey'
                             inputProps={{
                               id: 'select-multiple-native',
                             }}
                           >
-                            <option key="ROLE_ADMIN" value="ROLE_ADMIN">
+                            <option key="English" value="en">
+                              English
+                            </option>
+                            <option key="Spanish" value="es">
+                              Spanish
+                            </option>
+                          </Select>
+                        </Grid>
+                        <Grid item xs={12} md={12}>
+                          <Select
+                            multiple
+                            fullWidth
+                            native
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            value={values.authorities}
+                            name='authorities'
+                            inputProps={{
+                              id: 'select-multiple-native',
+                            }}
+                          >
+                            {/* ECHASIN this need to be retrieved from database */}
+                            <option key="ADMIN" value="ROLE_ADMIN">
                               ADMIN
                             </option>
-                            <option key="ROLE_USER" value="ROLE_USER">
+                            <option key="USER" value="ROLE_USER">
                               USER
                             </option>
-
-                            {/*
-                                  {names.map((name) => (
-                                    <option key={name} value={name}>
-                                      {name}
-                                    </option>
-                                  ))}
-                                  */}
                           </Select>
-                        </Box>
-                      </Grid>
 
+                        </Grid>
+                      </Grid>
                     </Grid>
-                  </Typography>
+                    <Grid item xs={12} lg={5} justifyContent="center">
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        flexDirection="column"
+                        mt={3}
+                      >
+                        <AvatarWrapper>
+                          <Avatar
+                            variant="rounded"
+                            // alt={user.name}
+                            src={`data:image/jpg;base64,${values.avatar}`}
+                          />
+                          <ButtonUploadWrapper>
+                            <Input
+                              accept="image/*"
+                              id="icon-button-file"
+                              name="icon-button-file"
+                              type="file"
+                            />
+                            <label htmlFor="icon-button-file">
+                              <IconButton component="span" color="primary">
+                                <CloudUploadTwoToneIcon />
+                              </IconButton>
+                            </label>
+                          </ButtonUploadWrapper>
+                        </AvatarWrapper>
+                        <Divider
+                          flexItem
+                          sx={{
+                            m: 4
+                          }}
+                        />
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          flexDirection="column"
+                          justifyContent="space-between"
+                        >
+                          <Typography
+                            variant="h4"
+                            sx={{
+                              pb: 1
+                            }}
+                          >
+                            {t('Active User')}
+                          </Typography>
+                          <Switch
+                            checked={user.activated}
+                            onChange={handleChange}
+                            name="activated"
+                            color="primary"
+                          />
+                        </Box>
+                        {/* ECHASIN */}
+                        {/* <Box
+                          display="flex"
+                          alignItems="center"
+                          flexDirection="column"
+                          justifyContent="space-between"
+                        >
+                          <Typography
+                            variant="h4"
+                            sx={{
+                              pb: 1
+                            }}
+                          >
+                            {t('Public Profile')}
+                          </Typography>
+                          <Switch
+                            checked={publicProfile.public}
+                            onChange={handlePublicProfile}
+                            name="public"
+                            color="primary"
+                          />
+                        </Box> */}
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </Box>
+                <DialogActions
+                  sx={{
+                    p: 4
+                  }}
+                >
+                  {/* <Button color="secondary" onClick={handleCreateUserClose}> */}
+                   <Button color="secondary" onClick={() => router.back()}> 
+                    {t('Cancel')}
+                  </Button>
                   <Button
                     type="submit"
                     startIcon={
@@ -337,7 +396,7 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {  //ALI 20230305
                   >
                     {t('Update user')}
                   </Button>
-                </CardContent>
+                </DialogActions>
               </Card>
             </Grid>
           </Grid>

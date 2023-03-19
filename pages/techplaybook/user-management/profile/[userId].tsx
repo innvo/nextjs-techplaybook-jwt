@@ -65,7 +65,8 @@ function ManagementUsersView() {
       console.log('In getUser')
       //API retreiving by login needs to be changed
       const response = await axiosInt.get('/api/admin/users/id/' + id);   //ALI 20230305
-      console.log("response:", response.data.avatar)
+      console.log("response.data.avatar:", response.data.avatar)
+      console.log("response.data.activated:", response.data.activated)
 
       if (isMountedRef()) {
         setUser(response.data);
@@ -124,7 +125,8 @@ function ManagementUsersView() {
            </Grid> */}
 
           <Grid item xs={12}>
-            <p> TEST</p>
+            {/* //ECHASIN */}
+            {/* <p> TEST</p> */}
             {/* {response.data.avatar} */}
            </Grid>
 

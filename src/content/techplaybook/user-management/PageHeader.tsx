@@ -97,22 +97,23 @@ function PageHeader() {
 
   const handleCreateUserSuccess = (user: any) => { //ALI 20230305
     try {
-      axiosInt.post('/api/admin/users' , user).then(data => {   //ALI 20230305
-      setOpen(false);  
-      enqueueSnackbar(t('The user account was created successfully'), {
-        variant: 'success',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right'
-        },
-        TransitionComponent: Zoom
+      axiosInt.post('/api/admin/users', user).then(data => {   //ALI 20230305
+        setOpen(false);
+        enqueueSnackbar(t('The user account was created successfully'), {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right'
+          },
+          TransitionComponent: Zoom
+        });
       });
-    });
     } catch (err) {
       console.error(err);
     }
-}
+  }
 
+  const newLocal = 120;
   return (
     <>
       <Grid container justifyContent="space-between" alignItems="center">
@@ -165,6 +166,7 @@ function PageHeader() {
             login: '',
             firstName: '',
             lastName: '',
+            avatar: '',
             email: '',
             langKey: 'English',
             authorities: null,
@@ -279,41 +281,47 @@ function PageHeader() {
                       </Grid>
                       <Grid item xs={12}>
                         <Select
-                                  native
-                                  fullWidth
-                                  onBlur={handleBlur}
-                                  onChange={handleChange}
-                                  value={values.langKey}
-                                  name='langKey'
-                                  inputProps={{
-                                    id: 'select-multiple-native',
-                                  }}
-                                >                                      
-                                  <option key="English" value="English">
-                                      English
-                                  </option>
-                               
+                          native
+                          fullWidth
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          value={values.langKey}
+                          name='langKey'
+                          inputProps={{
+                            id: 'select-multiple-native',
+                          }}
+                        >
+                          <option key="English" value="en">
+                            English
+                          </option>
+                          <option key="Spanish" value="es">
+                            Spanish
+                          </option>
+
                         </Select>
                       </Grid>
-                      <Grid item xs={12} md={6}>
-                        <Select
-                                  multiple
-                                  native
-                                  onBlur={handleBlur}
-                                  onChange={handleChange}
-                                  value={values.authorities}
-                                  name='authorities'
-                                  inputProps={{
-                                    id: 'select-multiple-native',
-                                  }}
-                                >
-                                  <option key="ADMIN" value="ROLE_ADMIN">
-                                      ADMIN
-                                  </option>
-                                  <option key="USER" value="ROLE_USER">
-                                      USER
-                                  </option>
-                              </Select>
+                      <Grid item xs={12} md={12}> 
+                          <Select
+                            multiple
+                            fullWidth
+                            native
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            value={values.authorities}
+                            name='authorities'
+                            inputProps={{
+                              id: 'select-multiple-native',
+                            }}
+                          >
+                            {/* ECHASIN this need to be retrieved from database */}
+                            <option key="ADMIN" value="ROLE_ADMIN">
+                              ADMIN
+                            </option>
+                            <option key="USER" value="ROLE_USER">
+                              USER
+                            </option>
+                          </Select>
+                     
                       </Grid>
                     </Grid>
                   </Grid>
@@ -328,8 +336,8 @@ function PageHeader() {
                       <AvatarWrapper>
                         <Avatar
                           variant="rounded"
-                          // alt={user.name}
-                          // src={user.avatar}
+                        // alt={user.name}
+                        src={values.avatar}
                         />
                         <ButtonUploadWrapper>
                           <Input
