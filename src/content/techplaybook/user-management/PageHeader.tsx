@@ -29,6 +29,10 @@ import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
 import { useSnackbar } from 'notistack';
 import CloudUploadTwoToneIcon from '@mui/icons-material/CloudUploadTwoTone';
 import axiosInt from '@/utils/axios';
+import { useRouter } from 'next/router';
+import ManagementUsers from 'pages/management/users';
+import { createUser } from '@/slices/user';
+import { useDispatch } from '@/store';
 
 const Input = styled('input')({
   display: 'none'
@@ -75,6 +79,7 @@ function PageHeader() {
   const { t }: { t: any } = useTranslation();
   const [open, setOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const dispatch= useDispatch();
 
   const [publicProfile, setPublicProfile] = useState({
     public: true
@@ -96,21 +101,8 @@ function PageHeader() {
   };
 
   const handleCreateUserSuccess = (user: any) => { //ALI 20230305
-    try {
-      axiosInt.post('/api/admin/users' , user).then(data => {   //ALI 20230305
-      setOpen(false);  
-      enqueueSnackbar(t('The user account was created successfully'), {
-        variant: 'success',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right'
-        },
-        TransitionComponent: Zoom
-      });
-    });
-    } catch (err) {
-      console.error(err);
-    }
+    dispatch(createUser(user, enqueueSnackbar));
+    setOpen(false);
 }
 
   return (
@@ -173,7 +165,13 @@ function PageHeader() {
           validationSchema={Yup.object().shape({
             login: Yup.string()
               .max(255)
-              .required(t('The username field is required')),
+              .required(t('The login field is required'))
+              .test('Unique Login','Login already in use', 
+              function(value){return new Promise((resolve, reject) => {
+                  axiosInt.get('/api/admin/users/check/login/'+ value)
+                  .then(res => {if(res.data === true){resolve(false)} resolve(true)})
+              })}
+            ),
             firstName: Yup.string()
               .max(255)
               .required(t('The first name field is required')),
@@ -184,6 +182,13 @@ function PageHeader() {
               .email(t('The email provided should be a valid email address'))
               .max(255)
               .required(t('The email field is required'))
+              .test('Unique Email','Email already in use', 
+              function(value){return new Promise((resolve, reject) => {
+                  axiosInt.get('/api/admin/users/check/email/'+ value)
+                  .then(res => {if(res.data === true){resolve(false)} resolve(true)})
+              })}
+            ),
+              
           })}
           onSubmit={async (
             _values,
