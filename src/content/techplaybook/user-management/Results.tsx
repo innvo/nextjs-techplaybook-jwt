@@ -299,11 +299,14 @@ const Results: FC<ResultsProps> = ({ users }) => {
   ): void => {
     if (!selectedItems.includes(userId)) {
       setSelectedUsers((prevSelected) => [...prevSelected, userId]);
+      console.log('handleSelectOneUser', userId)
     } else {
       setSelectedUsers((prevSelected) => prevSelected.filter((id) => id !== userId)
       );
     }
   };
+
+
 
   const handlePageChange = (_event: any, newPage: number): void => {
     setPage(newPage);
@@ -330,7 +333,17 @@ const Results: FC<ResultsProps> = ({ users }) => {
 
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
+  //ECHASIN
+  const handleDeleteOneUser = (
+    userId: number): void => {
+    console.log('handleDeleteOneUser', userId);
+  }
+
+
+
   const handleConfirmDelete = () => {
+    console.log('handleConfirmDelete');
+    console.log('openConfirmDelete', openConfirmDelete);
     setOpenConfirmDelete(true);
   };
 
@@ -339,6 +352,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
   };
 
   const handleDeleteCompleted = () => {
+    console.log('handleDeletedCompleted')
     setOpenConfirmDelete(false);
 
     enqueueSnackbar(t('The user account has been removed'), {
@@ -533,7 +547,8 @@ const Results: FC<ResultsProps> = ({ users }) => {
                               </Tooltip>
                               <Tooltip title={t('Delete')} arrow>
                                 <IconButton
-                                  onClick={handleConfirmDelete}
+                                  // onClick={handleConfirmDelete}
+                                  onClick={(event) => handleDeleteOneUser(user.id)}
                                   color="primary"
                                 >
                                   <DeleteTwoToneIcon fontSize="small" />
