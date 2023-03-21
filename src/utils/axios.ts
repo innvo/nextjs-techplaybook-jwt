@@ -7,14 +7,13 @@ const axiosInt = axios.create({
   },
 });
 
-if (typeof window !== "undefined") {
-  axiosInt.defaults.headers.common = {
-    'Authorization': 'Bearer ' +  localStorage.getItem('accessToken')
-  };
-}
-
+ //ALI 20230305
+ 
 axiosInt.interceptors.response.use(
-  (res) => {    
+  (res) => {  
+    axiosInt.defaults.headers.common = {
+      'Authorization': 'Bearer ' +  localStorage.getItem('accessToken')
+    };  
     return Promise.resolve(res);
   },
   (err) => {

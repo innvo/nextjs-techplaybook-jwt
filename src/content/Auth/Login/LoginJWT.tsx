@@ -56,6 +56,7 @@ export const LoginJWT: FC = (props) => {
       console.log("values", values); //ECHASIN
       try {
         await login(values.username, values.email, values.password); //ECHASIN
+
         if (isMountedRef()) {
           const backTo = (router.query.backTo as string) || '/management/projects'; //ECHASIN router.query.backTo
           router.push(backTo);
@@ -157,7 +158,7 @@ export const LoginJWT: FC = (props) => {
         startIcon={
           formik.isSubmitting ? <CircularProgress size="1rem" /> : null
         }
-        disabled={formik.isSubmitting}
+       // disabled={formik.isSubmitting}
         type="submit"
         fullWidth
         size="large"

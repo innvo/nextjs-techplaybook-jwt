@@ -10,21 +10,18 @@ import Footer from 'src/components/Footer';
 import { Box, Tabs, Tab, Grid, styled } from '@mui/material';
 
 import type { User } from 'src/models/user';
-import { usersApi } from 'src/mocks/users';
 
 import { useRefMounted } from 'src/hooks/useRefMounted';
 import { useTranslation } from 'react-i18next';
 
-import ProfileCover from 'src/content/Management/Users/single/ProfileCover';
-import RecentActivity from 'src/content/Management/Users/single/RecentActivity';
-import Feed from 'src/content/Management/Users/single/Feed';
-import PopularTags from 'src/content/Management/Users/single/PopularTags';
-import MyCards from 'src/content/Management/Users/single/MyCards';
-import Addresses from 'src/content/Management/Users/single/Addresses';
-import ActivityTab from 'src/content/Management/Users/single/ActivityTab';
-import EditProfileTab from 'src/content/Management/Users/single/EditProfileTab';
+import EditProfileTab from 'src/content/techplaybook/user-management/profile/EditProfileTab';
 import NotificationsTab from 'src/content/Management/Users/single/NotificationsTab';
 import SecurityTab from 'src/content/Management/Users/single/SecurityTab';
+
+//ECHASIN
+import { useRouter } from 'next/router';
+import axiosInt from 'src/utils/axios';
+
 
 const TabsWrapper = styled(Tabs)(
   () => `
@@ -35,14 +32,24 @@ const TabsWrapper = styled(Tabs)(
 );
 
 function ManagementUsersView() {
+  //ECHASIN User Info
+ 
+  
+  //ECHASIN Url Info
+    const router = useRouter(); 
+    var id = router.query.userId;
+   // console.log("router:", router)
+    //console.log("router.query.id:", id)
+
   const isMountedRef = useRefMounted();
   const [user, setUser] = useState<User | null>(null);
   const { t }: { t: any } = useTranslation();
 
-  const [currentTab, setCurrentTab] = useState<string>('activity');
+  const [currentTab, setCurrentTab] = useState<string>('edit_profile');
 
   const tabs = [
-    { value: 'activity', label: t('Activity') },
+    //ECHASIN
+    // { value: 'activity', label: t('Activity') },
     { value: 'edit_profile', label: t('Edit Profile') },
     { value: 'notifications', label: t('Notifications') },
     { value: 'security', label: t('Passwords/Security') }
@@ -52,12 +59,17 @@ function ManagementUsersView() {
     setCurrentTab(value);
   };
 
-  const getUser = useCallback(async () => {
+  const getUsers = useCallback(async () => {   //ALI 20230305
     try {
-      const response = await usersApi.getUser();
+      //ECHASIN
+      console.log('In getUser')
+      //API retreiving by login needs to be changed
+      const response = await axiosInt.get('/api/admin/users/id/' + id);   //ALI 20230305
+      console.log("response.data.avatar:", response.data.avatar)
+      console.log("response.data.activated:", response.data.activated)
 
       if (isMountedRef()) {
-        setUser(response);
+        setUser(response.data);
       }
     } catch (err) {
       console.error(err);
@@ -65,17 +77,23 @@ function ManagementUsersView() {
   }, [isMountedRef]);
 
   useEffect(() => {
-    getUser();
-  }, [getUser]);
+    getUsers();
+  }, [id]);  //ALI 20230305
+
+  //ECHASIN
+//   decodeBase64(base64data) {
+//     let base64ToString = Buffer.from(base64data, "base64").toString()
+//     this.setState({data: base64ToString })
+// }
+
 
   if (!user) {
     return null;
   }
-
   return (
     <>
       <Head>
-        <title>{user.name} - Profile Details</title>
+        <title> User Profile Details</title>
       </Head>
       <Box sx={{ mt: 3 }}>
         <Grid
@@ -86,7 +104,8 @@ function ManagementUsersView() {
           alignItems="stretch"
           spacing={3}
         >
-          <Grid item xs={12} md={8}>
+          {/* ECHASIN */}
+          {/* <Grid item xs={12} md={8}>
             <ProfileCover user={user} />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -103,7 +122,14 @@ function ManagementUsersView() {
           </Grid>
           <Grid item xs={12} md={5}>
             <Addresses />
-          </Grid>
+           </Grid> */}
+
+          <Grid item xs={12}>
+            {/* //ECHASIN */}
+            {/* <p> TEST</p> */}
+            {/* {response.data.avatar} */}
+           </Grid>
+
           <Grid item xs={12}>
             <TabsWrapper
               onChange={handleTabsChange}
@@ -119,8 +145,9 @@ function ManagementUsersView() {
             </TabsWrapper>
           </Grid>
           <Grid item xs={12}>
-            {currentTab === 'activity' && <ActivityTab />}
-            {currentTab === 'edit_profile' && <EditProfileTab />}
+            {/* //ECHASIN */}
+            {/* {currentTab === 'activity' && <ActivityTab />} */}
+            {currentTab === 'edit_profile' && <EditProfileTab user={user}/>}
             {currentTab === 'notifications' && <NotificationsTab />}
             {currentTab === 'security' && <SecurityTab />}
           </Grid>

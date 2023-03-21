@@ -50,6 +50,7 @@ class AuthApi1 {
         console.log('response.data:', data);
         // const bearerToken = response?.headers?.authorization;
         const bearerToken = data.id_token; //Ali
+        localStorage.setItem('accessToken',data.id_token)
         
         console.log('bearerToken:', bearerToken);   
         resolve(bearerToken); //Ali

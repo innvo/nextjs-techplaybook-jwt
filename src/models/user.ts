@@ -1,10 +1,15 @@
 export interface User {
-  id: string;
+  id: number;
   login: string;
-  // avatar: string;
-  // email: string;
+  email: string;
   firstName: string;
   lastName: string;
+  activated: boolean;
+  langKey: string;
+  jobtitle: string;
+  avatar: string;
+  authorities: any[];
+  lastModifiedDate: string;
   // jobtitle: string;
   // username: string;
   // location: string;
