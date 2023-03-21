@@ -65,6 +65,8 @@ function ManagementUsersView() {
       console.log('In getUser')
       //API retreiving by login needs to be changed
       const response = await axiosInt.get('/api/admin/users/id/' + id);   //ALI 20230305
+      console.log("response.data.avatar:", response.data.avatar)
+      console.log("response.data.activated:", response.data.activated)
 
       if (isMountedRef()) {
         setUser(response.data);
@@ -77,6 +79,13 @@ function ManagementUsersView() {
   useEffect(() => {
     getUsers();
   }, [id]);  //ALI 20230305
+
+  //ECHASIN
+//   decodeBase64(base64data) {
+//     let base64ToString = Buffer.from(base64data, "base64").toString()
+//     this.setState({data: base64ToString })
+// }
+
 
   if (!user) {
     return null;
@@ -113,7 +122,14 @@ function ManagementUsersView() {
           </Grid>
           <Grid item xs={12} md={5}>
             <Addresses />
-          </Grid> */}
+           </Grid> */}
+
+          <Grid item xs={12}>
+            {/* //ECHASIN */}
+            {/* <p> TEST</p> */}
+            {/* {response.data.avatar} */}
+           </Grid>
+
           <Grid item xs={12}>
             <TabsWrapper
               onChange={handleTabsChange}

@@ -104,7 +104,25 @@ function PageHeader() {
     dispatch(createUser(user, enqueueSnackbar));
     setOpen(false);
 }
+   // try {
+   //   axiosInt.post('/api/admin/users', user).then(data => {   //ALI 20230305
+   //    setOpen(false);
+   //     enqueueSnackbar(t('The user account was created successfully'), {
+   //       variant: 'success',
+   //      anchorOrigin: {
+   //         vertical: 'top',
+   //         horizontal: 'right'
+   //       },
+   //       TransitionComponent: Zoom
+   //     });
+   //   });
+   // } catch (err) {
+   //   console.error(err);
+  //  }
+ // }
 
+
+  const newLocal = 120;
   return (
     <>
       <Grid container justifyContent="space-between" alignItems="center">
@@ -159,6 +177,9 @@ function PageHeader() {
             lastName: '',
             email: '',
             langKey: 'English',
+            activated: true,
+            jobtitle: '',
+            avatar: '',
             authorities: null,
             submit: null
           }}
@@ -284,41 +305,47 @@ function PageHeader() {
                       </Grid>
                       <Grid item xs={12}>
                         <Select
-                                  native
-                                  fullWidth
-                                  onBlur={handleBlur}
-                                  onChange={handleChange}
-                                  value={values.langKey}
-                                  name='langKey'
-                                  inputProps={{
-                                    id: 'select-multiple-native',
-                                  }}
-                                >                                      
-                                  <option key="English" value="English">
-                                      English
-                                  </option>
-                               
+                          native
+                          fullWidth
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          value={values.langKey}
+                          name='langKey'
+                          inputProps={{
+                            id: 'select-multiple-native',
+                          }}
+                        >
+                          <option key="English" value="en">
+                            English
+                          </option>
+                          <option key="Spanish" value="es">
+                            Spanish
+                          </option>
+
                         </Select>
                       </Grid>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={12}>
                         <Select
-                                  multiple
-                                  native
-                                  onBlur={handleBlur}
-                                  onChange={handleChange}
-                                  value={values.authorities}
-                                  name='authorities'
-                                  inputProps={{
-                                    id: 'select-multiple-native',
-                                  }}
-                                >
-                                  <option key="ADMIN" value="ROLE_ADMIN">
-                                      ADMIN
-                                  </option>
-                                  <option key="USER" value="ROLE_USER">
-                                      USER
-                                  </option>
-                              </Select>
+                          multiple
+                          fullWidth
+                          native
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          value={values.authorities}
+                          name='authorities'
+                          inputProps={{
+                            id: 'select-multiple-native',
+                          }}
+                        >
+                          {/* ECHASIN this need to be retrieved from database */}
+                          <option key="ADMIN" value="ROLE_ADMIN">
+                            ADMIN
+                          </option>
+                          <option key="USER" value="ROLE_USER">
+                            USER
+                          </option>
+                        </Select>
+
                       </Grid>
                     </Grid>
                   </Grid>
@@ -334,7 +361,7 @@ function PageHeader() {
                         <Avatar
                           variant="rounded"
                           // alt={user.name}
-                          // src={user.avatar}
+                          src={values.avatar}
                         />
                         <ButtonUploadWrapper>
                           <Input
@@ -368,6 +395,28 @@ function PageHeader() {
                             pb: 1
                           }}
                         >
+                          {t('Active User')}
+                        </Typography>
+                        <Switch
+                          checked={values.activated}
+                          onChange={handleChange}
+                          name="activated"
+                          color="primary"
+                        />
+                      </Box>
+
+                      {/* <Box
+                        display="flex"
+                        alignItems="center"
+                        flexDirection="column"
+                        justifyContent="space-between"
+                      >
+                        <Typography
+                          variant="h4"
+                          sx={{
+                            pb: 1
+                          }}
+                        >
                           {t('Public Profile')}
                         </Typography>
                         <Switch
@@ -376,7 +425,7 @@ function PageHeader() {
                           name="public"
                           color="primary"
                         />
-                      </Box>
+                      </Box> */}
                     </Box>
                   </Grid>
                 </Grid>
