@@ -336,10 +336,8 @@ const Results: FC<ResultsProps> = ({ users }) => {
   //ECHASIN
   const handleDeleteOneUser = (
     userId: number): void => {
-    console.log('handleDeleteOneUser', userId);
+    console.log('In Results.tsx: handleDeleteOneUser', userId);
   }
-
-
 
   const handleConfirmDelete = () => {
     console.log('handleConfirmDelete');

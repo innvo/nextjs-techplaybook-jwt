@@ -100,6 +100,7 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
 
   const handleUpdateUserSuccess = (user: any) => {
     try {
+      console.log('Results.tsx: handleUpdateUserSuccess')
       axiosInt.put('/api/admin/users', user).then(data => {
         user = data.data;
         enqueueSnackbar(t('The user was updated successfully'), {
@@ -147,6 +148,8 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
           .max(255)
           .required(t('The email field is required'))
       })}
+
+
       onSubmit={async (
         _values,
         { resetForm, setErrors, setStatus, setSubmitting }
