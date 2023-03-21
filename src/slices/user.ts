@@ -7,11 +7,25 @@ import { Zoom } from '@mui/material';
 
 interface UserState {
   users: User[];
+  currentUser: User;
 }
 
 
 const initialState: UserState = {
-  users: []
+  users: [],
+  currentUser: {
+    id: 0,
+    login: '',
+    email: '',
+    firstName: '',
+    lastName: '',
+    activated: false,
+    langKey: '',
+    jobtitle: '',
+    avatar: '',
+    authorities: [],
+    lastModifiedDate: ''
+  }  
 };
 
 //Initialize slice
@@ -21,6 +35,9 @@ const slice = createSlice({
   reducers: {
     getUsers(state: UserState, action: PayloadAction<User[]>): void {
       state.users = action.payload;
+    },
+    getUser(state: UserState, action: PayloadAction<User>): void {
+      state.currentUser = action.payload;
     },
     createUser(state: UserState, action: PayloadAction<User>): void {
       state.users.push(action.payload);
@@ -35,6 +52,9 @@ const slice = createSlice({
 
         return _user;
       });
+    },
+    deleteUser(state: UserState, action: PayloadAction<User[]>): void {
+      state.users = action.payload;
     }
   }
 });
@@ -50,7 +70,15 @@ export const getUsers =
     console.log('In user.ts:getUsers');
     const data = await axiosInt.get('/api/users/')
     dispatch(slice.actions.getUsers(data.data));
-  };
+};
+
+export const getUser =
+  (id: number): AppThunk =>
+  async (dispatch): Promise<void> => {
+    console.log('In user.ts:getUser');
+    const data = await axiosInt.get('/api/admin/users/id/' + id)
+    dispatch(slice.actions.getUser(data.data));
+};
 
 export const createUser =  
   (user: User, enqueueSnackbar): AppThunk =>
@@ -82,20 +110,58 @@ export const createUser =
   };
 
 export const updateUser =
-  (userId: string, update: any): AppThunk =>
+  (user: User, enqueueSnackbar): AppThunk =>
   async (dispatch): Promise<void> => {
     console.log('In user.ts:updateUser');
-    const data = await axiosInt.get('/api/users/')
-
-    dispatch(slice.actions.updateUser(data.data));
-  };
+    try {
+      const data = await axiosInt.put('/api/admin/users', user)
+      dispatch(slice.actions.getUsers(data.data));
+      enqueueSnackbar('The user account was updated successfully', {
+        variant: 'success',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        },
+        TransitionComponent: Zoom
+      });
+    
+    } catch (err) {
+      enqueueSnackbar('Error in updating the user', {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        },
+        TransitionComponent: Zoom
+      });
+    }
+};
 
 export const deleteUser =
-  (userId: string): AppThunk =>
+  (userId: number, enqueueSnackbar): AppThunk =>
   async (dispatch): Promise<void> => {
-    await axiosInt.get('/api/users/')
-    //ECHASIN why is deleteUser not defined in const slice
-    //dispatch(slice.actions.deleteUser(userId));
+    try {
+      const data = await axiosInt.delete('/api/admin/users/'+ userId)
+      dispatch(slice.actions.getUsers(data.data));
+      enqueueSnackbar('The user account was deleted successfully', {
+        variant: 'success',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        },
+        TransitionComponent: Zoom
+      });
+    
+    } catch (err) {
+      enqueueSnackbar('Error in deleting the user', {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        },
+        TransitionComponent: Zoom
+      });
+    }
   };
 
 export default slice;

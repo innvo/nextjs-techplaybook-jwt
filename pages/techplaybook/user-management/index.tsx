@@ -7,7 +7,7 @@ import Footer from 'src/components/Footer';
 import PageHeader from 'src/content/techplaybook/user-management/PageHeader';
 import Results from 'src/content/techplaybook/user-management/Results';
 import { Grid} from '@mui/material';
-import { useDispatch, useSelector } from '@/store';
+import { useDispatch, useSelector } from 'src/store';
 import { getUsers } from '@/slices/user';
 
 function ManagementUsers() {

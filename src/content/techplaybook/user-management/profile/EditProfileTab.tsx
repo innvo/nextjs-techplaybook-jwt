@@ -11,7 +11,6 @@ import {
   CircularProgress,
   styled,
   Switch,
-  Zoom,
   Select,
   DialogActions
 } from '@mui/material';
@@ -23,9 +22,10 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { wait } from '@/utils/wait';
 import { useSnackbar } from 'notistack';
-import axiosInt from '@/utils/axios';
 import CloudUploadTwoToneIcon from '@mui/icons-material/CloudUploadTwoTone';
 import { useRouter } from 'next/router';
+import { useDispatch } from '@/store';
+import { updateUser } from '@/slices/user';
 
 
 //ECHASIN
@@ -76,11 +76,8 @@ const Input = styled('input')({
   display: 'none'
 });
 
-
-
 const EditProfileTab: FC<ResultsProps> = ({ user }) => {
-  // Results is the functional component
-  //ECHASIN  added userRouter to support cancel back function
+
   const router = useRouter()
  
   const [publicProfile, setPublicProfile] = useState({
@@ -98,23 +95,10 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  const dispatch= useDispatch();
+
   const handleUpdateUserSuccess = (user: any) => {
-    try {
-      console.log('Results.tsx: handleUpdateUserSuccess')
-      axiosInt.put('/api/admin/users', user).then(data => {
-        user = data.data;
-        enqueueSnackbar(t('The user was updated successfully'), {
-          variant: 'success',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right'
-          },
-          TransitionComponent: Zoom
-        });
-      });
-    } catch (err) {
-      console.error(err);
-    }
+    dispatch(updateUser(user, enqueueSnackbar));
   }
 
   return (
@@ -133,6 +117,7 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
         authorities: user.authorities,
         submit: null
       }}
+      enableReinitialize
       validationSchema={Yup.object().shape({
         login: Yup.string()
           .max(255)
