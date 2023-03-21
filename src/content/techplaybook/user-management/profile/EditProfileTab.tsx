@@ -152,6 +152,7 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
         { resetForm, setErrors, setStatus, setSubmitting }
       ) => {
         try {
+          console.log("In EditProfileTab.tsx: onSubmit")
           await wait(1000);
           //   resetForm();
           setStatus({ success: true });

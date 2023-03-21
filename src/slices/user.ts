@@ -9,10 +9,12 @@ interface UserState {
   users: User[];
 }
 
+
 const initialState: UserState = {
   users: []
 };
 
+//Initialize slice
 const slice = createSlice({
   name: 'user',
   initialState,
@@ -37,11 +39,15 @@ const slice = createSlice({
   }
 });
 
+
+// The reducer function is destructured from the slice object and exported using the ES6 shorthand syntax. This makes it easy to import the reducer function in another file by using:
+
 export const { reducer } = slice;
 
 export const getUsers =
   (): AppThunk =>
   async (dispatch): Promise<void> => {
+    console.log('In user.ts:getUsers');
     const data = await axiosInt.get('/api/users/')
     dispatch(slice.actions.getUsers(data.data));
   };
@@ -49,6 +55,7 @@ export const getUsers =
 export const createUser =  
   (user: User, enqueueSnackbar): AppThunk =>
   async (dispatch): Promise<void> => {
+    console.log('In user.ts:createUser');
     try {
       const data = await axiosInt.post('/api/admin/users', user)
       dispatch(slice.actions.getUsers(data.data));
@@ -77,6 +84,7 @@ export const createUser =
 export const updateUser =
   (userId: string, update: any): AppThunk =>
   async (dispatch): Promise<void> => {
+    console.log('In user.ts:updateUser');
     const data = await axiosInt.get('/api/users/')
 
     dispatch(slice.actions.updateUser(data.data));
@@ -86,6 +94,7 @@ export const deleteUser =
   (userId: string): AppThunk =>
   async (dispatch): Promise<void> => {
     await axiosInt.get('/api/users/')
+    //ECHASIN why is deleteUser not defined in const slice
     //dispatch(slice.actions.deleteUser(userId));
   };
 

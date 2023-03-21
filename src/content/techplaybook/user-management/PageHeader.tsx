@@ -99,8 +99,10 @@ function PageHeader() {
   const handleCreateUserClose = () => {
     setOpen(false);
   };
-
-  const handleCreateUserSuccess = (user: any) => { //ALI 20230305
+ 
+  //ECHASIN
+  //Implementation of Redux 
+  const handleCreateUserSuccess = (user: any) => {
     dispatch(createUser(user, enqueueSnackbar));
     setOpen(false);
 }
@@ -200,9 +202,10 @@ function PageHeader() {
               .max(255)
               .required(t('The last name field is required')),
             email: Yup.string()
-              .email(t('The email provided should be a valid email address'))
+              //.email(t('The email provided should be a valid email address'))
               .max(255)
               .required(t('The email field is required'))
+              //ECHASIN 
               .test('Unique Email','Email already in use', 
               function(value){return new Promise((resolve, reject) => {
                   axiosInt.get('/api/admin/users/check/email/'+ value)
