@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -100,31 +100,39 @@ function PageHeader() {
     setOpen(false);
   };
  
-  //ECHASIN
-  //Implementation of Redux 
   const handleCreateUserSuccess = (user: any) => {
     dispatch(createUser(user, enqueueSnackbar));
     setOpen(false);
-}
-   // try {
-   //   axiosInt.post('/api/admin/users', user).then(data => {   //ALI 20230305
-   //    setOpen(false);
-   //     enqueueSnackbar(t('The user account was created successfully'), {
-   //       variant: 'success',
-   //      anchorOrigin: {
-   //         vertical: 'top',
-   //         horizontal: 'right'
-   //       },
-   //       TransitionComponent: Zoom
-   //     });
-   //   });
-   // } catch (err) {
-   //   console.error(err);
-  //  }
- // }
+  }
 
+  const [avatar, setAvatar] =  useState<any>();
 
-  const newLocal = 120;
+  function readFileDataAsBase64(e) {
+    const file = e.currentTarget.files[0];
+
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+
+        reader.onload = (event) => {
+            resolve(event.target.result);
+        };
+
+        reader.onerror = (err) => {
+            reject(err);
+        };
+
+        reader.readAsDataURL(file);
+        
+    }).then(function(result) {
+      const regex = /data:.*base64,/
+      setAvatar( result.replace(regex,""))
+   });;
+  }
+
+  const saveAvatar = (event) => {
+     readFileDataAsBase64(event);
+  }
+
   return (
     <>
       <Grid container justifyContent="space-between" alignItems="center">
@@ -223,6 +231,7 @@ function PageHeader() {
               resetForm();
               setStatus({ success: true });
               setSubmitting(false);
+              _values.avatar=avatar;
               handleCreateUserSuccess(_values);
             } catch (err) {
               console.error(err);
@@ -334,7 +343,7 @@ function PageHeader() {
                           native
                           onBlur={handleBlur}
                           onChange={handleChange}
-                          value={values.authorities}
+                          value={values.authorities == null ? []: values.authorities}
                           name='authorities'
                           inputProps={{
                             id: 'select-multiple-native',
@@ -364,14 +373,16 @@ function PageHeader() {
                         <Avatar
                           variant="rounded"
                           // alt={user.name}
-                          src={values.avatar}
+                          src={`data:image/jpg;base64,${avatar}`}
                         />
                         <ButtonUploadWrapper>
                           <Input
                             accept="image/*"
                             id="icon-button-file"
-                            name="icon-button-file"
+                            name="avatar"
                             type="file"
+                            //value={avatar}
+                            onChange ={(event) => {saveAvatar(event)}}
                           />
                           <label htmlFor="icon-button-file">
                             <IconButton component="span" color="primary">

@@ -255,7 +255,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
     }
   ];
 
-  const [selectedUserId, setSelectedUserId] = useState<number>(0);
+  const [selectedUser, setSelectedUser] = useState<User>();
 
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
@@ -333,8 +333,8 @@ const Results: FC<ResultsProps> = ({ users }) => {
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
   const handleDeleteOneUser = (
-    userId: number): void => {
-      setSelectedUserId(userId)
+    user: User): void => {
+      setSelectedUser(user)
       setOpenConfirmDelete(true);
   }
 
@@ -344,7 +344,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
 
   const handleDeleteCompleted = () => {
     setOpenConfirmDelete(false);
-    dispatch(deleteUser(selectedUserId, enqueueSnackbar)) ;
+    dispatch(deleteUser(selectedUser.id, enqueueSnackbar)) ;
   };
 
   return (
@@ -534,7 +534,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                               <Tooltip title={t('Delete')} arrow>
                                 <IconButton
                                   // onClick={handleConfirmDelete}
-                                  onClick={(event) => handleDeleteOneUser(user.id)}
+                                  onClick={(event) => {handleDeleteOneUser(user)}}
                                   color="primary"
                                 >
                                   <DeleteTwoToneIcon fontSize="small" />
@@ -823,7 +823,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
             }}
             variant="h3"
           >
-            {t('Are you sure you want to permanently delete this user account')}
+            {t('Are you sure you want to permanently delete user ')} {selectedUser?.firstName} {selectedUser?.lastName}
             ?
           </Typography>
 
