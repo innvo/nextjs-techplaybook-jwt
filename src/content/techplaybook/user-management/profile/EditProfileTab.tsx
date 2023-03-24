@@ -81,15 +81,10 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
 
   const router = useRouter()
  
-  const [publicProfile, setPublicProfile] = useState({
-    public: true
-  });
+  const [activated, setActivated] = useState(user.activated);
 
-  const handlePublicProfile = (event) => {
-    setPublicProfile({
-      ...publicProfile,
-      [event.target.name]: event.target.checked
-    });
+  const handleChangeActivated = (event) => {
+    setActivated(event.target.checked);
   };
 
   const { t }: { t: any } = useTranslation();
@@ -131,7 +126,8 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
   }
 
   useEffect(() => {
-    setAvatar(user.avatar)
+    setAvatar(user.avatar);
+    setActivated(user.activated);
    }, [user]);
 
   return (
@@ -189,6 +185,7 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
           await wait(1000);
           setStatus({ success: true });
           _values.avatar=avatar;
+          _values.activated=activated;
           handleUpdateUserSuccess(_values);
         } catch (err) {
           console.error(err);
@@ -380,8 +377,8 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
                             {t('Active User')}
                           </Typography>
                           <Switch
-                            checked={user.activated}
-                            onChange={handleChange}
+                            checked={activated}
+                            onChange={handleChangeActivated}
                             name="activated"
                             color="primary"
                           />

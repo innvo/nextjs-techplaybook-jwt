@@ -232,6 +232,7 @@ function PageHeader() {
               setStatus({ success: true });
               setSubmitting(false);
               _values.avatar=avatar;
+              console.log(_values)
               handleCreateUserSuccess(_values);
             } catch (err) {
               console.error(err);

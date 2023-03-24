@@ -68,7 +68,7 @@ export const getUsers =
   (): AppThunk =>
   async (dispatch): Promise<void> => {
     console.log('In user.ts:getUsers');
-    const data = await axiosInt.get('/api/users/')
+    const data = await axiosInt.get('/api/admin/users/')
     dispatch(slice.actions.getUsers(data.data));
 };
 
