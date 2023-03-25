@@ -123,7 +123,7 @@ function PageHeader() {
 
         reader.readAsDataURL(file);
         
-    }).then(function(result) {
+    }).then(function(result: string) {
       const regex = /data:.*base64,/
       setAvatar( result.replace(regex,""))
    });;

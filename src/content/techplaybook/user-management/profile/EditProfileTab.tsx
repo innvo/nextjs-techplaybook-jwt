@@ -93,9 +93,12 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
 
   const dispatch= useDispatch();
 
-  const [avatar, setAvatar] =  useState<any>();
+  const [avatar, setAvatar] =  useState<any>('');
+
+  const [validImage, setValidImage] =  useState<boolean>(false);
 
   function readFileDataAsBase64(e) {
+ 
     const file = e.currentTarget.files[0];
 
     return new Promise((resolve, reject) => {
@@ -111,9 +114,23 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
 
         reader.readAsDataURL(file);
         
-    }).then(function(result) {
-      const regex = /data:.*base64,/
-      setAvatar( result.replace(regex,""))
+    }).then(function(result: string) {
+      var img: HTMLImageElement;
+      img = document.createElement("img");
+      img.src = URL.createObjectURL(file);
+      img.onload = function () {
+      
+      if (img.width && img.height > 200) {
+        setValidImage(false);
+
+      }
+      else {
+        const regex = /data:.*base64,/
+        setAvatar( result.replace(regex,""))
+        setValidImage(true)
+       }
+    };
+      
    });;
 }
 
@@ -172,8 +189,9 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
                   axiosInt.get('/api/admin/users/check/email/'+ value)
                   .then(res => {if(res?.data.id === user.id || res?.data.id === undefined ){resolve(true)} resolve(false)})
               })}
-          )
-          
+          ),
+        avatar: Yup.string()
+           .test('len', 'Max size is 200x200  pixels', val => validImage === true)
       })}
 
 
@@ -335,6 +353,8 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
                         flexDirection="column"
                         mt={3}
                       >
+                                                <Typography  color='error'>{errors.avatar}</Typography>
+
                         <AvatarWrapper>
                           <Avatar
                             variant="rounded"
@@ -343,7 +363,7 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
                           />
                           <ButtonUploadWrapper>
                             <Input
-                              accept="image/*"
+                              accept="image/jpg,image/jpeg"
                               id="icon-button-file"
                               name="avatar"
                               type="file"
