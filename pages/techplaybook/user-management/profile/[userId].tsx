@@ -1,27 +1,17 @@
-import { useState, useCallback, ChangeEvent, useEffect } from 'react';
-
+import { useState, ChangeEvent, useEffect } from 'react';
 import Head from 'next/head';
-
 import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
 import { Authenticated } from 'src/components/Authenticated';
-
 import Footer from 'src/components/Footer';
-
 import { Box, Tabs, Tab, Grid, styled } from '@mui/material';
-
 import type { User } from 'src/models/user';
-
-import { useRefMounted } from 'src/hooks/useRefMounted';
 import { useTranslation } from 'react-i18next';
-
 import EditProfileTab from 'src/content/techplaybook/user-management/profile/EditProfileTab';
 import NotificationsTab from 'src/content/Management/Users/single/NotificationsTab';
 import SecurityTab from 'src/content/Management/Users/single/SecurityTab';
-
-//ECHASIN
 import { useRouter } from 'next/router';
-import axiosInt from 'src/utils/axios';
-
+import { getUser } from '@/slices/user';
+import { useDispatch, useSelector } from '@/store';
 
 const TabsWrapper = styled(Tabs)(
   () => `
@@ -32,24 +22,17 @@ const TabsWrapper = styled(Tabs)(
 );
 
 function ManagementUsersView() {
-  //ECHASIN User Info
- 
-  
-  //ECHASIN Url Info
-    const router = useRouter(); 
-    var id = router.query.userId;
-   // console.log("router:", router)
-    //console.log("router.query.id:", id)
 
-  const isMountedRef = useRefMounted();
-  const [user, setUser] = useState<User | null>(null);
+  const router = useRouter(); 
+  var id = router.query.userId;
   const { t }: { t: any } = useTranslation();
+  const dispatch= useDispatch();  
+
+  const user = useSelector((state) => state.user.currentUser);
 
   const [currentTab, setCurrentTab] = useState<string>('edit_profile');
 
   const tabs = [
-    //ECHASIN
-    // { value: 'activity', label: t('Activity') },
     { value: 'edit_profile', label: t('Edit Profile') },
     { value: 'notifications', label: t('Notifications') },
     { value: 'security', label: t('Passwords/Security') }
@@ -59,33 +42,9 @@ function ManagementUsersView() {
     setCurrentTab(value);
   };
 
-  const getUsers = useCallback(async () => {   //ALI 20230305
-    try {
-      //ECHASIN
-      console.log('In getUser')
-      //API retreiving by login needs to be changed
-      const response = await axiosInt.get('/api/admin/users/id/' + id);   //ALI 20230305
-      console.log("response.data.avatar:", response.data.avatar)
-      console.log("response.data.activated:", response.data.activated)
-
-      if (isMountedRef()) {
-        setUser(response.data);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }, [isMountedRef]);
-
   useEffect(() => {
-    getUsers();
-  }, [id]);  //ALI 20230305
-
-  //ECHASIN
-//   decodeBase64(base64data) {
-//     let base64ToString = Buffer.from(base64data, "base64").toString()
-//     this.setState({data: base64ToString })
-// }
-
+    dispatch(getUser(+id)) ;
+  }, [id]);
 
   if (!user) {
     return null;

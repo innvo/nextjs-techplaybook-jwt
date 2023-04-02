@@ -33,7 +33,6 @@ const users = [
 class AuthApi1 {
  
   async login({ username, email, password }): Promise<string> {  //ECHASIN added username to login 
-    console.log("In src/content/Auth/auth.ts - async login:", username);  //ECHASIN getting instance of Login
 
     await wait(500);
 
@@ -47,12 +46,10 @@ class AuthApi1 {
          "password": password,
       }).then(function (response) {
         const data= response.data
-        console.log('response.data:', data);
         // const bearerToken = response?.headers?.authorization;
         const bearerToken = data.id_token; //Ali
         localStorage.setItem('accessToken',data.id_token)
         
-        console.log('bearerToken:', bearerToken);   
         resolve(bearerToken); //Ali
       })
       .catch(function (error) {
@@ -156,7 +153,6 @@ class AuthApi1 {
       axiosInt.get('/api/account', config)// Ali add api to get current logged user
         .then(function (response) {
             const data= response.data
-            console.log('response.data:', data);
             const user = response.data;
 
             if (!user) {
@@ -169,13 +165,11 @@ class AuthApi1 {
               avatar: user.avatar,
               jobtitle: user.jobtitle,
               email: user.email,
-              name: user.name,
-              location: user.location,
-              username: user.username,
-              role: user.role,
-              posts: user.posts,
-              coverImg: user.coverImg,
-              followers: user.followers,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              avatar: user.avatar,
+              login: user.login,
+              authorities: user.authorities,
               description: user.description
             });
           })

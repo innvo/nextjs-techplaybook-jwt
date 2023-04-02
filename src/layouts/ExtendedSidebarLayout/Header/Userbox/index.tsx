@@ -212,7 +212,9 @@ function HeaderUserbox() {
   return (
     <>
       <UserBoxButton color="primary" ref={ref} onClick={handleOpen}>
-        <UserAvatar alt={user.login} src={user.login} />
+        <UserAvatar src={`data:image/jpg;base64,${user?.avatar}`} >
+         {user?.firstName?.substring(0,1).toUpperCase()}{user?.lastName?.substring(0,1).toUpperCase()}
+        </UserAvatar>
       </UserBoxButton>
       <Popover
         disableScrollLock
@@ -234,11 +236,13 @@ function HeaderUserbox() {
           }}
           display="flex"
         >
-          <Avatar variant="rounded" alt={user.login} src={user.login} />
+          <Avatar variant="rounded"  src={`data:image/jpg;base64,${user?.avatar}`}> 
+           {user?.firstName?.substring(0,1).toUpperCase()}{user?.lastName?.substring(0,1).toUpperCase()}
+          </Avatar>
           <UserBoxText>
-            <UserBoxLabel variant="body1">{user.firstName}</UserBoxLabel>
+            <UserBoxLabel variant="body1">{user?.firstName}</UserBoxLabel>
             <UserBoxDescription variant="body2">
-              {user.lastName}
+              {user?.lastName}
             </UserBoxDescription>
           </UserBoxText>
         </MenuUserBox>

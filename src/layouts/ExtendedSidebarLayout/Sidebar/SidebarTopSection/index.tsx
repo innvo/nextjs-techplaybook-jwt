@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from 'src/hooks/useAuth';
 
 import {
@@ -77,6 +77,7 @@ function SidebarTopSection() {
   const ref = useRef<any>(null);
   const [isOpen, setOpen] = useState<boolean>(false);
 
+
   const handleOpen = (): void => {
     setOpen(true);
   };
@@ -111,17 +112,17 @@ function SidebarTopSection() {
           mb: 2,
           mx: 'auto'
         }}
-        alt={user.firstName}
-        src={user.lastName}
-      />
-
+        //alt={user.firstName}
+       
+        src={`data:image/jpg;base64,${user?.avatar}`}
+      >{user?.firstName?.substring(0,1).toUpperCase()}{user?.lastName?.substring(0,1).toUpperCase()}</Avatar>
       <Typography
         variant="h4"
         sx={{
           color: `${theme.colors.alpha.trueWhite[100]}`
         }}
       >
-        {user.firstName}
+        {user?.firstName}
       </Typography>
       <Typography
         variant="subtitle1"
@@ -129,7 +130,7 @@ function SidebarTopSection() {
           color: `${theme.colors.alpha.trueWhite[70]}`
         }}
       >
-        {user.lastName}
+        {user?.lastName}
       </Typography>
       <IconButton
         size="small"
@@ -170,13 +171,13 @@ function SidebarTopSection() {
           }}
           display="flex"
         >
-          <Avatar variant="rounded" alt={user.login} src={user.login} />
+          <Avatar variant="rounded" alt={user?.login} src={user?.avatar} />
           <UserBoxText>
             <UserBoxLabel className="popoverTypo" variant="body1">
-              {user.firstName}
+              {user?.firstName}
             </UserBoxLabel>
             <UserBoxDescription className="popoverTypo" variant="body2">
-              {user.lastName}
+              {user?.lastName}
             </UserBoxDescription>
           </UserBoxText>
         </MenuUserBox>

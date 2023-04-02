@@ -11,21 +11,22 @@ import {
   CircularProgress,
   styled,
   Switch,
-  Zoom,
   Select,
   DialogActions
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 import type { User } from 'src/models/user';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { wait } from '@/utils/wait';
 import { useSnackbar } from 'notistack';
-import axiosInt from '@/utils/axios';
 import CloudUploadTwoToneIcon from '@mui/icons-material/CloudUploadTwoTone';
 import { useRouter } from 'next/router';
+import { useDispatch } from '@/store';
+import { updateUser } from '@/slices/user';
+import axiosInt from '@/utils/axios';
 
 
 //ECHASIN
@@ -76,46 +77,75 @@ const Input = styled('input')({
   display: 'none'
 });
 
-
-
 const EditProfileTab: FC<ResultsProps> = ({ user }) => {
-  // Results is the functional component
-  //ECHASIN  added userRouter to support cancel back function
+
   const router = useRouter()
  
-  const [publicProfile, setPublicProfile] = useState({
-    public: true
-  });
+  const [activated, setActivated] = useState(user.activated);
 
-  const handlePublicProfile = (event) => {
-    setPublicProfile({
-      ...publicProfile,
-      [event.target.name]: event.target.checked
-    });
+  const handleChangeActivated = (event) => {
+    setActivated(event.target.checked);
   };
 
   const { t }: { t: any } = useTranslation();
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const handleUpdateUserSuccess = (user: any) => {
-    try {
-      console.log('Results.tsx: handleUpdateUserSuccess')
-      axiosInt.put('/api/admin/users', user).then(data => {
-        user = data.data;
-        enqueueSnackbar(t('The user was updated successfully'), {
-          variant: 'success',
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right'
-          },
-          TransitionComponent: Zoom
-        });
-      });
-    } catch (err) {
-      console.error(err);
-    }
+  const dispatch= useDispatch();
+
+  const [avatar, setAvatar] =  useState<any>('');
+
+  const [validImage, setValidImage] =  useState<boolean>(false);
+
+  function readFileDataAsBase64(e) {
+ 
+    const file = e.currentTarget.files[0];
+
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+
+        reader.onload = (event) => {
+            resolve(event.target.result);
+        };
+
+        reader.onerror = (err) => {
+            reject(err);
+        };
+
+        reader.readAsDataURL(file);
+        
+    }).then(function(result: string) {
+      var img: HTMLImageElement;
+      img = document.createElement("img");
+      img.src = URL.createObjectURL(file);
+      img.onload = function () {
+      
+      if (img.width && img.height > 200) {
+        setValidImage(false);
+
+      }
+      else {
+        const regex = /data:.*base64,/
+        setAvatar( result.replace(regex,""))
+        setValidImage(true)
+       }
+    };
+      
+   });;
+}
+
+  const saveAvatar = (event) => {
+     readFileDataAsBase64(event);
   }
+
+  const handleUpdateUserSuccess = (user: any) => {
+    dispatch(updateUser(user, enqueueSnackbar));
+  }
+
+  useEffect(() => {
+    setAvatar(user.avatar);
+    setActivated(user.activated);
+   }, [user]);
 
   return (
 
@@ -133,10 +163,17 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
         authorities: user.authorities,
         submit: null
       }}
+      enableReinitialize
       validationSchema={Yup.object().shape({
         login: Yup.string()
           .max(255)
-          .required(t('The username field is required')),
+          .required(t('The Login field is required'))
+          .test('Unique Login','Login already in use', 
+              function(value){return new Promise((resolve, reject) => {
+                  axiosInt.get('/api/admin/users/check/login/'+ value)
+                  .then(res => {if(res?.data.id === user.id || res?.data.id === undefined ){resolve(true)} resolve(false)})
+              })}
+           ),
         firstName: Yup.string()
           .max(255)
           .required(t('The first name field is required')),
@@ -147,18 +184,26 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
           .email(t('The email provided should be a valid email address'))
           .max(255)
           .required(t('The email field is required'))
+          .test('Unique Email','Email already in use', 
+              function(value){return new Promise((resolve, reject) => {
+                  axiosInt.get('/api/admin/users/check/email/'+ value)
+                  .then(res => {if(res?.data.id === user.id || res?.data.id === undefined ){resolve(true)} resolve(false)})
+              })}
+          ),
+        avatar: Yup.string()
+           .test('len', 'Max size is 200x200  pixels', val => validImage === true)
       })}
 
 
       onSubmit={async (
         _values,
-        { resetForm, setErrors, setStatus, setSubmitting }
+        { setErrors, setStatus, setSubmitting }
       ) => {
         try {
-          console.log("In EditProfileTab.tsx: onSubmit")
           await wait(1000);
-          //   resetForm();
           setStatus({ success: true });
+          _values.avatar=avatar;
+          _values.activated=activated;
           handleUpdateUserSuccess(_values);
         } catch (err) {
           console.error(err);
@@ -308,18 +353,21 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
                         flexDirection="column"
                         mt={3}
                       >
+                                                <Typography  color='error'>{errors.avatar}</Typography>
+
                         <AvatarWrapper>
                           <Avatar
                             variant="rounded"
                             // alt={user.name}
-                            src={`data:image/jpg;base64,${values.avatar}`}
+                            src={`data:image/jpg;base64,${avatar}`}
                           />
                           <ButtonUploadWrapper>
                             <Input
-                              accept="image/*"
+                              accept="image/jpg,image/jpeg"
                               id="icon-button-file"
-                              name="icon-button-file"
+                              name="avatar"
                               type="file"
+                              onChange ={(event) => {saveAvatar(event)}}
                             />
                             <label htmlFor="icon-button-file">
                               <IconButton component="span" color="primary">
@@ -349,8 +397,8 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
                             {t('Active User')}
                           </Typography>
                           <Switch
-                            checked={user.activated}
-                            onChange={handleChange}
+                            checked={activated}
+                            onChange={handleChangeActivated}
                             name="activated"
                             color="primary"
                           />

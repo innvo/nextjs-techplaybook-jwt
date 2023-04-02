@@ -59,6 +59,8 @@ import { useRouter } from 'next/router';
 import Moment from 'react-moment';
 import 'moment-timezone';
 import Link from 'next/link';
+import { useDispatch } from '@/store';
+import { deleteUser } from '@/slices/user';
 
 
 const DialogWrapper = styled(Dialog)(
@@ -228,13 +230,11 @@ const applyPagination = (
 };
 
 const Results: FC<ResultsProps> = ({ users }) => {
-  //ECHASIN Results is the functional component
-  //ALI 20230305
 
   const [selectedItems, setSelectedUsers] = useState<number[]>([]);
   const { t }: { t: any; } = useTranslation();
+  const dispatch= useDispatch();
   const { enqueueSnackbar } = useSnackbar();
-
 
   const tabs = [
     {
@@ -255,6 +255,8 @@ const Results: FC<ResultsProps> = ({ users }) => {
     }
   ];
 
+  const [selectedUser, setSelectedUser] = useState<User>();
+
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
   const [query, setQuery] = useState<string>('');
@@ -263,7 +265,6 @@ const Results: FC<ResultsProps> = ({ users }) => {
   });
   const handleTabsChange = (_event: SyntheticEvent, tabsValue: unknown) => {
     let value = null;
-
 
     if (tabsValue !== 'all') {
       //ECHASIN
@@ -306,8 +307,6 @@ const Results: FC<ResultsProps> = ({ users }) => {
     }
   };
 
-
-
   const handlePageChange = (_event: any, newPage: number): void => {
     setPage(newPage);
   };
@@ -333,36 +332,20 @@ const Results: FC<ResultsProps> = ({ users }) => {
 
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
-  //ECHASIN
   const handleDeleteOneUser = (
-    userId: number): void => {
-    console.log('In Results.tsx: handleDeleteOneUser', userId);
+    user: User): void => {
+      setSelectedUser(user)
+      setOpenConfirmDelete(true);
   }
-
-  const handleConfirmDelete = () => {
-    console.log('handleConfirmDelete');
-    console.log('openConfirmDelete', openConfirmDelete);
-    setOpenConfirmDelete(true);
-  };
 
   const closeConfirmDelete = () => {
     setOpenConfirmDelete(false);
   };
 
   const handleDeleteCompleted = () => {
-    console.log('handleDeletedCompleted')
     setOpenConfirmDelete(false);
-
-    enqueueSnackbar(t('The user account has been removed'), {
-      variant: 'success',
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'right'
-      },
-      TransitionComponent: Zoom
-    });
+    dispatch(deleteUser(selectedUser.id, enqueueSnackbar)) ;
   };
-
 
   return (
     <>
@@ -536,17 +519,22 @@ const Results: FC<ResultsProps> = ({ users }) => {
                           <TableCell align="center">
                             <Typography noWrap>
                               <Tooltip title={t('View')} arrow>
-                                <IconButton
-                                  href={'/management/users/single/' + user.id}
+
+                                <Link
+                                  href={'/techplaybook/user-management/profile/' + user.id}>
+                                  <IconButton
                                   color="primary"
-                                >
+                                  >
                                   <LaunchTwoToneIcon fontSize="small" />
                                 </IconButton>
+                                </Link>
+
+                               
                               </Tooltip>
                               <Tooltip title={t('Delete')} arrow>
                                 <IconButton
                                   // onClick={handleConfirmDelete}
-                                  onClick={(event) => handleDeleteOneUser(user.id)}
+                                  onClick={(event) => {handleDeleteOneUser(user)}}
                                   color="primary"
                                 >
                                   <DeleteTwoToneIcon fontSize="small" />
@@ -835,7 +823,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
             }}
             variant="h3"
           >
-            {t('Are you sure you want to permanently delete this user account')}
+            {t('Are you sure you want to permanently delete user ')} {selectedUser?.firstName} {selectedUser?.lastName}
             ?
           </Typography>
 
