@@ -35,13 +35,13 @@ const menuItems: MenuItems[] = [
       {
         name: 'Teammates',
         icon: BackupTableTwoToneIcon,
-        link: '/techplaybook/teammates',
+        link: '/techplaybook/teammate',
         badgeTooltip: 'Add, update, and delete teammates'
       },
       {
         name: 'Projects',
         icon: BackupTableTwoToneIcon,
-        link: '/techplaybook/projects',
+        link: '/techplaybook/project',
         badgeTooltip: 'Add, update, and delete projects'
       }
     ]
