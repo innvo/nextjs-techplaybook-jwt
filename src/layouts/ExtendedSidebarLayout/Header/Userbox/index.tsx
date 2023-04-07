@@ -15,7 +15,8 @@ import {
   Popover,
   Typography,
   styled,
-  useTheme
+  useTheme,
+  Link
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
@@ -253,7 +254,7 @@ function HeaderUserbox() {
         />
         <MenuListWrapperPrimary disablePadding>
           <MenuItem>
-            <ListItemText
+            <ListItemText              
               primaryTypographyProps={{
                 variant: 'h5'
               }}
@@ -271,7 +272,7 @@ function HeaderUserbox() {
               primaryTypographyProps={{
                 variant: 'h5'
               }}
-              primary={t('Profile settings')}
+              primary={t('My Profile Settings')}
             />
             <Box display="flex" alignItems="center">
               <DotLegend

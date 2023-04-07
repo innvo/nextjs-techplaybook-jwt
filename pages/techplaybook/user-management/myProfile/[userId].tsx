@@ -4,14 +4,14 @@ import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
 import { Authenticated } from 'src/components/Authenticated';
 import Footer from 'src/components/Footer';
 import { Box, Tabs, Tab, Grid, styled } from '@mui/material';
-import type { User } from 'src/models/user';
 import { useTranslation } from 'react-i18next';
-import EditProfileTab from 'src/content/techplaybook/user-management/profile/EditProfileTab';
+import EditMyProfileTab from 'src/content/techplaybook/user-management/myProfile/EditMyProfileTab';
 import NotificationsTab from 'src/content/Management/Users/single/NotificationsTab';
 import SecurityTab from 'src/content/Management/Users/single/SecurityTab';
 import { useRouter } from 'next/router';
 import { getUser } from '@/slices/user';
-import { useDispatch, useSelector } from '@/store';
+import { useDispatch } from '@/store';
+import { useAuth } from '@/hooks/useAuth';
 
 const TabsWrapper = styled(Tabs)(
   () => `
@@ -28,13 +28,13 @@ function ManagementUsersView() {
   const { t }: { t: any } = useTranslation();
   const dispatch= useDispatch();  
 
-  const user = useSelector((state) => state.user.currentUser);
+  const { user }  = useAuth();
+
 
   const [currentTab, setCurrentTab] = useState<string>('edit_profile');
 
   const tabs = [
     { value: 'edit_profile', label: t('Edit Profile') },
-    { value: 'notifications', label: t('Notifications') },
     { value: 'security', label: t('Passwords/Security') }
   ];
 
@@ -106,7 +106,8 @@ function ManagementUsersView() {
           <Grid item xs={12}>
             {/* //ECHASIN */}
             {/* {currentTab === 'activity' && <ActivityTab />} */}
-            {currentTab === 'edit_profile' && <EditProfileTab user={user}/>}
+            {currentTab === 'edit_profile' && <EditMyProfileTab user={user}/>}
+            {currentTab === 'notifications' && <NotificationsTab />}
             {currentTab === 'security' && <SecurityTab />}
           </Grid>
         </Grid>
