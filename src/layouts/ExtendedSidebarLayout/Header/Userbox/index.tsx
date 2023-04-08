@@ -16,7 +16,8 @@ import {
   Typography,
   styled,
   useTheme,
-  Link
+  Link,
+  ListItemButton
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
@@ -123,6 +124,11 @@ function HeaderUserbox() {
 
   const ref = useRef<any>(null);
   const [isOpen, setOpen] = useState<boolean>(false);
+
+  const myProfileRedirect= (): void => {
+    router.push('/techplaybook/user-management/myProfile/' + user?.id);
+    handleClose();
+  };
 
   const handleOpen = (): void => {
     setOpen(true);
@@ -267,7 +273,9 @@ function HeaderUserbox() {
               }}
             />
           </MenuItem>
-          <MenuItem>
+          <MenuItem
+             onClick={myProfileRedirect}
+           >
             <ListItemText
               primaryTypographyProps={{
                 variant: 'h5'
