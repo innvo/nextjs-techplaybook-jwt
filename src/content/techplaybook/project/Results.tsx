@@ -61,6 +61,24 @@ import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import { useSnackbar } from 'notistack';
 import { formatDistance, format } from 'date-fns';
 import Text from 'src/components/Text';
+import { responseSymbol } from 'next/dist/server/web/spec-compliant/fetch-event';
+
+//------------------- ECHASIN
+import { DataGridPro, GridRow, GridColumnHeaders, GridColDef } from '@mui/x-data-grid-pro';//ECHASIN
+import {
+  DataGridPremium,
+  GridRenderCellParams,
+  GridToolbar,
+  useGridApiRef,
+  useKeepGroupedColumnsHidden,
+} from '@mui/x-data-grid-premium';
+import { useDemoData } from '@mui/x-data-grid-generator';
+import WarningIcon from "@material-ui/icons/Warning";
+import CheckCircleIcon from "@material-ui/icons/CheckCircle";
+import Chip, { ChipProps } from "@material-ui/core/Chip";
+import { red, blue } from "@material-ui/core/colors";
+
+//----------------- ECHASIN
 
 const DialogWrapper = styled(Dialog)(
   () => `
@@ -129,6 +147,7 @@ const IconButtonError = styled(IconButton)(
      }
 `
 );
+
 
 interface ResultsProps {
   projects: Project[];
@@ -213,7 +232,75 @@ const applyPagination = (
   return projects.slice(page * limit, page * limit + limit);
 };
 
+//ECHASIN
+
+
+
 const Results: FC<ResultsProps> = ({ projects }) => {
+  console.log("In project>Results.tsx") //ECHASIN
+  console.log("projects:", projects) //ECHASIN
+
+  //----------------------------------------------------
+  // DATA GRID ECHASIN
+  // const columns: GridColDef[] = [
+  //   { field: 'id', headerName: 'ID', width: 90 },
+  //   {
+  //     field: 'name',
+  //     headerName: 'Name',
+  //     width: 150,
+  //     editable: true,
+  //   },
+  //   {
+  //     field: "status",
+  //     headerName: "Status",
+  //     flex: 1,
+  //     minWidth: 100,
+  //     description: "Status",
+  //     headerAlign: "left",
+  //     renderCell: (params) => {
+  //       return <Chip variant="outlined" size="small" {...getChipProps(params)} />;
+  //     }
+  //   },
+  //   {
+  //     field: "status1",
+  //     headerName: "Status1",
+  //     flex: 1,
+  //     minWidth: 100,
+  //     description: "Status1",
+  //     headerAlign: "left",
+  //     editable: true,
+  //     renderCell: () => {
+  //       return <Button
+  //         variant="contained"
+  //       >
+  //         {t('Cancel')}
+  //       </Button>;
+  //     }
+  //   },
+  // ];
+
+  // function getChipProps(params: GridRenderCellParams): ChipProps {
+  //   if (params.value === "ACTIVE") {
+  //     return {
+  //       // icon: <WarningIcon style={{ fill: red[500] }} />,
+  //       label: params.value,
+  //       style: {
+  //         borderColor: red[500]
+  //       }
+  //     };
+  //   } else {
+  //     return {
+  //       icon: <CheckCircleIcon style={{ fill: blue[500] }} />,
+  //       label: params.value,
+  //       style: {
+  //         borderColor: blue[500]
+  //       }
+  //     };
+  //   }
+  // }
+  //----------------------------------------------------
+
+
   const [selectedItems, setSelectedProjects] = useState<string[]>([]);
   const { t }: { t: any } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
@@ -251,9 +338,15 @@ const Results: FC<ResultsProps> = ({ projects }) => {
     }
   ];
 
+  /**
+   * Search for project by name of records data table
+   * @param {string} project name  (event.target.value)
+   */
   const handleQueryChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    console.log("in handleQueryChange")
     event.persist();
     setQuery(event.target.value);
+    console.log("setQuery(event.target.value):", event.target.value)
   };
 
   const handleStatusChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -316,7 +409,14 @@ const Results: FC<ResultsProps> = ({ projects }) => {
 
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
 
+
+
+  /**
+ * Deletes Project using Dialog Window
+ * @param {number} project_id
+ */
   const handleConfirmDelete = () => {
+    console.log("in handleConfirmDelete")
     setOpenConfirmDelete(true);
   };
 
@@ -339,6 +439,22 @@ const Results: FC<ResultsProps> = ({ projects }) => {
 
   return (
     <>
+      {/* <p>DATA GRID SECTION</p>
+      <Box sx={{ height: 520, width: '100%' }}>
+        <DataGridPremium
+          rows={projects}
+          columns={columns}
+          rowHeight={38}
+          checkboxSelection
+          disableRowSelectionOnClick
+          slots={{ toolbar: GridToolbar }}
+          pagination
+        />
+      </Box>
+
+    </> */}
+
+
       {/* ECHASIN */}
       <p><b>SEARCH SECTION</b></p>
       <Card
@@ -437,7 +553,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
 
       {toggleView === 'table_view' && (
         <Card>
-           {/* ECHASIN */}
+          {/* ECHASIN */}
           <p><b>RESULTS TABLE SECTION</b></p>
           {selectedBulkActions && (
             <Box p={2}>
@@ -467,13 +583,13 @@ const Results: FC<ResultsProps> = ({ projects }) => {
                 rowsPerPageOptions={[5, 10, 15]}
               />
             </Box>
-            
+
           )}
           <Divider />
 
           {paginatedProjects.length === 0 ? (
             <>
-              
+
               <Typography
                 sx={{
                   py: 10
@@ -490,7 +606,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
             </>
           ) : (
             <>
-             
+
               <TableContainer>
                 <Table>
                   <TableHead>
@@ -536,7 +652,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
                               {project.name}
                             </Typography>
                           </TableCell>
-                          <TableCell>
+                          {/* <TableCell>
                             {project.tags.map((value) => {
                               return (
                                 <span key={value}>
@@ -544,8 +660,8 @@ const Results: FC<ResultsProps> = ({ projects }) => {
                                 </span>
                               );
                             })}
-                          </TableCell>
-                          <TableCell>
+                          </TableCell> */}
+                          {/* <TableCell>
                             <Typography
                               noWrap
                               variant="subtitle1"
@@ -567,8 +683,8 @@ const Results: FC<ResultsProps> = ({ projects }) => {
                               {t('Started')}:{' '}
                               {format(project.dueDate, 'MMMM dd yyyy')}
                             </Typography>
-                          </TableCell>
-                          <TableCell>
+                          </TableCell> */}
+                          {/* <TableCell>
                             <Box display="flex" justifyContent="flex-start">
                               {project.memberIds.length > 0 && (
                                 <AvatarGroup max={4}>
@@ -592,8 +708,8 @@ const Results: FC<ResultsProps> = ({ projects }) => {
                                 </AvatarGroup>
                               )}
                             </Box>
-                          </TableCell>
-                          <TableCell align="center">
+                          </TableCell> */}
+                          {/* <TableCell align="center">
                             <Box
                               sx={{
                                 minWidth: 175
@@ -614,12 +730,12 @@ const Results: FC<ResultsProps> = ({ projects }) => {
                                 {project.progress}%
                               </Typography>
                             </Box>
-                          </TableCell>
-                          <TableCell>
+                          </TableCell> */}
+                          {/* <TableCell>
                             <Typography noWrap>
                               {getProjectStatusLabel(project.status)}
                             </Typography>
-                          </TableCell>
+                          </TableCell> */}
                           <TableCell align="center">
                             <Typography noWrap>
                               <Tooltip title={t('View')} arrow>

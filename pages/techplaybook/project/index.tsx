@@ -58,7 +58,7 @@ function Projects() {
         spacing={3}
       >
         <Grid item xs={12}>
-          {/* <Results projects={projects} /> */}
+          <Results projects={projects} />
         </Grid>
       </Grid>
       <Footer />

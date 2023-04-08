@@ -9,13 +9,13 @@ export interface Member {
 export interface Project {
   id: string;
   name: string;
-  screenshot: string;
-  description: string;
-  tags: string[];
-  startDate: number;
-  dueDate: number;
-  memberIds: Member[];
-  progress: number;
-  status: ProjectStatus;
-  [key: string]: any;
+  // screenshot: string;
+  // description: string;
+  // tags: string[];
+  // startDate: number;
+  // dueDate: number;
+  // memberIds: Member[];
+  // progress: number;
+  // status: ProjectStatus;
+  // [key: string]: any;
 }
