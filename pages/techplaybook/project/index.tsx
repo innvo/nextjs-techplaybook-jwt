@@ -12,28 +12,33 @@ import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import { Grid } from '@mui/material';
 import { useRefMounted } from 'src/hooks/useRefMounted';
 import type { Project } from 'src/models/project';
-import { projectsApi } from 'src/mocks/projects';
+// import { projectsApi } from 'src/mocks/projects'; //ECHASIN
 import Results from 'src/content/techplaybook/project/Results';
 
-function ManagementProjects() {
+import axiosInt from '@/utils/axios';//ECHASIN
+
+
+function Projects() {
+  console.log("In Project.index.ts"); //ECHASIN
   const isMountedRef = useRefMounted();
   const [projects, setProjects] = useState<Project[]>([]);
 
-  const getProjects = useCallback(async () => {
-    try {
-      const response = await projectsApi.getProjects();
-
-      if (isMountedRef()) {
-        setProjects(response);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }, [isMountedRef]);
-
   useEffect(() => {
     getProjects();
-  }, [getProjects]);
+  }, []);
+
+  const getProjects = useCallback(async () => {
+    try {
+      const response = await axiosInt.get('/api/projects');
+
+      if (isMountedRef()) {
+        setProjects(response.data);
+        console.log('response.data:', response.data)
+      }
+    } catch (err) {
+      console.error('Error getting projects:', err);
+    }
+  }, [isMountedRef]);
 
   return (
     <>
@@ -53,7 +58,7 @@ function ManagementProjects() {
         spacing={3}
       >
         <Grid item xs={12}>
-          <Results projects={projects} />
+          {/* <Results projects={projects} /> */}
         </Grid>
       </Grid>
       <Footer />
@@ -61,10 +66,12 @@ function ManagementProjects() {
   );
 }
 
-ManagementProjects.getLayout = (page) => (
+Projects.getLayout = (page) => (
   <Authenticated>
     <ExtendedSidebarLayout>{page}</ExtendedSidebarLayout>
   </Authenticated>
 );
 
-export default ManagementProjects;
+export default Projects;
+
+
