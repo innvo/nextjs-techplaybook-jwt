@@ -6,8 +6,7 @@ import Footer from 'src/components/Footer';
 import { Box, Tabs, Tab, Grid, styled } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import EditMyProfileTab from 'src/content/techplaybook/user-management/myProfile/EditMyProfileTab';
-import NotificationsTab from 'src/content/Management/Users/single/NotificationsTab';
-import SecurityTab from 'src/content/Management/Users/single/SecurityTab';
+import SecurityTab from 'src/content/techplaybook/user-management/myProfile/SecurityTab';
 import { useRouter } from 'next/router';
 import { getUser } from '@/slices/user';
 import { useDispatch } from '@/store';
@@ -107,8 +106,7 @@ function ManagementUsersView() {
             {/* //ECHASIN */}
             {/* {currentTab === 'activity' && <ActivityTab />} */}
             {currentTab === 'edit_profile' && <EditMyProfileTab user={user}/>}
-            {currentTab === 'notifications' && <NotificationsTab />}
-            {currentTab === 'security' && <SecurityTab />}
+            {currentTab === 'security' && <SecurityTab user={user}/>}
           </Grid>
         </Grid>
       </Box>

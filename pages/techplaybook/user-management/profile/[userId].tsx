@@ -4,11 +4,9 @@ import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
 import { Authenticated } from 'src/components/Authenticated';
 import Footer from 'src/components/Footer';
 import { Box, Tabs, Tab, Grid, styled } from '@mui/material';
-import type { User } from 'src/models/user';
 import { useTranslation } from 'react-i18next';
 import EditProfileTab from 'src/content/techplaybook/user-management/profile/EditProfileTab';
-import NotificationsTab from 'src/content/Management/Users/single/NotificationsTab';
-import SecurityTab from 'src/content/Management/Users/single/SecurityTab';
+import SecurityTab from    'src/content/techplaybook/user-management/profile/SecurityTab';
 import { useRouter } from 'next/router';
 import { getUser } from '@/slices/user';
 import { useDispatch, useSelector } from '@/store';
@@ -34,7 +32,6 @@ function ManagementUsersView() {
 
   const tabs = [
     { value: 'edit_profile', label: t('Edit Profile') },
-    { value: 'notifications', label: t('Notifications') },
     { value: 'security', label: t('Passwords/Security') }
   ];
 
@@ -107,7 +104,7 @@ function ManagementUsersView() {
             {/* //ECHASIN */}
             {/* {currentTab === 'activity' && <ActivityTab />} */}
             {currentTab === 'edit_profile' && <EditProfileTab user={user}/>}
-            {currentTab === 'security' && <SecurityTab />}
+            {currentTab === 'security' && <SecurityTab user={user}/>}
           </Grid>
         </Grid>
       </Box>

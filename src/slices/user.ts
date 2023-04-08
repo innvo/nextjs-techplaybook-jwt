@@ -137,6 +137,34 @@ export const updateUser =
     }
 };
 
+export const changePassword =
+  (user: User, enqueueSnackbar): AppThunk =>
+  async (dispatch): Promise<void> => {
+    console.log('In user.ts:updateUser');
+    try {
+      const data = await axiosInt.post('/api/account/change-password', user)
+      dispatch(slice.actions.getUsers(data.data));
+      enqueueSnackbar('The user password was updated successfully', {
+        variant: 'success',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        },
+        TransitionComponent: Zoom
+      });
+    
+    } catch (err) {
+      enqueueSnackbar('Error in updating the password', {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        },
+        TransitionComponent: Zoom
+      });
+    }
+};
+
 export const deleteUser =
   (userId: number, enqueueSnackbar): AppThunk =>
   async (dispatch): Promise<void> => {

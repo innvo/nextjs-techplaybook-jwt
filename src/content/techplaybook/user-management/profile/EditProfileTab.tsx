@@ -12,7 +12,9 @@ import {
   styled,
   Switch,
   Select,
-  DialogActions
+  DialogActions,
+  FormControl,
+  InputLabel
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
@@ -301,10 +303,15 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
                           />
                         </Grid>
                         <Grid item xs={12}>
+                        <FormControl sx={{ m: 1, minWidth: 120, maxWidth: 300 }}>
+                        <InputLabel shrink htmlFor="select-multiple-native">
+                          {t('Language')}
+                        </InputLabel>
                           <Select
                             native
                             fullWidth
                             onBlur={handleBlur}
+                            label={t('Language')}
                             onChange={handleChange}
                             value={values.langKey}
                             name='langKey'
@@ -319,12 +326,18 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
                               Spanish
                             </option>
                           </Select>
+                          </FormControl>
                         </Grid>
                         <Grid item xs={12} md={12}>
+                        <FormControl sx={{ m: 1, minWidth: 120, maxWidth: 300 }}>
+                          <InputLabel shrink htmlFor="select-multiple-native">
+                          {t('Roles')}
+                          </InputLabel>
                           <Select
                             multiple
                             fullWidth
                             native
+                            label={t('ROles')}
                             onBlur={handleBlur}
                             onChange={handleChange}
                             value={values.authorities}
@@ -341,7 +354,7 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
                               USER
                             </option>
                           </Select>
-
+                          </FormControl>
                         </Grid>
                       </Grid>
                     </Grid>
