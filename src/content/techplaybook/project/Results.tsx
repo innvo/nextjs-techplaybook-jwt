@@ -191,9 +191,27 @@ const applyFilters = (
   filters: Filters
 ): Project[] => {
   return projects.filter((project) => {
+    console.log("In applyfilters:");
+    console.log("filters:", filters);
+    console.log("filters.status:", filters.status);
+    console.log("query:", query)
+    console.log("query.length",query.length)
+    
     let matches = true;
 
+    if (filters){
+      console.log("In filters")
+    }
+
+    if (filters.status == 'completed') {
+      console.log("completed");
+    }
+
+
+    
+
     if (query) {
+      console.log("In query")
       const properties = ['name'];
       let containsQuery = false;
 
@@ -203,7 +221,7 @@ const applyFilters = (
         }
       });
 
-      if (filters.status && project.status !== filters.status) {
+     if (filters.status && project.projectstatus.name !== filters.status) {
         matches = false;
       }
 
@@ -214,7 +232,6 @@ const applyFilters = (
 
     Object.keys(filters).forEach((key) => {
       const value = filters[key];
-
       if (value && project[key] !== value) {
         matches = false;
       }
@@ -311,6 +328,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
   const [filters, setFilters] = useState<Filters>({
     status: null
   });
+  const [tags, setTags] = useState<string[]>([]);
 
   const projectTags = [
     { title: 'Development' },
@@ -349,11 +367,23 @@ const Results: FC<ResultsProps> = ({ projects }) => {
     console.log("setQuery(event.target.value):", event.target.value)
   };
 
+  const handleTagChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    console.log("in handleTagChange")
+  };
+
   const handleStatusChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    console.log("In handleStatusChange")
     let value = null;
+  
+
+    if (e.target.value == 'Completed') {
+      console.log("Completed")
+      value = e.target.value;
+    }
 
     if (e.target.value !== 'all') {
       value = e.target.value;
+      console.log("value:", value)
     }
 
     setFilters((prevFilters) => ({
@@ -494,6 +524,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
                 }}
                 limitTags={2}
                 // @ts-ignore
+                onChange={handleTagChange}
                 getOptionLabel={(option) => option.title}
                 options={projectTags}
                 renderInput={(params) => (
@@ -731,6 +762,9 @@ const Results: FC<ResultsProps> = ({ projects }) => {
                               </Typography>
                             </Box>
                           </TableCell> */}
+                          <TableCell>
+                            {project.projectstatus.name}
+                          </TableCell>
                           {/* <TableCell>
                             <Typography noWrap>
                               {getProjectStatusLabel(project.status)}

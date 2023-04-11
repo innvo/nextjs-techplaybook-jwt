@@ -1,3 +1,5 @@
+import {Projectstatus} from  './projectstatus';
+
 export type ProjectStatus = 'not_started' | 'in_progress' | 'completed';
 
 export interface Member {
@@ -9,6 +11,7 @@ export interface Member {
 export interface Project {
   id: string;
   name: string;
+  projectstatus?: Projectstatus
   // screenshot: string;
   // description: string;
   // tags: string[];
