@@ -77,6 +77,9 @@ import WarningIcon from "@material-ui/icons/Warning";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import Chip, { ChipProps } from "@material-ui/core/Chip";
 import { red, blue } from "@material-ui/core/colors";
+import { options } from 'numeral';
+import { getTags } from '@/slices/mailbox';
+import { constrainPoint } from '@fullcalendar/common';
 
 //----------------- ECHASIN
 
@@ -329,6 +332,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
     status: null
   });
   const [tags, setTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState([]); //ECHASIN
 
   const projectTags = [
     { title: 'Development' },
@@ -367,9 +371,37 @@ const Results: FC<ResultsProps> = ({ projects }) => {
     console.log("setQuery(event.target.value):", event.target.value)
   };
 
-  const handleTagChange = (event: ChangeEvent<HTMLInputElement>): void => {
+  const handleTagChange = (event: ChangeEvent<{}>, value: any) => {
     console.log("in handleTagChange")
+    console.log("options:", options)
+    console.log("value:", value)
+    event.persist();
+    setSelectedTags(value);
+    console.log("event.target.value:", event.target)
+   
   };
+
+  const handleTag1Change = (event, value) => {
+    setSelectedTags(value);
+    console.log('XXXX', value);
+  };
+
+
+  const handleSelect = event => {
+    console.log("in handleSelect")
+    //const selected = Array.from(event.target.selectedOptions, option => option.title);
+
+    // setSelectedOptions(selected);
+    //console.log("selected:", selected);
+    console.log("options:", options);
+    // console.log("getOptionLabel:", getOptionLabel )
+  };
+
+
+
+
+
+
 
   const handleStatusChange = (e: ChangeEvent<HTMLInputElement>): void => {
     console.log("In handleStatusChange")
@@ -422,6 +454,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
   };
 
   const filteredProjects = applyFilters(projects, query, filters);
+  console.log("filters:", filters)
   const paginatedProjects = applyPagination(filteredProjects, page, limit);
   const selectedBulkActions = selectedItems.length > 0;
   const selectedSomeProjects =
@@ -487,6 +520,55 @@ const Results: FC<ResultsProps> = ({ projects }) => {
 
       {/* ECHASIN */}
       <p><b>SEARCH SECTION</b></p>
+      {/* < div>
+      <select multiple={true} onChange={handleSelect}>
+        <option value="apple">Apple</option>
+        <option value="orange">Orange</option>
+        <option value="banana">Banana</option>
+        <option value="grapes">Grapes</option>
+        <option value="watermelon">Watermelon</option>
+      </select>
+    </div> */}
+
+<Autocomplete
+      multiple
+      value={selectedTags}
+      onChange={handleTag1Change}
+      options={projectTags}
+      getOptionLabel={(option) => option.title}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          variant="outlined"
+          label="Tags"
+          placeholder="Select tags..."
+        />
+      )}
+    />
+
+    <Box p={1}>
+              <Autocomplete
+                multiple
+                sx={{
+                  m: 0
+                }}
+                limitTags={2}
+                // @ts-ignore
+                onChange={handleSelect}
+                getOptionLabel={(option) => option.title}
+                options={projectTags}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    fullWidth
+                    variant="outlined"
+                    label={t('Tags')}
+                    placeholder={t('Select tags...')}
+                  />
+                )}
+              />
+            </Box>
+
       <Card
         sx={{
           p: 1,
@@ -516,6 +598,10 @@ const Results: FC<ResultsProps> = ({ projects }) => {
             </Box>
           </Grid>
           <Grid item xs={12} sm={6} md={6}>
+            
+     
+            
+            
             <Box p={1}>
               <Autocomplete
                 multiple
@@ -524,9 +610,10 @@ const Results: FC<ResultsProps> = ({ projects }) => {
                 }}
                 limitTags={2}
                 // @ts-ignore
+                value={selectedTags}
                 onChange={handleTagChange}
-                getOptionLabel={(option) => option.title}
                 options={projectTags}
+                getOptionLabel={(option) => option.title}
                 renderInput={(params) => (
                   <TextField
                     {...params}
