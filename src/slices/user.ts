@@ -143,7 +143,6 @@ export const changePassword =
     console.log('In user.ts:updateUser');
     try {
       const data = await axiosInt.post('/api/account/change-password', user)
-      dispatch(slice.actions.getUsers(data.data));
       enqueueSnackbar('The user password was updated successfully', {
         variant: 'success',
         anchorOrigin: {

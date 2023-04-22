@@ -97,7 +97,7 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
 
   const [avatar, setAvatar] =  useState<any>('');
 
-  const [validImage, setValidImage] =  useState<boolean>(false);
+  const [validImage, setValidImage] =  useState<boolean>(true);
 
   function readFileDataAsBase64(e) {
  
@@ -193,6 +193,7 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
               })}
           ),
         avatar: Yup.string()
+           .nullable()
            .test('len', 'Max size is 200x200  pixels', val => validImage === true)
       })}
 
