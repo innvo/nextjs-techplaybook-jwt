@@ -13,8 +13,8 @@ import {
   Switch,
   Select,
   DialogActions,
-  FormControl,
-  InputLabel
+  InputLabel,
+  FormControl
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
@@ -79,7 +79,7 @@ const Input = styled('input')({
   display: 'none'
 });
 
-const EditProfileTab: FC<ResultsProps> = ({ user }) => {
+const EditMyProfileTab: FC<ResultsProps> = ({ user }) => {
 
   const router = useRouter()
  
@@ -97,7 +97,7 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
 
   const [avatar, setAvatar] =  useState<any>('');
 
-  const [validImage, setValidImage] =  useState<boolean>(true);
+  const [validImage, setValidImage] =  useState<boolean>(false);
 
   function readFileDataAsBase64(e) {
  
@@ -193,7 +193,6 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
               })}
           ),
         avatar: Yup.string()
-           .nullable()
            .test('len', 'Max size is 200x200  pixels', val => validImage === true)
       })}
 
@@ -252,6 +251,7 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
                           <TextField
                             error={Boolean(touched.login && errors.login)}
                             fullWidth
+                            disabled={!user?.authorities.includes('ROLE_ADMIN')}
                             helperText={touched.login && errors.login}
                             label={t('Login')}
                             name="login"
@@ -311,8 +311,8 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
                           <Select
                             native
                             fullWidth
-                            onBlur={handleBlur}
                             label={t('Language')}
+                            onBlur={handleBlur}
                             onChange={handleChange}
                             value={values.langKey}
                             name='langKey'
@@ -327,18 +327,19 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
                               Spanish
                             </option>
                           </Select>
-                          </FormControl>
+                          </FormControl> 
                         </Grid>
                         <Grid item xs={12} md={12}>
                         <FormControl sx={{ m: 1, minWidth: 120, maxWidth: 300 }}>
-                          <InputLabel shrink htmlFor="select-multiple-native">
+                        <InputLabel shrink htmlFor="select-multiple-native">
                           {t('Roles')}
-                          </InputLabel>
+                        </InputLabel>
                           <Select
+                            label={t('Roles')}
                             multiple
                             fullWidth
                             native
-                            label={t('ROles')}
+                            disabled={!user?.authorities.includes('ROLE_ADMIN')}
                             onBlur={handleBlur}
                             onChange={handleChange}
                             value={values.authorities}
@@ -355,7 +356,7 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
                               USER
                             </option>
                           </Select>
-                          </FormControl>
+                         </FormControl>
                         </Grid>
                       </Grid>
                     </Grid>
@@ -367,7 +368,7 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
                         flexDirection="column"
                         mt={3}
                       >
-                                                <Typography  color='error'>{errors.avatar}</Typography>
+                        <Typography  color='error'>{errors.avatar}</Typography>
 
                         <AvatarWrapper>
                           <Avatar
@@ -414,6 +415,7 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
                             checked={activated}
                             onChange={handleChangeActivated}
                             name="activated"
+                            disabled={!user?.authorities.includes('ROLE_ADMIN')}
                             color="primary"
                           />
                         </Box>
@@ -460,7 +462,7 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
                     disabled={Boolean(errors.submit) || isSubmitting}
                     variant="contained"
                   >
-                    {t('Update user')}
+                    {t('Update My Profile')}
                   </Button>
                 </DialogActions>
               </Card>
@@ -472,4 +474,4 @@ const EditProfileTab: FC<ResultsProps> = ({ user }) => {
   );
 }
 
-export default EditProfileTab;
+export default EditMyProfileTab;

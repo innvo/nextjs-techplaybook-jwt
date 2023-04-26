@@ -5,11 +5,12 @@ import { Authenticated } from 'src/components/Authenticated';
 import Footer from 'src/components/Footer';
 import { Box, Tabs, Tab, Grid, styled } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import EditProfileTab from 'src/content/techplaybook/user-management/profile/EditProfileTab';
-import SecurityTab from    'src/content/techplaybook/user-management/profile/SecurityTab';
+import EditMyProfileTab from 'src/content/techplaybook/user-management/myProfile/EditMyProfileTab';
+import SecurityTab from 'src/content/techplaybook/user-management/myProfile/SecurityTab';
 import { useRouter } from 'next/router';
 import { getUser } from '@/slices/user';
-import { useDispatch, useSelector } from '@/store';
+import { useDispatch } from '@/store';
+import { useAuth } from '@/hooks/useAuth';
 
 const TabsWrapper = styled(Tabs)(
   () => `
@@ -26,7 +27,8 @@ function ManagementUsersView() {
   const { t }: { t: any } = useTranslation();
   const dispatch= useDispatch();  
 
-  const user = useSelector((state) => state.user.currentUser);
+  const { user }  = useAuth();
+
 
   const [currentTab, setCurrentTab] = useState<string>('edit_profile');
 
@@ -103,7 +105,7 @@ function ManagementUsersView() {
           <Grid item xs={12}>
             {/* //ECHASIN */}
             {/* {currentTab === 'activity' && <ActivityTab />} */}
-            {currentTab === 'edit_profile' && <EditProfileTab user={user}/>}
+            {currentTab === 'edit_profile' && <EditMyProfileTab user={user}/>}
             {currentTab === 'security' && <SecurityTab user={user}/>}
           </Grid>
         </Grid>

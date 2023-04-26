@@ -5,6 +5,7 @@ import SidebarMenuItem from './item';
 import menuItems, { MenuItem } from './items';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/router';
+import { useAuth } from '@/hooks/useAuth';
 
 const MenuWrapper = styled(Box)(
   ({ theme }) => `
@@ -174,6 +175,7 @@ const reduceChildRoutes = ({
   const key = item.name;
   const partialMatch = path.includes(item.link);
   const exactMatch = path === item.link;
+  const { user }  = useAuth();
 
   if (item.items) {
     ev.push(
@@ -194,17 +196,20 @@ const reduceChildRoutes = ({
       </SidebarMenuItem>
     );
   } else {
-    ev.push(
-      <SidebarMenuItem
-        key={key}
-        active={exactMatch}
-        name={item.name}
-        link={item.link}
-        badge={item.badge}
-        badgeTooltip={item.badgeTooltip}
-        icon={item.icon}
-      />
-    );
+     if (user?.authorities.includes('ROLE_ADMIN')) {
+        ev.push(
+          <SidebarMenuItem
+            key={key}
+            active={exactMatch}
+            name={item.name}
+            link={item.link}
+            badge={item.badge}
+            badgeTooltip={item.badgeTooltip}
+            icon={item.icon}
+          />
+       );
+    }
+    
   }
 
   return ev;

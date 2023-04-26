@@ -96,47 +96,23 @@ class AuthApi1 {
   
   }
 
-
-  async register({ email, name, password }): Promise<string> {
+  async register(user: User): Promise<string> {
     await wait(1000);
 
     return new Promise((resolve, reject) => {
-      try {
-        let user = users.find((_user) => _user.email === email);
-
-        if (user) {
-          reject(new Error('Email address is already in use'));
-          return;
-        }
-
-        user = {
-          id: randomId(),
-          avatar: null,
-          jobtitle: 'Lead Developer',
-          email,
-          username: null,
-          name,
-          password,
-          location: null,
-          role: 'admin',
-          posts: null,
-          coverImg: null,
-          followers: null,
-          description: null
-        };
-
-        users.push(user);
-
-        const accessToken = sign({ userId: user.id }, JWT_SECRET, {
-          expiresIn: JWT_EXPIRES_IN
+      return new Promise((resolve, reject) => {
+        axiosInt.post('/api/register', user ).then(function (response) {
+        //  const data= response.data
+        //  const bearerToken = data.id_token; //Ali
+      //    localStorage.setItem('accessToken',data.id_token)
+          
+       //   resolve(bearerToken); //Ali
+        })
+        .catch(function (error) {
+          console.log(error);
         });
-
-        resolve(accessToken);
-      } catch (err) {
-        console.error(err);
-        reject(new Error('Internal server error'));
-      }
-    });
+     });
+   });
   }
 
   me(accessToken): Promise<User> {

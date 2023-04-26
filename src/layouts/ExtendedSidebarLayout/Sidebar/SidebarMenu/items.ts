@@ -30,6 +30,23 @@ export interface MenuItems {
 
 const menuItems: MenuItems[] = [
   {
+    heading: 'Playbook',
+    items: [
+      {
+        name: 'Teammates',
+        icon: BackupTableTwoToneIcon,
+        link: '/techplaybook/teammate',
+        badgeTooltip: 'Add, update, and delete teammates'
+      },
+      {
+        name: 'Projects',
+        icon: BackupTableTwoToneIcon,
+        link: '/techplaybook/project',
+        badgeTooltip: 'Add, update, and delete projects'
+      }
+    ]
+  }, 
+  {
     heading: 'Techplaybook',
     items: [
       {
@@ -45,6 +62,7 @@ const menuItems: MenuItems[] = [
       }
     ]
   }, 
+  
   //============================= 
   {
     heading: 'General',

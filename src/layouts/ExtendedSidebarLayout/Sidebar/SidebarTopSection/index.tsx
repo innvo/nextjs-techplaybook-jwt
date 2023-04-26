@@ -27,6 +27,7 @@ import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
 
 //ECHASIN
 import type { User } from 'src/models/user';
+import Link from 'next/link';
 
 
 const MenuUserBox = styled(Box)(
@@ -116,22 +117,29 @@ function SidebarTopSection() {
        
         src={`data:image/jpg;base64,${user?.avatar}`}
       >{user?.firstName?.substring(0,1).toUpperCase()}{user?.lastName?.substring(0,1).toUpperCase()}</Avatar>
-      <Typography
-        variant="h4"
-        sx={{
-          color: `${theme.colors.alpha.trueWhite[100]}`
-        }}
-      >
-        {user?.firstName}
-      </Typography>
-      <Typography
-        variant="subtitle1"
-        sx={{
-          color: `${theme.colors.alpha.trueWhite[70]}`
-        }}
-      >
-        {user?.lastName}
-      </Typography>
+      
+      <Link
+          href={'/techplaybook/user-management/myProfile/' + user?.id} >
+             <a style={{ textDecoration: 'none' }}>
+                <Typography
+                  variant="h4"
+                  sx={{
+                    color: `${theme.colors.alpha.trueWhite[100]}`
+                  }}
+                >
+                  {user?.firstName}
+                </Typography>
+
+                <Typography
+                  variant="h4"
+                  sx={{
+                    color: `${theme.colors.alpha.trueWhite[100]}`
+                  }}
+                >
+                    {user?.lastName}
+                </Typography>
+            </a>
+      </Link>
       <IconButton
         size="small"
         sx={{
@@ -199,7 +207,7 @@ function SidebarTopSection() {
             button
           >
             <AccountBoxTwoToneIcon fontSize="small" />
-            <ListItemText primary={t('Profile')} />
+            <ListItemText primary={t('My Profile Settings')} />
           </ListItem>
           <ListItem
             onClick={() => {
