@@ -172,7 +172,25 @@ export const resetPassword =
       await axiosInt.post('/api/account/reset-password/finish', user)
       router.push('/auth/reset-password/success');    
     } catch (err) {
-      enqueueSnackbar('Error in updating the password', {
+      enqueueSnackbar('Error in rest the password', {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        },
+        TransitionComponent: Zoom
+      });
+    }
+};
+
+export const resetPasswordInit =
+  (email: string, enqueueSnackbar): AppThunk =>
+  async (dispatch): Promise<void> => {
+    console.log(email);
+    try {
+      await axiosInt.post('/api/account/reset-password/init', email, { headers: { ['Content-Type']: 'text/plain' } })
+    } catch (err) {
+      enqueueSnackbar('Error in rest the password', {
         variant: 'error',
         anchorOrigin: {
           vertical: 'top',
