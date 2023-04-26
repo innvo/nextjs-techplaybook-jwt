@@ -23,11 +23,13 @@ export const RegisterJWT: FC = (props) => {
   const { t }: { t: any } = useTranslation();
   const router = useRouter();
 
+
   const formik = useFormik({
     initialValues: {
       email: '',
-      name: '',
+      login: '',
       password: '',
+      confirmPassword: '',
       terms: false,
       submit: null
     },
@@ -36,11 +38,15 @@ export const RegisterJWT: FC = (props) => {
         .email(t('The email provided should be a valid email address'))
         .max(255)
         .required(t('The email field is required')),
-      name: Yup.string().max(255).required(t('The name field is required')),
+        login: Yup.string().max(255).required(t('The login field is required')),
       password: Yup.string()
         .min(8)
         .max(255)
         .required(t('The password field is required')),
+      confirmPassword: Yup.string()
+        .max(255)
+        .required(t('The confirm password field is required'))
+        .oneOf([Yup.ref('password')], 'Passwords does not match'),  
       terms: Yup.boolean().oneOf(
         [true],
         t('You must agree to our terms and conditions')
@@ -48,8 +54,8 @@ export const RegisterJWT: FC = (props) => {
     }),
     onSubmit: async (values, helpers): Promise<void> => {
       try {
-        await register(values.email, values.name, values.password);
-
+         register(values);
+        
         if (isMountedRef()) {
           const backTo =
             (router.query.backTo as string) || '/dashboards/reports';
@@ -70,15 +76,15 @@ export const RegisterJWT: FC = (props) => {
   return (
     <form noValidate onSubmit={formik.handleSubmit} {...props}>
       <TextField
-        error={Boolean(formik.touched.name && formik.errors.name)}
+        error={Boolean(formik.touched.login && formik.errors.login)}
         fullWidth
         margin="normal"
-        helperText={formik.touched.name && formik.errors.name}
-        label={t('Name')}
-        name="name"
+        helperText={formik.touched.login && formik.errors.login}
+        label={t('login')}
+        name="login"
         onBlur={formik.handleBlur}
         onChange={formik.handleChange}
-        value={formik.values.name}
+        value={formik.values.login}
         variant="outlined"
       />
       <TextField
@@ -105,6 +111,17 @@ export const RegisterJWT: FC = (props) => {
         onChange={formik.handleChange}
         type="password"
         value={formik.values.password}
+        variant="outlined"
+      />
+      <TextField
+        type='password'
+        error={Boolean(formik.touched.confirmPassword && formik.errors.confirmPassword)}
+        fullWidth
+        helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
+        label={t('Password Confirmation')}
+        name='confirmPassword'
+        onBlur={formik.handleBlur}
+        onChange={formik.handleChange}
         variant="outlined"
       />
       <FormControlLabel
@@ -134,7 +151,7 @@ export const RegisterJWT: FC = (props) => {
         }}
         color="primary"
         startIcon={
-          formik.isSubmitting ? <CircularProgress size="1rem" /> : null
+           <CircularProgress size="1rem" /> 
         }
         disabled={formik.isSubmitting}
         type="submit"

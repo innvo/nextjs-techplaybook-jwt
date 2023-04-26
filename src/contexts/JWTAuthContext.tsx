@@ -190,21 +190,19 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
   };
 
   const register = async (
-    email: string,
-    name: string,
-    password: string
+    newUser: User
   ): Promise<void> => {
-    const accessToken = await authApi1.register({ email, name, password });
-    const user = await authApi1.me(accessToken);
+     await authApi1.register(newUser);
+   // const user = await authApi1.me(accessToken);
 
-    localStorage.setItem('accessToken', accessToken);
+   // localStorage.setItem('accessToken', accessToken);
 
-    dispatch({
-      type: 'REGISTER',
-      payload: {
-        user
-      }
-    });
+   // dispatch({
+    //  type: 'REGISTER',
+     // payload: {
+     //   user
+     // }
+    //});
   };
 
   return (

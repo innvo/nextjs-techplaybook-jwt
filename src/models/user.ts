@@ -8,6 +8,7 @@ export interface User {
   langKey: string;
   jobtitle: string;
   avatar: string;
+  password: string;
   authorities: any[];
   lastModifiedDate: string;
   // jobtitle: string;

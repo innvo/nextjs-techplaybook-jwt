@@ -187,7 +187,7 @@ const applyFilters = (
   query: string,
   filters: Filters
 ): User[] => {
-  return users.filter((user) => {
+  return users?.filter((user) => {
     let matches = true;
 
     if (query) {
