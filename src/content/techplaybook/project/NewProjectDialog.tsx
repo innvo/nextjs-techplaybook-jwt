@@ -1,95 +1,96 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
+import { Formik } from 'formik';
 import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    TextField,
-    Typography
-  } from '@mui/material';
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  Typography
+} from '@mui/material';
+import * as Yup from 'yup';
 
 //   import api from '../services/api';
-  
-  interface NewProjectDialogProps {
-    open: boolean;
-    onClose: () => void;
-  }
-  
-  function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
-    console.log('In src/content/techplaybook/project/NewProjectDialog.tsx')
-    const { t }: { t: any } = useTranslation();
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-  
-    const handleCreate = async () => {
-      try {
-        const response = await api.post('/projects', {
-          name,
-          description,
-        });
-  
-        console.log('Project created:', response.data);
-        setName('');
-        setDescription('');
-        onClose();
-      } catch (error) {
-        console.error('Error creating project:', error);
-      }
-    };
-  
-    return (
-      // <Dialog open={open} onClose={onClose}>
-        <Dialog
-        fullWidth
-        maxWidth="md"
-        open={open}
-        onClose={onClose}
+
+interface NewProjectDialogProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
+  console.log('In src/content/techplaybook/project/NewProjectDialog.tsx')
+  const { t }: { t: any } = useTranslation();
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+
+  const handleCreate = async () => {
+    try {
+      const response = await api.post('/projects', {
+        name,
+        description,
+      });
+
+      console.log('Project created:', response.data);
+      setName('');
+      setDescription('');
+      onClose();
+    } catch (error) {
+      console.error('Error creating project:', error);
+    }
+  };
+
+  return (
+    // <Dialog open={open} onClose={onClose}>
+    <Dialog
+      fullWidth
+      maxWidth="md"
+      open={open}
+      onClose={onClose}
+    >
+      <DialogTitle
+        sx={{
+          p: 3
+        }}
       >
-        <DialogTitle
-          sx={{
-            p: 3
-          }}
-        >
-          <Typography variant="h4" gutterBottom>
-            {t('Create new project')}
-          </Typography>
-          <Typography variant="subtitle2">
-            {t('Use this dialog window to add a new project')}
-          </Typography>
-        </DialogTitle> 
-        {/* <Formik
-          initialValues={{
-            title: '',
-            submit: null
-          }}
-          validationSchema={Yup.object().shape({
-            title: Yup.string()
-              .max(255)
-              .required(t('The title field is required'))
-          })}
-          onSubmit={async (
-            _values,
-            { resetForm, setErrors, setStatus, setSubmitting }
-          ) => {
-            try {
-              await wait(1000);
-              resetForm();
-              setStatus({ success: true });
-              setSubmitting(false);
-              handleCreateProjectSuccess();
-            } catch (err) {
-              console.error(err);
-              setStatus({ success: false });
-              setErrors({ submit: err.message });
-              setSubmitting(false);
-            }
-          }}
-        >
-          {({
+        <Typography variant="h4" gutterBottom>
+          {t('Create new project')}
+        </Typography>
+        <Typography variant="subtitle2">
+          {t('Use this dialog window to add a new project')}
+        </Typography>
+      </DialogTitle>
+      <Formik
+        initialValues={{
+          title: '',
+          submit: null
+        }}
+        validationSchema={Yup.object().shape({
+          title: Yup.string()
+            .max(255)
+            .required(t('The title field is required'))
+        })}
+        onSubmit={async (
+          _values,
+          { resetForm, setErrors, setStatus, setSubmitting }
+        ) => {
+          try {
+            await wait(1000);
+            resetForm();
+            setStatus({ success: true });
+            setSubmitting(false);
+            handleCreateProjectSuccess();
+          } catch (err) {
+            console.error(err);
+            setStatus({ success: false });
+            setErrors({ submit: err.message });
+            setSubmitting(false);
+          }
+        }}
+      >
+        {/* {({
             errors,
             handleBlur,
             handleChange,
@@ -458,10 +459,10 @@ import {
                 </Grid>
               </DialogContent>
             </form>
-          )}
-        </Formik>  */}
-      </Dialog>
-    );
-  }
+          )} */}
+      </Formik>
+    </Dialog>
+  );
+}
 
-  export default  NewProjectDialog;
+export default NewProjectDialog;
