@@ -142,7 +142,7 @@ export const changePassword =
   async (dispatch): Promise<void> => {
     console.log('In user.ts:updateUser');
     try {
-      const data = await axiosInt.post('/api/account/change-password', user)
+      await axiosInt.post('/api/account/change-password', user)
       enqueueSnackbar('The user password was updated successfully', {
         variant: 'success',
         anchorOrigin: {
@@ -152,6 +152,25 @@ export const changePassword =
         TransitionComponent: Zoom
       });
     
+    } catch (err) {
+      enqueueSnackbar('Error in updating the password', {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        },
+        TransitionComponent: Zoom
+      });
+    }
+};
+
+export const resetPassword =
+  (user: User, enqueueSnackbar, router): AppThunk =>
+  async (dispatch): Promise<void> => {
+    console.log('In user.ts:updateUser');
+    try {
+      await axiosInt.post('/api/account/reset-password/finish', user)
+      router.push('/auth/reset-password/success');    
     } catch (err) {
       enqueueSnackbar('Error in updating the password', {
         variant: 'error',
