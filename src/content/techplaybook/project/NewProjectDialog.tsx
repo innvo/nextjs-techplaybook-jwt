@@ -10,20 +10,22 @@ import {
   Avatar,
   Box,
   Button,
+  CircularProgress,
   Dialog,
-  DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
+  Divider,
   ListItem,
   ListItemText,
   Grid,
   styled,
   TextField,
   Typography,
-  useTheme
+  useTheme, 
+  Zoom
 } from '@mui/material';
 import dynamic from 'next/dynamic';
+import { useSnackbar } from 'notistack';
 import * as Yup from 'yup';
 
 //   import api from '../services/api';
@@ -38,6 +40,14 @@ const AvatarWrapper = styled(Avatar)(
   ({ theme }) => `
     background: ${theme.colors.primary.lighter};
     color: ${theme.colors.primary.main};
+    width: ${theme.spacing(7)};
+    height: ${theme.spacing(7)};
+`
+);
+
+const AvatarSuccess = styled(Avatar)(
+  ({ theme }) => `
+    background: ${theme.colors.success.light};
     width: ${theme.spacing(7)};
     height: ${theme.spacing(7)};
 `
@@ -105,11 +115,13 @@ const projectTags = [
   { title: 'Software' }
 ];
 
+
 // Functional Component
 function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
   console.log('In src/content/techplaybook/project/NewProjectDialog.tsx')
   const { t }: { t: any } = useTranslation();
   const theme = useTheme();
+  const { enqueueSnackbar } = useSnackbar();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [value, setValue] = useState<Date | null>(null); //Datepicker
@@ -138,7 +150,7 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
     </ListItem>
   ));
 
-
+// Functions
   const handleCreate = async () => {
     try {
       const response = await api.post('/projects', {
@@ -154,6 +166,21 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
       console.error('Error creating project:', error);
     }
   };
+
+  const handleCreateProjectSuccess = () => {
+    enqueueSnackbar(t('A new project has been created successfully'), {
+      variant: 'success',
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'right'
+      },
+      TransitionComponent: Zoom
+    });
+
+    setOpen(false);
+  };
+
+
 
   return (
     // <Dialog open={open} onClose={onClose}>
@@ -417,7 +444,7 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
                     </>
                   )}
                 </Grid>
-                <Grid
+                {/* <Grid
                   item
                   xs={12}
                   sm={4}
@@ -435,7 +462,7 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
                   >
                     <b>{t('Members')}:</b>
                   </Box>
-                </Grid>
+                </Grid> */}
                 {/* <Grid
                   sx={{
                     mb: `${theme.spacing(3)}`
