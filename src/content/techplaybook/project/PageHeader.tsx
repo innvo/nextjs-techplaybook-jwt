@@ -199,8 +199,6 @@ function PageHeader() {
 
   return (
     <>
-      {/* ECHASIN */}
-      <p><b>PAGEHEADER SECTION</b></p>
       <Grid container justifyContent="space-between" alignItems="center">
         <Grid item>
           <Typography variant="h3" component="h3" gutterBottom>
