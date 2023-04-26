@@ -8,6 +8,8 @@ import 'react-quill/dist/quill.snow.css';
 
 import axiosInt from '@/utils/axios';//ECHASIN
 
+import NewProjectDialog from './NewProjectDialog';
+
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 import {
@@ -177,10 +179,12 @@ function PageHeader() {
   const [value, setValue] = useState<Date | null>(null);
 
   const handleCreateProjectOpen = () => {
+    console.log("In src/content/techplaybook/project/PageHeader.tsx/ handleCreateProjectOpen")
     setOpen(true);
   };
 
   const handleCreateProjectClose = () => {
+    console.log("In src/content/techplaybook/project/PageHeader.tsx/ handleCreateProjectClose")
     setOpen(false);
   };
 
@@ -221,7 +225,10 @@ function PageHeader() {
           </Button>
         </Grid>
       </Grid>
-      <Dialog
+      <NewProjectDialog open={open}
+        onClose={handleCreateProjectClose}>
+      </NewProjectDialog>
+      {/* <Dialog
         fullWidth
         maxWidth="md"
         open={open}
@@ -638,7 +645,7 @@ function PageHeader() {
             </form>
           )}
         </Formik>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 }
