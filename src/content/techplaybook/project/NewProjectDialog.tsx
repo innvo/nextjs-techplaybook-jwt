@@ -15,7 +15,8 @@ import {
     onClose: () => void;
   }
   
-    export default function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
+  function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
+    console.log('In src/content/techplaybook/project/NewProjectDialog.tsx')
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
   
@@ -67,3 +68,5 @@ import {
       </Dialog>
     );
   }
+
+  export default  NewProjectDialog;
