@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import 'react-quill/dist/quill.snow.css';
 import { Formik } from 'formik';
 import CloudUploadTwoToneIcon from '@mui/icons-material/CloudUploadTwoTone';
+import CloseTwoToneIcon from '@mui/icons-material/CloseTwoTone';
+import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
 import DatePicker from '@mui/lab/DatePicker';
 import {
   Autocomplete,
@@ -26,6 +28,7 @@ import {
 } from '@mui/material';
 import dynamic from 'next/dynamic';
 import { useSnackbar } from 'notistack';
+import { wait } from 'src/utils/wait';
 import * as Yup from 'yup';
 
 //   import api from '../services/api';
@@ -117,11 +120,12 @@ const projectTags = [
 
 
 // Functional Component
-function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
+  function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
   console.log('In src/content/techplaybook/project/NewProjectDialog.tsx')
   const { t }: { t: any } = useTranslation();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
+  //const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [value, setValue] = useState<Date | null>(null); //Datepicker
@@ -151,7 +155,7 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
   ));
 
 // Functions
-  const handleCreate = async () => {
+  const handleCreateProject = async () => {
     try {
       const response = await api.post('/projects', {
         name,
@@ -162,6 +166,7 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
       setName('');
       setDescription('');
       onClose();
+  
     } catch (error) {
       console.error('Error creating project:', error);
     }
@@ -177,10 +182,13 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
       TransitionComponent: Zoom
     });
 
-    setOpen(false);
+    // setOpen(false); ECHASIN
   };
 
-
+  const handleCreateProjectCancel = () => {
+    console.log("In src/content/techplaybook/project/NewProjectDialog.tsx/ handleCreateProjectCancel")
+    // setOpen(false); ECHASIN
+  };
 
   return (
     // <Dialog open={open} onClose={onClose}>
@@ -584,6 +592,7 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
                     disabled={Boolean(errors.submit) || isSubmitting}
                     variant="contained"
                     size="large"
+                    onClick={handleCreateProject}
                   >
                     {t('Create project')}
                   </Button>
@@ -591,7 +600,7 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
                     color="secondary"
                     size="large"
                     variant="outlined"
-                    // onClick={handleCreateProjectClose}
+                    onClick={handleCreateProjectCancel}
                   >
                     {t('Cancel')}
                   </Button>
