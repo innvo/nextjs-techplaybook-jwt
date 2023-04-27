@@ -8,6 +8,7 @@ import CloseTwoToneIcon from '@mui/icons-material/CloseTwoTone';
 import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
 import DatePicker from '@mui/lab/DatePicker';
 import {
+  Alert,
   Autocomplete,
   Avatar,
   Box,
@@ -17,6 +18,7 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  List,
   ListItem,
   ListItemText,
   Grid,
@@ -32,7 +34,6 @@ import { wait } from 'src/utils/wait';
 import * as Yup from 'yup';
 
 //   import api from '../services/api';
-
 interface NewProjectDialogProps {
   open: boolean;
   onClose: () => void;
@@ -43,6 +44,13 @@ const AvatarWrapper = styled(Avatar)(
   ({ theme }) => `
     background: ${theme.colors.primary.lighter};
     color: ${theme.colors.primary.main};
+    width: ${theme.spacing(7)};
+    height: ${theme.spacing(7)};
+`
+);
+const AvatarDanger = styled(Avatar)(
+  ({ theme }) => `
+    background: ${theme.colors.error.light};
     width: ${theme.spacing(7)};
     height: ${theme.spacing(7)};
 `
@@ -166,8 +174,7 @@ const projectTags = [
       // console.log('Project created:', response.data);
       setName('');
       setDescription('');
-
-      handleCreateProjectSuccess();
+      handleCreateProjectSuccess();  //Only on Project Insert
       onClose();
   
     } catch (error) {
@@ -217,13 +224,15 @@ const projectTags = [
       </DialogTitle>
       <Formik
         initialValues={{
-          title: '',
+          name: '',
+          nameshort: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
-          title: Yup.string()
-            .max(255)
-            .required(t('The title field is required'))
+          name: Yup.string()
+            .min(3)
+            .max(100)
+            .required(t('The name field is required'))
         })}
         onSubmit={async (
           _values,
@@ -276,7 +285,7 @@ const projectTags = [
                     }}
                     alignSelf="center"
                   >
-                    <b>{t('Project title')}:</b>
+                    <b>{t('Project Name')}:</b>
                   </Box>
                 </Grid>
                 <Grid
@@ -289,14 +298,14 @@ const projectTags = [
                   md={9}
                 >
                   <TextField
-                    error={Boolean(touched.title && errors.title)}
+                    error={Boolean(touched.name && errors.name)}
                     fullWidth
-                    helperText={touched.title && errors.title}
-                    name="title"
-                    placeholder={t('Project title here...')}
+                    helperText={touched.name && errors.name}
+                    name="name"
+                    placeholder={t('Project name here...')}
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.title}
+                    value={values.name}
                     variant="outlined"
                   />
                 </Grid>
