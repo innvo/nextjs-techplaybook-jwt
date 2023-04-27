@@ -133,10 +133,8 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
   const { t }: { t: any } = useTranslation();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
-  //const [open, setOpen] = useState(false);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [value, setValue] = useState<Date | null>(null); //Datepicker
+
+  const [startdate, setStartdate] = useState<Date | null>(null); //Datepicker
 
 
   // Dropzone
@@ -172,8 +170,6 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
       // });
 
       // console.log('Project created:', response.data);
-      setName('');
-      setDescription('');
       handleCreateProjectSuccess();  //Only on Project Insert
       onClose();
 
@@ -227,7 +223,13 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
           name: '',
           nameshort: '',
           description: '',
-
+          projectstartdatetime: null,
+          status: 'ACTIVE', //This a hardcoded value for new Projects
+          createdby: 'HARDCODED', //This a hardcoded value must be replaced by user login
+          createdatetime: Date.now(),
+          lastmodifiedby: 'HARDCODED', //This a hardcoded value must be replaced by user login
+          lastmodifiedatetime: Date.now(),
+          domain: 1001, //This a hardcoded value must be replaced by user login
           submit: null
         }}
         validationSchema={Yup.object().shape(
@@ -319,7 +321,7 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
                     variant="outlined"
                   />
                 </Grid>
-                <Grid item xs={12} sm={4} md={3}  justifyContent="flex-end" textAlign={{ sm: 'right' }}>
+                <Grid item xs={12} sm={4} md={3} justifyContent="flex-end" textAlign={{ sm: 'right' }}>
                   <Box
                     pr={3}
                     sx={{
@@ -424,7 +426,8 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
                     )}
                   />
                 </Grid> */}
-                <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }}>
+                {/* FILES TO BE MOVED TO EDIT PAGE */}
+                {/* <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }}>
                   <Box
                     pr={3}
                     sx={{
@@ -510,7 +513,7 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
                       </List>
                     </>
                   )}
-                </Grid>
+                </Grid> */}
                 {/* <Grid
                   item
                   xs={12}
@@ -598,7 +601,7 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
                     }}
                     alignSelf="center"
                   >
-                    <b>{t('Due Date')}:</b>
+                    <b>{t('Project Start Date')}:</b>
                   </Box>
                 </Grid>
                 <Grid
@@ -611,13 +614,11 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
                   md={9}
                 >
                   <DatePicker
-                    value={value}
-                    onChange={(newValue) => {
-                      setValue(newValue);
-                    }}
+                    value={values.projectstartdatetime}
+                    onChange={(newValue) => setStartdate(newValue)}
                     renderInput={(params) => (
                       <TextField
-                        placeholder={t('Select due date...')}
+                        placeholder={t('Select start date...')}
                         {...params}
                       />
                     )}
