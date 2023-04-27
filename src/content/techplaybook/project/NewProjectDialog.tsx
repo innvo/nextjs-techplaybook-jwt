@@ -25,7 +25,7 @@ import {
   styled,
   TextField,
   Typography,
-  useTheme, 
+  useTheme,
   Zoom
 } from '@mui/material';
 import dynamic from 'next/dynamic';
@@ -128,7 +128,7 @@ const projectTags = [
 
 
 // Functional Component
-  function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
+function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
   console.log('In src/content/techplaybook/project/NewProjectDialog.tsx')
   const { t }: { t: any } = useTranslation();
   const theme = useTheme();
@@ -162,7 +162,7 @@ const projectTags = [
     </ListItem>
   ));
 
-// Functions
+  // Functions
   const handleCreateProject = async () => {
     try {
       // TO BE REPLACED BY REAL REST CALL
@@ -176,10 +176,10 @@ const projectTags = [
       setDescription('');
       handleCreateProjectSuccess();  //Only on Project Insert
       onClose();
-  
+
     } catch (error) {
       console.error('Error creating project:', error);
-   
+
     }
   };
 
@@ -226,14 +226,24 @@ const projectTags = [
         initialValues={{
           name: '',
           nameshort: '',
+          description: '',
+
           submit: null
         }}
-        validationSchema={Yup.object().shape({
-          name: Yup.string()
-            .min(3)
-            .max(100)
-            .required(t('The name field is required'))
-        })}
+        validationSchema={Yup.object().shape(
+          {
+            name: Yup.string()
+              .min(3)
+              .max(100)
+              .required(t('The name field is required')),
+            nameshort: Yup.string()
+              .min(3)
+              .max(25)
+              .required(t('The short name  field is required')),
+            description: Yup.string()
+              .max(255)
+          }
+        )}
         onSubmit={async (
           _values,
           { resetForm, setErrors, setStatus, setSubmitting }
@@ -305,6 +315,40 @@ const projectTags = [
                     placeholder={t('Project name here...')}
                     onBlur={handleBlur}
                     onChange={handleChange}
+                    value={values.nameshort}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4} md={3}  justifyContent="flex-end" textAlign={{ sm: 'right' }}>
+                  <Box
+                    pr={3}
+                    sx={{
+                      pt: `${theme.spacing(2)}`,
+                      pb: { xs: 1, md: 0 }
+                    }}
+                    alignSelf="center"
+
+                  >
+                    <b>{t('Name Short')}:</b>
+                  </Box>
+                </Grid>
+                <Grid
+                  sx={{
+                    mb: `${theme.spacing(3)}`
+                  }}
+                  item
+                  xs={12}
+                  sm={8}
+                  md={9}
+                >
+                  <TextField
+                    error={Boolean(touched.name && errors.name)}
+                    fullWidth
+                    helperText={touched.name && errors.name}
+                    name="name"
+                    placeholder={t('Project name here...')}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
                     value={values.name}
                     variant="outlined"
                   />
@@ -332,7 +376,8 @@ const projectTags = [
                     <ReactQuill />
                   </EditorWrapper>
                 </Grid>
-                <Grid
+                {/* TAGS TO BE MOVED TO EDIT PAGE */}
+                {/* <Grid
                   item
                   xs={12}
                   sm={4}
@@ -378,7 +423,7 @@ const projectTags = [
                       />
                     )}
                   />
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12} sm={4} md={3} textAlign={{ sm: 'right' }}>
                   <Box
                     pr={3}
