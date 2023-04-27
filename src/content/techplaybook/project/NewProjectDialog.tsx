@@ -157,18 +157,22 @@ const projectTags = [
 // Functions
   const handleCreateProject = async () => {
     try {
-      const response = await api.post('/projects', {
-        name,
-        description,
-      });
+      // TO BE REPLACED BY REAL REST CALL
+      // const response = await api.post('/projects', {
+      //   name,
+      //   description,
+      // });
 
-      console.log('Project created:', response.data);
+      // console.log('Project created:', response.data);
       setName('');
       setDescription('');
+
+      handleCreateProjectSuccess();
       onClose();
   
     } catch (error) {
       console.error('Error creating project:', error);
+   
     }
   };
 
@@ -187,6 +191,7 @@ const projectTags = [
 
   const handleCreateProjectCancel = () => {
     console.log("In src/content/techplaybook/project/NewProjectDialog.tsx/ handleCreateProjectCancel")
+    onClose();
     // setOpen(false); ECHASIN
   };
 

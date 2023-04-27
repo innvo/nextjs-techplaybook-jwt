@@ -129,30 +129,30 @@ function PageHeader() {
   const { t }: { t: any } = useTranslation();
   const [open, setOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const theme = useTheme();
+  // const theme = useTheme();
 
-  const members = [
-    {
-      avatar: '/static/images/avatars/1.jpg',
-      name: 'Maren Lipshutz'
-    },
-    {
-      avatar: '/static/images/avatars/2.jpg',
-      name: 'Zain Vetrovs'
-    },
-    {
-      avatar: '/static/images/avatars/3.jpg',
-      name: 'Hanna Siphron'
-    },
-    {
-      avatar: '/static/images/avatars/4.jpg',
-      name: 'Cristofer Aminoff'
-    },
-    {
-      avatar: '/static/images/avatars/5.jpg',
-      name: 'Maria Calzoni'
-    }
-  ];
+  // const members = [
+  //   {
+  //     avatar: '/static/images/avatars/1.jpg',
+  //     name: 'Maren Lipshutz'
+  //   },
+  //   {
+  //     avatar: '/static/images/avatars/2.jpg',
+  //     name: 'Zain Vetrovs'
+  //   },
+  //   {
+  //     avatar: '/static/images/avatars/3.jpg',
+  //     name: 'Hanna Siphron'
+  //   },
+  //   {
+  //     avatar: '/static/images/avatars/4.jpg',
+  //     name: 'Cristofer Aminoff'
+  //   },
+  //   {
+  //     avatar: '/static/images/avatars/5.jpg',
+  //     name: 'Maria Calzoni'
+  //   }
+  // ];
 
   const {
     acceptedFiles,
@@ -225,9 +225,7 @@ function PageHeader() {
           </Button>
         </Grid>
       </Grid>
-      <NewProjectDialog open={open}
-        onClose={handleCreateProjectClose}>
-      </NewProjectDialog>
+      <NewProjectDialog open={open}  onClose={handleCreateProjectClose}/>
       {/* <Dialog
         fullWidth
         maxWidth="md"
