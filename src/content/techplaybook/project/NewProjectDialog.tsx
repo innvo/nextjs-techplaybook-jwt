@@ -317,7 +317,7 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
                     placeholder={t('Project name here...')}
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.nameshort}
+                    value={values.name}
                     variant="outlined"
                   />
                 </Grid>
@@ -347,11 +347,11 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
                     error={Boolean(touched.name && errors.name)}
                     fullWidth
                     helperText={touched.name && errors.name}
-                    name="name"
-                    placeholder={t('Project name here...')}
+                    name="nameshort"
+                    placeholder={t('Project short name here...')}
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.name}
+                    value={values.nameshort}
                     variant="outlined"
                   />
                 </Grid>
@@ -615,10 +615,15 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
                 >
                   <DatePicker
                     value={values.projectstartdatetime}
-                    onChange={(newValue) => setStartdate(newValue)}
+                    onChange={(date) =>
+                    handleChange({
+                      target: { name: 'projectstartdatetime', value: date },
+                    })
+                  }
+                    // onChange={(newValue) => setStartdate(newValue)}
                     renderInput={(params) => (
                       <TextField
-                        placeholder={t('Select start date...')}
+                        placeholder={t('Select project start date...')}
                         {...params}
                       />
                     )}
