@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { useDropzone } from 'react-dropzone';
+// import { useState } from 'react';
+// import { useDropzone } from 'react-dropzone';
 import { useTranslation } from 'react-i18next';
 import 'react-quill/dist/quill.snow.css';
 import { Formik } from 'formik';
-import CloudUploadTwoToneIcon from '@mui/icons-material/CloudUploadTwoTone';
-import CloseTwoToneIcon from '@mui/icons-material/CloseTwoTone';
-import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
+// import CloudUploadTwoToneIcon from '@mui/icons-material/CloudUploadTwoTone';
+// import CloseTwoToneIcon from '@mui/icons-material/CloseTwoTone';
+// import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
 import DatePicker from '@mui/lab/DatePicker';
 import {
   Alert,
@@ -40,49 +40,49 @@ interface NewProjectDialogProps {
 }
 
 // CSS
-const AvatarWrapper = styled(Avatar)(
-  ({ theme }) => `
-    background: ${theme.colors.primary.lighter};
-    color: ${theme.colors.primary.main};
-    width: ${theme.spacing(7)};
-    height: ${theme.spacing(7)};
-`
-);
-const AvatarDanger = styled(Avatar)(
-  ({ theme }) => `
-    background: ${theme.colors.error.light};
-    width: ${theme.spacing(7)};
-    height: ${theme.spacing(7)};
-`
-);
+// const AvatarWrapper = styled(Avatar)(
+//   ({ theme }) => `
+//     background: ${theme.colors.primary.lighter};
+//     color: ${theme.colors.primary.main};
+//     width: ${theme.spacing(7)};
+//     height: ${theme.spacing(7)};
+// `
+// );
+// const AvatarDanger = styled(Avatar)(
+//   ({ theme }) => `
+//     background: ${theme.colors.error.light};
+//     width: ${theme.spacing(7)};
+//     height: ${theme.spacing(7)};
+// `
+// );
 
-const AvatarSuccess = styled(Avatar)(
-  ({ theme }) => `
-    background: ${theme.colors.success.light};
-    width: ${theme.spacing(7)};
-    height: ${theme.spacing(7)};
-`
-);
+// const AvatarSuccess = styled(Avatar)(
+//   ({ theme }) => `
+//     background: ${theme.colors.success.light};
+//     width: ${theme.spacing(7)};
+//     height: ${theme.spacing(7)};
+// `
+// );
 
-const BoxUploadWrapper = styled(Box)(
-  ({ theme }) => `
-    border-radius: ${theme.general.borderRadius};
-    padding: ${theme.spacing(3)};
-    background: ${theme.colors.alpha.black[5]};
-    border: 1px dashed ${theme.colors.alpha.black[30]};
-    outline: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    transition: ${theme.transitions.create(['border', 'background'])};
+// const BoxUploadWrapper = styled(Box)(
+//   ({ theme }) => `
+//     border-radius: ${theme.general.borderRadius};
+//     padding: ${theme.spacing(3)};
+//     background: ${theme.colors.alpha.black[5]};
+//     border: 1px dashed ${theme.colors.alpha.black[30]};
+//     outline: none;
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     justify-content: center;
+//     transition: ${theme.transitions.create(['border', 'background'])};
 
-    &:hover {
-      background: ${theme.colors.alpha.white[100]};
-      border-color: ${theme.colors.primary.main};
-    }
-`
-);
+//     &:hover {
+//       background: ${theme.colors.alpha.white[100]};
+//       border-color: ${theme.colors.primary.main};
+//     }
+// `
+// );
 
 const EditorWrapper = styled(Box)(
   ({ theme }) => `
@@ -119,12 +119,12 @@ const EditorWrapper = styled(Box)(
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 // Data 
-const projectTags = [
-  { title: 'Development' },
-  { title: 'Design Project' },
-  { title: 'Marketing Research' },
-  { title: 'Software' }
-];
+// const projectTags = [
+//   { title: 'Development' },
+//   { title: 'Design Project' },
+//   { title: 'Marketing Research' },
+//   { title: 'Software' }
+// ];
 
 
 // Functional Component
@@ -134,31 +134,28 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [startdate, setStartdate] = useState<Date | null>(null); //Datepicker
-
-
   // Dropzone
-  const {
-    acceptedFiles,
-    isDragActive,
-    isDragAccept,
-    isDragReject,
-    getRootProps,
-    getInputProps
-  } = useDropzone({
-    accept: {
-      'image/png': ['.png'],
-      'image/jpeg': ['.jpg']
-    }
-  });
+  // const {
+  //   acceptedFiles,
+  //   isDragActive,
+  //   isDragAccept,
+  //   isDragReject,
+  //   getRootProps,
+  //   getInputProps
+  // } = useDropzone({
+  //   accept: {
+  //     'image/png': ['.png'],
+  //     'image/jpeg': ['.jpg']
+  //   }
+  // });
 
-  const files = acceptedFiles.map((file, index) => (
-    <ListItem disableGutters component="div" key={index}>
-      <ListItemText primary={file.name} />
-      <b>{file.size} bytes</b>
-      <Divider />
-    </ListItem>
-  ));
+  // const files = acceptedFiles.map((file, index) => (
+  //   <ListItem disableGutters component="div" key={index}>
+  //     <ListItemText primary={file.name} />
+  //     <b>{file.size} bytes</b>
+  //     <Divider />
+  //   </ListItem>
+  // ));
 
   // Functions
   const handleCreateProject = async () => {
