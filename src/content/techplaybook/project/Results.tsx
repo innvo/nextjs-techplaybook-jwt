@@ -34,6 +34,8 @@ import {
   GridToolbarContainer,
   GridRowSelectionModel, GridToolbarDensitySelector
 } from '@mui/x-data-grid';
+import { DataGridPro } from '@mui/x-data-grid-pro';
+import { DataGridPremium } from '@mui/x-data-grid-premium';
 import type { Project, ProjectStatus } from 'src/models/project';
 import { useTranslation } from 'react-i18next';
 import SearchTwoToneIcon from '@mui/icons-material/SearchTwoTone';
@@ -541,16 +543,17 @@ const Results: FC<ResultsProps> = ({ projects }) => {
           {/* <TableContainer> */}
           <Box p={1} sx={{ height: 600, width: '100%' }}>
             {/* DataGrid version 6 */}
-            <DataGrid
+            <DataGridPro
               rows={projects}
               columns={columns}
-              initialState={{
-                pagination: {
-                  paginationModel: {
-                    pageSize: 5,
-                  },
-                },
-              }}
+              // initialState={{
+              //   pagination: {
+              //     paginationModel: {
+              //       pageSize: 5
+              //     },
+              //   },
+              // }}
+              pagination
               pageSizeOptions={[5, 10, 25, 50, 100]}
               checkboxSelection
               onRowSelectionModelChange={(newRowSelectionModel) => {
