@@ -1,49 +1,81 @@
-import { FC } from 'react';
+import React from 'react';
+import * as Yup from 'yup';
+import { Formik } from 'formik';
 import {
   Box,
-  Button,
   Card,
-  CircularProgress,
-  DialogActions,
-  Grid,
   TextField,
   Typography,
-  useTheme
+  Container,
+  Button,
+  styled,
+  DialogActions,
+  CircularProgress
 } from '@mui/material';
-import { useTranslation } from 'react-i18next';
-import { Formik } from 'formik';
-import { User } from '@/models/user';
-import * as Yup from 'yup';
-import { wait } from '@/utils/wait';
+import Head from 'next/head';
+import BaseLayout from 'src/layouts/BaseLayout';
+import { Guest } from 'src/components/Guest';
+import Link from 'src/components/Link';
 import { useRouter } from 'next/router';
-import { changePassword } from '@/slices/user';
+import { useTranslation } from 'react-i18next';
+import Logo from 'src/components/LogoSign';
+import PasswordStrengthBar from 'react-password-strength-bar';
 import { useDispatch } from '@/store';
 import { useSnackbar } from 'notistack';
-import PasswordStrengthBar from 'react-password-strength-bar';
+import { wait } from '@/utils/wait';
+import { resetPassword } from '@/slices/user';
 
-interface UserProps {
-  user: User
-}
 
-const SecurityTab: FC<UserProps> = ({ user }) => {
+const MainContent = styled(Box)(
+  () => `
+    height: 100%;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+`
+);
+
+function RecoverPasswordBasic() {
   const { t }: { t: any } = useTranslation();
-  const router = useRouter()
+  const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const dispatch= useDispatch();
- 
-  const handleUserPasswordSuccess = (user: any) => {
-    dispatch(changePassword(user, enqueueSnackbar));
+
+  var key = router.query.key;
+
+  const handleUserPasswordSuccess = (keyAndPasswordVM: any) => {
+    dispatch(resetPassword(keyAndPasswordVM, enqueueSnackbar, router));
   }
 
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={12}>
-        <Box pb={2}>
-        </Box>
-        <Card>
-          <Formik
+    <>
+      <Head>
+        <title>Reset Password</title>
+      </Head>
+      <MainContent>
+        <Container maxWidth="sm">
+          <Logo />
+          <Card
+            sx={{
+              mt: 3,
+              p: 4
+            }}
+          >
+            <Box>
+              <Typography
+                variant="h2"
+                sx={{
+                  mb: 1
+                }}
+              >
+                {t('Reset Password')}
+              </Typography>
+            </Box>
+            <Formik
             initialValues={{
-              id: user.id,
+              key: key,
               newPassword: '',
               confirmPassword: '',
               submit: null
@@ -87,29 +119,8 @@ const SecurityTab: FC<UserProps> = ({ user }) => {
               values
             }) => (
               <form onSubmit={handleSubmit}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <Card>
-                      <Box
-                        p={3}
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="space-between"
-                      >
-                        <Box>
-                          <Typography variant="h4" gutterBottom>
-                            {t('Change Password')}
-                          </Typography>
-                          <Typography variant="subtitle2">
-                            {t('You can change your password here')}
-                          </Typography>
-                        </Box>
-                      </Box>
                       <Box ml={2}>
-                        <Grid container spacing={3}>
-                          <Grid item xs={12} lg={7}>
-                            <Grid container spacing={3}>
-                              <Grid item xs={12}>
+                      
                                 <TextField
                                   type='password'
                                   error={Boolean(touched.newPassword && errors.newPassword)}
@@ -123,8 +134,7 @@ const SecurityTab: FC<UserProps> = ({ user }) => {
                                   variant="outlined"
                                 />
                                 <PasswordStrengthBar password={values.newPassword} />
-                              </Grid>
-                              <Grid item xs={12}>
+                             
                                 <TextField
                                   type='password'
                                   error={Boolean(
@@ -138,17 +148,13 @@ const SecurityTab: FC<UserProps> = ({ user }) => {
                                   onChange={handleChange}
                                   variant="outlined"
                                 />
-                              </Grid>                             
-                            </Grid>
-                          </Grid>
-                        </Grid>
+                             
                       </Box>
                       <DialogActions
                         sx={{
                           p: 4
                         }}
                       >
-                        {/* <Button color="secondary" onClick={handleCreateUserClose}> */}
                         <Button color="secondary" onClick={() => router.back()}> 
                           {t('Cancel')}
                         </Button>
@@ -163,19 +169,34 @@ const SecurityTab: FC<UserProps> = ({ user }) => {
                           {t('Update Password')}
                         </Button>
                       </DialogActions>
-                    </Card>
-                  </Grid>
-                </Grid>
+                 
               </form>
             )}
           </Formik>
-          
-        </Card>
-      </Grid>
-    
-
-    </Grid>
+          </Card>
+          <Box mt={3} textAlign="right">
+            <Typography
+              component="span"
+              variant="subtitle2"
+              color="text.primary"
+              fontWeight="bold"
+            >
+              {t('Want to try to sign in again?')}
+            </Typography>{' '}
+            <Link href={'/'} >
+              <b>Click here</b>
+            </Link>
+          </Box>
+        </Container>
+      </MainContent>
+    </>
   );
 }
 
-export default SecurityTab;
+RecoverPasswordBasic.getLayout = (page) => (
+  <Guest>
+    <BaseLayout>{page}</BaseLayout>
+  </Guest>
+);
+
+export default RecoverPasswordBasic;

@@ -24,11 +24,12 @@ import { useRefMounted } from 'src/hooks/useRefMounted';
 import CloseIcon from '@mui/icons-material/Close';
 import { Guest } from 'src/components/Guest';
 import Link from 'src/components/Link';
-import { useRouter } from 'next/router';
-
 import { useTranslation } from 'react-i18next';
 import Logo from 'src/components/LogoSign';
 import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
+import { useDispatch } from '@/store';
+import { resetPasswordInit } from '@/slices/user';
+import { useSnackbar } from 'notistack';
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & { children: ReactElement<any, any> },
@@ -77,8 +78,8 @@ const AvatarSuccess = styled(Avatar)(
 function RecoverPasswordBasic() {
   const { t }: { t: any } = useTranslation();
   const isMountedRef = useRefMounted();
-  const router = useRouter();
-  const { demo } = router.query;
+  const dispatch= useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [openAlert, setOpenAlert] = useState(true);
 
@@ -131,7 +132,7 @@ function RecoverPasswordBasic() {
 
             <Formik
               initialValues={{
-                email: 'demo@example.com',
+                email: '',
                 submit: null
               }}
               validationSchema={Yup.object().shape({
@@ -148,6 +149,7 @@ function RecoverPasswordBasic() {
               ) => {
                 try {
                   if (isMountedRef()) {
+                    dispatch(resetPasswordInit(_values.email, enqueueSnackbar));
                     setStatus({ success: true });
                     setSubmitting(false);
                   }
@@ -211,11 +213,7 @@ function RecoverPasswordBasic() {
             >
               {t('Want to try to sign in again?')}
             </Typography>{' '}
-            <Link
-              href={
-                demo ? `/auth/login/basic?demo=${demo}` : '/auth/login/basic'
-              }
-            >
+            <Link href={'/'} >
               <b>Click here</b>
             </Link>
           </Box>
@@ -280,8 +278,7 @@ function RecoverPasswordBasic() {
             size="large"
             variant="contained"
             onClick={handleCloseDialog}
-            href={demo ? `/auth/login/basic?demo=${demo}` : '/auth/login/basic'}
-          >
+            href={'/'} >
             {t('Continue to login')}
           </Button>
         </Box>

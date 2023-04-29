@@ -24,11 +24,18 @@ import {
   styled,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { DataGrid,
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridRowId,
   GridRowHeightParams,
   GridToolbarContainer,
-  GridRowSelectionModel, GridToolbarDensitySelector,
-  } from '@mui/x-data-grid';
+  GridRowSelectionModel, GridToolbarDensitySelector
+} from '@mui/x-data-grid';
+import { DataGridPro } from '@mui/x-data-grid-pro';
+import { DataGridPremium } from '@mui/x-data-grid-premium';
 import type { Project, ProjectStatus } from 'src/models/project';
 import { useTranslation } from 'react-i18next';
 import SearchTwoToneIcon from '@mui/icons-material/SearchTwoTone';
@@ -206,18 +213,18 @@ const applyFilters = (
 
 
 const Results: FC<ResultsProps> = ({ projects }) => {
- 
+
   const { t }: { t: any } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const [query, setQuery] = useState<string>('');
   const [filters, setFilters] = useState<Filters>({ status: null });
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState([]);
-  const [rowSelectionModel, setRowSelectionModel] =  useState<GridRowSelectionModel>([]);
-  
+  const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
+
   console.log("In project>Results.tsx")
-  console.log("projects:", projects) 
-  console.log("rowSelectionModel:", rowSelectionModel) 
+  console.log("projects:", projects)
+  console.log("rowSelectionModel:", rowSelectionModel)
   /**
  * An array of project tag objects, each containing a title representing a tag associated with a project.
  * 
@@ -281,6 +288,22 @@ const Results: FC<ResultsProps> = ({ projects }) => {
     setSelectedTags(value);
     console.log("event.target.value:", event.target)
 
+  };
+
+  /**
+    * Edit Project
+  */
+  const editProject = (id: GridRowId) => {
+    // Add your project deletion logic here
+    console.log(`Deleting project with ID: ${id}`);
+  };
+
+  /**
+   * Delete Project
+ */
+  const deleteProject = (id: GridRowId) => {
+    // Add your project deletion logic here
+    console.log(`Deleting project with ID: ${id}`);
   };
 
   /**
@@ -358,11 +381,48 @@ const Results: FC<ResultsProps> = ({ projects }) => {
     {
       field: 'name',
       headerName: 'Project name',
-      width: 150,
+      width: 300,
       editable: false,
     },
+    {
+      field: 'tags',
+      headerName: 'Tags',
+      width: 250,
+      editable: false,
+    },
+    {
+      field: 'projectstatus.name',
+      headerName: 'Status',
+      width: 250,
+      editable: false,
+    },
+    {
+      field: 'lastmodifieddatetime',
+      headerName: 'Last Modified',
+      width: 250,
+      editable: false,
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      type: 'actions',
+      width: 80,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<EditIcon />}
+          label="Edit"
+          onClick={editProject(params.id)}
+        />,
+        <GridActionsCellItem
+          icon={<DeleteIcon />}
+          label="Delete"
+          onClick={deleteProject(params.id)}
+        />,
+      ],
+    },
+    ,
   ];
-  
+
   /**
  * CustomToolbar is a React functional component that renders a custom toolbar
  * for a data grid, containing a density selector.
@@ -376,8 +436,8 @@ const Results: FC<ResultsProps> = ({ projects }) => {
       </GridToolbarContainer>
     );
   }
-  
-  
+
+
 
 
   return (
@@ -483,17 +543,18 @@ const Results: FC<ResultsProps> = ({ projects }) => {
           {/* <TableContainer> */}
           <Box p={1} sx={{ height: 600, width: '100%' }}>
             {/* DataGrid version 6 */}
-            <DataGrid
+            <DataGridPro
               rows={projects}
               columns={columns}
-              initialState={{
-                pagination: {
-                  paginationModel: {
-                    pageSize: 5,
-                  },
-                },
-              }}
-              pageSizeOptions={[5,10,25,50,100]}
+              // initialState={{
+              //   pagination: {
+              //     paginationModel: {
+              //       pageSize: 5
+              //     },
+              //   },
+              // }}
+              pagination
+              pageSizeOptions={[5, 10, 25, 50, 100]}
               checkboxSelection
               onRowSelectionModelChange={(newRowSelectionModel) => {
                 setRowSelectionModel(newRowSelectionModel);

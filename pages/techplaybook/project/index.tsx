@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from 'react';
 import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
 import { Authenticated } from 'src/components/Authenticated';
 
-import PageHeader from '@/content/techplaybook/project-old/PageHeader';
+import PageHeader from '@/content/techplaybook/project/PageHeader';
 import Footer from 'src/components/Footer';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 
@@ -15,7 +15,6 @@ import type { Project } from 'src/models/project';
 
 import axiosInt from '@/utils/axios';//ECHASIN
 import Results from '@/content/techplaybook/project/Results';//ECHASIN
-
 
 function Projects() {
   console.log("In Project.index.ts"); //ECHASIN

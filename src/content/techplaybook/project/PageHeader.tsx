@@ -8,6 +8,8 @@ import 'react-quill/dist/quill.snow.css';
 
 import axiosInt from '@/utils/axios';//ECHASIN
 
+import NewProjectDialog from './NewProjectDialog';
+
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 import {
@@ -127,30 +129,30 @@ function PageHeader() {
   const { t }: { t: any } = useTranslation();
   const [open, setOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const theme = useTheme();
+  // const theme = useTheme();
 
-  const members = [
-    {
-      avatar: '/static/images/avatars/1.jpg',
-      name: 'Maren Lipshutz'
-    },
-    {
-      avatar: '/static/images/avatars/2.jpg',
-      name: 'Zain Vetrovs'
-    },
-    {
-      avatar: '/static/images/avatars/3.jpg',
-      name: 'Hanna Siphron'
-    },
-    {
-      avatar: '/static/images/avatars/4.jpg',
-      name: 'Cristofer Aminoff'
-    },
-    {
-      avatar: '/static/images/avatars/5.jpg',
-      name: 'Maria Calzoni'
-    }
-  ];
+  // const members = [
+  //   {
+  //     avatar: '/static/images/avatars/1.jpg',
+  //     name: 'Maren Lipshutz'
+  //   },
+  //   {
+  //     avatar: '/static/images/avatars/2.jpg',
+  //     name: 'Zain Vetrovs'
+  //   },
+  //   {
+  //     avatar: '/static/images/avatars/3.jpg',
+  //     name: 'Hanna Siphron'
+  //   },
+  //   {
+  //     avatar: '/static/images/avatars/4.jpg',
+  //     name: 'Cristofer Aminoff'
+  //   },
+  //   {
+  //     avatar: '/static/images/avatars/5.jpg',
+  //     name: 'Maria Calzoni'
+  //   }
+  // ];
 
   const {
     acceptedFiles,
@@ -177,10 +179,12 @@ function PageHeader() {
   const [value, setValue] = useState<Date | null>(null);
 
   const handleCreateProjectOpen = () => {
+    console.log("In src/content/techplaybook/project/PageHeader.tsx/ handleCreateProjectOpen")
     setOpen(true);
   };
 
   const handleCreateProjectClose = () => {
+    console.log("In src/content/techplaybook/project/PageHeader.tsx/ handleCreateProjectClose")
     setOpen(false);
   };
 
@@ -199,8 +203,6 @@ function PageHeader() {
 
   return (
     <>
-      {/* ECHASIN */}
-      <p><b>PAGEHEADER SECTION</b></p>
       <Grid container justifyContent="space-between" alignItems="center">
         <Grid item>
           <Typography variant="h3" component="h3" gutterBottom>
@@ -223,7 +225,8 @@ function PageHeader() {
           </Button>
         </Grid>
       </Grid>
-      <Dialog
+      <NewProjectDialog open={open}  onClose={handleCreateProjectClose}/>
+      {/* <Dialog
         fullWidth
         maxWidth="md"
         open={open}
@@ -640,7 +643,7 @@ function PageHeader() {
             </form>
           )}
         </Formik>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 }
