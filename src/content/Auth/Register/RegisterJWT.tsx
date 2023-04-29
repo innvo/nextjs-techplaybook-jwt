@@ -40,7 +40,7 @@ export const RegisterJWT: FC = (props) => {
         .required(t('The email field is required')),
         login: Yup.string().max(255).required(t('The login field is required')),
       password: Yup.string()
-        .min(8)
+        .min(6)
         .max(255)
         .required(t('The password field is required')),
       confirmPassword: Yup.string()
