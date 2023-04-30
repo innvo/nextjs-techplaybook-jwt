@@ -54,17 +54,6 @@ function PageHeader() {
         </Box>
       </Box>
       <Box mt={{ xs: 3, md: 0 }}>
-        {/* <Button
-          variant="outlined"
-          ref={actionRef1}
-          onClick={() => setOpenMenuPeriod(true)}
-          sx={{
-            mr: 1
-          }}
-          endIcon={<KeyboardArrowDownTwoToneIcon fontSize="small" />}
-        >
-          {period}
-        </Button> */}
 
         <Button 
         variant="outlined" 
@@ -75,7 +64,6 @@ function PageHeader() {
           {t('Cancel')}
         </Button>
   
-
         <Button 
         variant="contained" 
         sx={{
