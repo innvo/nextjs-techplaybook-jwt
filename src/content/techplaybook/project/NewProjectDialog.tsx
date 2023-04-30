@@ -32,6 +32,11 @@ import dynamic from 'next/dynamic';
 import { useSnackbar } from 'notistack';
 import { wait } from 'src/utils/wait';
 import * as Yup from 'yup';
+import { createProject } from '@/slices/projects';
+import { Project } from '@/models/project';
+import { useDispatch } from '@/store';
+import { useAuth } from '@/hooks/useAuth';
+import { useState } from 'react';
 
 //   import api from '../services/api';
 interface NewProjectDialogProps {
@@ -133,6 +138,8 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
   const { t }: { t: any } = useTranslation();
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
+  const dispatch= useDispatch();
+  const { user }  = useAuth();
 
   // Dropzone
   // const {
@@ -167,7 +174,7 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
       // });
 
       // console.log('Project created:', response.data);
-      handleCreateProjectSuccess();  //Only on Project Insert
+     // handleCreateProjectSuccess();  //Only on Project Insert
       onClose();
 
     } catch (error) {
@@ -176,17 +183,10 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
     }
   };
 
-  const handleCreateProjectSuccess = () => {
-    enqueueSnackbar(t('A new project has been created successfully'), {
-      variant: 'success',
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'right'
-      },
-      TransitionComponent: Zoom
-    });
-
-    // setOpen(false); ECHASIN
+  const handleCreateProjectSuccess = (project: any) => {
+    console.log(project)
+    dispatch(createProject(project, enqueueSnackbar));
+    onClose;
   };
 
   const handleCreateProjectCancel = () => {
@@ -194,6 +194,9 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
     onClose();
     // setOpen(false); ECHASIN
   };
+
+  
+  const [projectDescription, setProjectDescription] = useState('');
 
   return (
     // <Dialog open={open} onClose={onClose}>
@@ -222,11 +225,11 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
           description: '',
           projectstartdatetime: null,
           status: 'ACTIVE', //This a hardcoded value for new Projects
-          createdby: 'HARDCODED', //This a hardcoded value must be replaced by user login
-          createdatetime: Date.now(),
-          lastmodifiedby: 'HARDCODED', //This a hardcoded value must be replaced by user login
-          lastmodifiedatetime: Date.now(),
-          domain: 1001, //This a hardcoded value must be replaced by user login
+          createdby: user.login, //This a hardcoded value must be replaced by user login
+          createddatetime: Date.now(),
+          lastmodifiedby: user.login, //This a hardcoded value must be replaced by user login
+          lastmodifieddatetime: Date.now(),
+         // domain: 1001, //This a hardcoded value must be replaced by user login
           submit: null
         }}
         validationSchema={Yup.object().shape(
@@ -252,7 +255,8 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
             resetForm();
             setStatus({ success: true });
             setSubmitting(false);
-            handleCreateProjectSuccess();
+            _values.description = projectDescription;
+            handleCreateProjectSuccess(_values);
           } catch (err) {
             console.error(err);
             setStatus({ success: false });
@@ -371,8 +375,8 @@ function NewProjectDialog({ open, onClose }: NewProjectDialogProps) {
                   sm={8}
                   md={9}
                 >
-                  <EditorWrapper>
-                    <ReactQuill />
+                  <EditorWrapper >
+                    <ReactQuill onChange={setProjectDescription}/>
                   </EditorWrapper>
                 </Grid>
                 {/* TAGS TO BE MOVED TO EDIT PAGE */}

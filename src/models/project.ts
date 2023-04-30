@@ -9,16 +9,18 @@ export interface Member {
 }
 
 export interface Project {
-  id: string;
+  id: number;
   name: string;
-  projectstatus?: Projectstatus
-  // screenshot: string;
-  // description: string;
-  // tags: string[];
-  // startDate: number;
-  // dueDate: number;
-  // memberIds: Member[];
-  // progress: number;
-  // status: ProjectStatus;
-  // [key: string]: any;
+  nameshort: string;
+  description: string;
+  projectstartdatetime: any;
+  status: string;
+  createdby: string;
+  createdatetime: number;
+  lastmodifiedby: string;
+  lastmodifiedatetime: number;
+  domain: number;
+  projectstatus?: any;
+  submit: any;
 }
+

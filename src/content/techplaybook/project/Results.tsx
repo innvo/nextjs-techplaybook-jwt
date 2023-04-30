@@ -1,7 +1,8 @@
 import {
   FC,
   ChangeEvent,
-  useState
+  useState,
+  useEffect
 } from 'react';
 import {
   Avatar,
@@ -22,6 +23,7 @@ import {
   Zoom,
   lighten,
   styled,
+  Chip,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -40,6 +42,9 @@ import type { Project, ProjectStatus } from 'src/models/project';
 import { useTranslation } from 'react-i18next';
 import SearchTwoToneIcon from '@mui/icons-material/SearchTwoTone';
 import { useSnackbar } from 'notistack';
+import { useDispatch } from '@/store';
+import {  deleteProject } from '@/slices/projects';
+import { blue } from '@mui/material/colors';
 
 /**
  * Creates a styled Dialog component using the styled-components library.
@@ -192,11 +197,6 @@ const applyFilters = (
   filters: Filters
 ): Project[] => {
   return projects.filter((project) => {
-    console.log("In applyfilters:");
-    console.log("filters:", filters);
-    console.log("filters.status:", filters.status);
-    console.log("query:", query)
-    console.log("query.length", query.length)
 
     if (filters) {
       console.log("In filters")
@@ -221,10 +221,15 @@ const Results: FC<ResultsProps> = ({ projects }) => {
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
+  const dispatch= useDispatch(); 
 
-  console.log("In project>Results.tsx")
-  console.log("projects:", projects)
-  console.log("rowSelectionModel:", rowSelectionModel)
+  const [projectName, setProjectName] = useState('');
+  const [projectStatusName, setProjectStatusName] = useState('');
+  const [projectTagName, setProjectTagName] = useState('');
+  const [rows, setRows] = useState(projects);
+  const [selectedProjectId, setSelectedProjectId] = useState(0);
+
+
   /**
  * An array of project tag objects, each containing a title representing a tag associated with a project.
  * 
@@ -232,10 +237,9 @@ const Results: FC<ResultsProps> = ({ projects }) => {
  * @property {string} title - The title of the project tag.
  */
   const projectTags = [
-    { title: 'Development' },
-    { title: 'Design Project' },
-    { title: 'Marketing Research' },
-    { title: 'Software' }
+    { title: 'jhipster' },
+    { title: 'rest' },
+    { title: 'agile' }
   ];
 
   /**
@@ -247,63 +251,42 @@ const Results: FC<ResultsProps> = ({ projects }) => {
    * @property {string} name - The translated name of the project status option.
    */
 
+   useEffect(() => {
+    setRows(projects);
+   }, [projects]);
+ 
   const statusOptions = [
     {
       id: 'all',
       name: 'All'
     },
     {
-      id: 'not_started',
+      id: 'Not started',
       name: t('Not started')
     },
     {
-      id: 'completed',
+      id: 'Completed',
       name: t('Completed')
     },
     {
-      id: 'in_progress',
+      id: 'In Progress',
       name: t('In Progress')
     }
   ];
-
-  /**
-   * Search for project by name of records data table
-   * @param {string} project name  (event.target.value)
-   */
-  const handleQueryChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    console.log("in handleQueryChange")
-    event.persist();
-    setQuery(event.target.value);
-    console.log("setQuery(event.target.value):", event.target.value)
-  };
-
-  /**
-  * Search for project by tag of records data table
-  * @param {string} project name  (event.target.value)
-  */
-  const handleTagChange = (event: ChangeEvent<{}>, value: any) => {
-    console.log("in handleTagChange")
-    console.log("value:", value)
-    event.persist();
-    setSelectedTags(value);
-    console.log("event.target.value:", event.target)
-
-  };
 
   /**
     * Edit Project
   */
   const editProject = (id: GridRowId) => {
     // Add your project deletion logic here
-    console.log(`Deleting project with ID: ${id}`);
   };
 
   /**
    * Delete Project
  */
-  const deleteProject = (id: GridRowId) => {
-    // Add your project deletion logic here
-    console.log(`Deleting project with ID: ${id}`);
+  const handleDeleteProject = (id: number) => {
+    setSelectedProjectId(id);
+    setOpenConfirmDelete(true);
   };
 
   /**
@@ -313,25 +296,38 @@ const Results: FC<ResultsProps> = ({ projects }) => {
    * @param {ChangeEvent<HTMLInputElement>} e - The change event from the status filter input element.
    * @returns {void}
    */
-  const handleStatusChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    console.log("In handleStatusChange")
-    let value = null;
 
-    // If the selected value is 'Completed', set the value variable accordingly
-    if (e.target.value == 'Completed') {
-      console.log("Completed")
-      value = e.target.value;
-    }
-    // If the selected value is not 'all', set the value variable accordingly
-    if (e.target.value !== 'all') {
-      value = e.target.value;
-      console.log("value:", value)
-    }
-    // Update the 'filters' state with the new status filter value
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      status: value
-    }));
+  const handleStatusChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setProjectStatusName (e.target.value)
+    var data = projects.filter(row => 
+      row.projectName?.includes(projectName) && 
+      row.statusName?.includes(e.target.value) && 
+      row.tagName?.includes(projectTagName) 
+     );
+
+    setRows(data) 
+  };
+
+  const handleNameChange = (searchValue) => {
+    setProjectName(searchValue.target.value);
+    var data = projects.filter(row => 
+      row.projectName?.includes(searchValue.target.value) && 
+      row.statusName?.includes(projectStatusName) && 
+      row.tagName?.includes(projectTagName) 
+     );
+   setRows(data) 
+  };
+
+  const handleTagChange = (searchValue) => {
+    console.log(searchValue.target.innerText)
+    setProjectTagName(searchValue.target.innerText);
+    var data = projects.filter(row => 
+      row.tagName?.includes(searchValue.target.innerText) && 
+      row.projectName?.includes(projectName) && 
+      row.statusName?.includes(projectStatusName)
+     );
+   setRows(data) 
+
   };
 
   // const filteredProjects = applyFilters(projects, query, filters);
@@ -350,20 +346,14 @@ const Results: FC<ResultsProps> = ({ projects }) => {
    * @property {function} setOpenConfirmDelete - The function to update the openConfirmDelete state.
    */
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
+  
   const closeConfirmDelete = () => {
     setOpenConfirmDelete(false);
   };
+
   const handleDeleteCompleted = () => {
     setOpenConfirmDelete(false);
-
-    enqueueSnackbar(t('The projects has been deleted successfully'), {
-      variant: 'success',
-      anchorOrigin: {
-        vertical: 'top',
-        horizontal: 'right'
-      },
-      TransitionComponent: Zoom
-    });
+    dispatch(deleteProject(selectedProjectId, enqueueSnackbar));
   };
 
   /**
@@ -377,21 +367,32 @@ const Results: FC<ResultsProps> = ({ projects }) => {
  * @property {boolean} [column.editable] - Optional property specifying if the column is editable. Defaults to true.
  */
   const columns = [
-    { field: 'id', headerName: 'ID', width: 90 },
+    { field: 'projectId', headerName: 'ID', width: 90 },
     {
-      field: 'name',
+      field: 'projectName',
       headerName: 'Project name',
       width: 300,
       editable: false,
     },
     {
-      field: 'tags',
+      field: 'tagName',
       headerName: 'Tags',
       width: 250,
       editable: false,
+      renderCell: (cellValues) => {
+        return (
+          <>
+          {cellValues.row.tagName? <Chip
+              color="primary"
+              aria-label="add an alarm"
+              label={cellValues.row.tagName}
+            />  : null}
+          </>
+        );
+      },
     },
     {
-      field: 'projectstatus.name',
+      field: 'statusName',
       headerName: 'Status',
       width: 250,
       editable: false,
@@ -411,12 +412,12 @@ const Results: FC<ResultsProps> = ({ projects }) => {
         <GridActionsCellItem
           icon={<EditIcon />}
           label="Edit"
-          onClick={editProject(params.id)}
+          onClick={id => editProject(params.id)}
         />,
         <GridActionsCellItem
           icon={<DeleteIcon />}
           label="Delete"
-          onClick={deleteProject(params.id)}
+          onClick={id => handleDeleteProject(params.id)}
         />,
       ],
     },
@@ -436,9 +437,6 @@ const Results: FC<ResultsProps> = ({ projects }) => {
       </GridToolbarContainer>
     );
   }
-
-
-
 
   return (
     <>
@@ -462,9 +460,9 @@ const Results: FC<ResultsProps> = ({ projects }) => {
                     </InputAdornment>
                   )
                 }}
-                onChange={handleQueryChange}
+                onChange={handleNameChange}
                 placeholder={t('Search by project name...')}
-                value={query}
+                value={projectName}
                 fullWidth
                 variant="outlined"
               />
@@ -500,7 +498,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
               <FormControl fullWidth variant="outlined">
                 <InputLabel>{t('Status')}</InputLabel>
                 <Select
-                  value={filters.status || 'all'}
+                  value={projectStatusName}
                   onChange={handleStatusChange}
                   label={t('Status')}
                 >
@@ -544,7 +542,8 @@ const Results: FC<ResultsProps> = ({ projects }) => {
           <Box p={1} sx={{ height: 600, width: '100%' }}>
             {/* DataGrid version 6 */}
             <DataGridPro
-              rows={projects}
+              getRowId={(row) => row.projectId}
+              rows={rows}
               columns={columns}
               // initialState={{
               //   pagination: {
