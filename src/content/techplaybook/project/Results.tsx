@@ -288,7 +288,6 @@ const Results: FC<ResultsProps> = ({ projects }) => {
     setSelectedProjectId(id);
     setOpenConfirmDelete(true);
   };
-
   /**
    * Handles changes in the status filter by updating the `filters` state based on the selected value.
    * 
@@ -298,11 +297,12 @@ const Results: FC<ResultsProps> = ({ projects }) => {
    */
 
   const handleStatusChange = (e: ChangeEvent<HTMLInputElement>): void => {
+
     setProjectStatusName (e.target.value)
     var data = projects.filter(row => 
       row.projectName?.includes(projectName) && 
       row.statusName?.includes(e.target.value) && 
-      row.tagName?.includes(projectTagName) 
+      (row.tagName?.includes(projectTagName) || row.tagName === null )
      );
 
     setRows(data) 
@@ -312,19 +312,18 @@ const Results: FC<ResultsProps> = ({ projects }) => {
     setProjectName(searchValue.target.value);
     var data = projects.filter(row => 
       row.projectName?.includes(searchValue.target.value) && 
-      row.statusName?.includes(projectStatusName) && 
-      row.tagName?.includes(projectTagName) 
+      (row.statusName?.includes(projectStatusName) || row.statusName === null ) &&
+      (row.tagName?.includes(projectTagName) || row.tagName === null )
      );
    setRows(data) 
   };
 
   const handleTagChange = (searchValue) => {
-    console.log(searchValue.target.innerText)
     setProjectTagName(searchValue.target.innerText);
     var data = projects.filter(row => 
       row.tagName?.includes(searchValue.target.innerText) && 
       row.projectName?.includes(projectName) && 
-      row.statusName?.includes(projectStatusName)
+      (row.statusName?.includes(projectStatusName) || row.statusName === null ) 
      );
    setRows(data) 
 
@@ -380,15 +379,19 @@ const Results: FC<ResultsProps> = ({ projects }) => {
       width: 250,
       editable: false,
       renderCell: (cellValues) => {
-        return (
-          <>
-          {cellValues.row.tagName? <Chip
-              color="primary"
-              aria-label="add an alarm"
-              label={cellValues.row.tagName}
-            />  : null}
-          </>
-        );
+        if (cellValues.row.tags.length > 0 ) {
+          return cellValues.row.tags.map(function (tag: any) {
+            return (<Chip
+                  color="primary"
+                  aria-label="add an alarm"
+                  label={tag}
+                /> 
+            );
+          });
+        }
+        else{
+          return null; 
+        }
       },
     },
     {
@@ -498,7 +501,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
               <FormControl fullWidth variant="outlined">
                 <InputLabel>{t('Status')}</InputLabel>
                 <Select
-                  value={projectStatusName}
+                 // value={projectStatusName}
                   onChange={handleStatusChange}
                   label={t('Status')}
                 >
