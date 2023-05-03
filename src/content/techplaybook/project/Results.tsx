@@ -182,36 +182,6 @@ const getProjectStatusLabel = (projectStatus: ProjectStatus): JSX.Element => {
   };
 };
 
-
-/**
- * Filters an array of projects based on the provided query and filters.
- *
- * @param {Project[]} projects - An array of projects, where each project is an object of type Project.
- * @param {string} query - A query string that can be used to filter the projects.
- * @param {Filters} filters - An object containing the filter criteria to be applied to the projects.
- * @returns {Project[]} - A filtered array of projects.
- */
-const applyFilters = (
-  projects: Project[],
-  query: string,
-  filters: Filters
-): Project[] => {
-  return projects.filter((project) => {
-
-    if (filters) {
-      console.log("In filters")
-    }
-
-    if (filters.status == 'completed') {
-      console.log("completed");
-    }
-  })
-};
-
-
-
-
-
 const Results: FC<ResultsProps> = ({ projects }) => {
 
   const { t }: { t: any } = useTranslation();
@@ -219,7 +189,6 @@ const Results: FC<ResultsProps> = ({ projects }) => {
   const [query, setQuery] = useState<string>('');
   const [filters, setFilters] = useState<Filters>({ status: null });
   const [tags, setTags] = useState<string[]>([]);
-  const [selectedTags, setSelectedTags] = useState([]);
   const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
   const dispatch= useDispatch(); 
 
@@ -229,6 +198,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
   const [rows, setRows] = useState(projects);
   const [selectedProjectId, setSelectedProjectId] = useState(0);
 
+  const [selectedTags, setSelectedTags] = useState([]);
 
   /**
  * An array of project tag objects, each containing a title representing a tag associated with a project.
@@ -236,11 +206,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
  * @type {Array<Object>}
  * @property {string} title - The title of the project tag.
  */
-  const projectTags = [
-    { title: 'jhipster' },
-    { title: 'rest' },
-    { title: 'agile' }
-  ];
+  const projectTags = [ 'jhipster' , 'rest' , 'agile'];
 
   /**
    * An array of status option objects, each containing an id and a name representing a project status.
@@ -318,13 +284,34 @@ const Results: FC<ResultsProps> = ({ projects }) => {
    setRows(data) 
   };
 
+
+  let newSelectedTags=[];
+
   const handleTagChange = (searchValue) => {
     setProjectTagName(searchValue.target.innerText);
-    var data = projects.filter(row => 
-      row.tagName?.includes(searchValue.target.innerText) && 
+
+    
+    console.log(newSelectedTags.includes(searchValue.target.innerText));
+
+    if ( selectedTags.includes(searchValue.target.innerText)) {
+      console.log('newSelectedTags')
+      let index = selectedTags.indexOf(searchValue.target.innerText);
+      selectedTags.splice(index,1);
+
+    }else{
+       newSelectedTags=[...selectedTags,searchValue.target.innerText]
+    }
+    setSelectedTags(newSelectedTags)
+    console.log(newSelectedTags)
+    console.log(selectedTags)
+
+    var data = projects.filter(row => {
+     return row.tags?.includes(searchValue.target.innerText) && 
       row.projectName?.includes(projectName) && 
       (row.statusName?.includes(projectStatusName) || row.statusName === null ) 
+    }
      );
+
    setRows(data) 
 
   };
@@ -394,6 +381,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
         }
       },
     },
+    
     {
       field: 'statusName',
       headerName: 'Status',
@@ -483,7 +471,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
                 value={selectedTags}
                 onChange={handleTagChange}
                 options={projectTags}
-                getOptionLabel={(option) => option.title}
+                getOptionLabel={(option) => option}
                 renderInput={(params) => (
                   <TextField
                     {...params}
