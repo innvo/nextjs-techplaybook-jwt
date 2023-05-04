@@ -44,7 +44,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-function a11yProps(index: number) {
+function tabProps(index: number) {
   return {
     id: `simple-tab-${index}`,
     'aria-controls': `simple-tabpanel-${index}`,
@@ -62,11 +62,11 @@ export default function BasicTabs() {
 
     <Grid item xs={12}>
       <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-        <Tab label="Item One" {...a11yProps(0)} />
-        <Tab label="Item Two" {...a11yProps(1)} />
-        <Tab label="Item Three" {...a11yProps(2)} />
+        <Tab label="Item One" {...tabProps(0)} />
+        <Tab label="Item Two" {...tabProps(1)} />
+        <Tab label="Item Three" {...tabProps(2)} />
       </Tabs>
-     <TabPanel value={value} index={0}>
+      <TabPanel value={value} index={0}>
         Item One
       </TabPanel><TabPanel value={value} index={1}>
         Item Two
@@ -74,6 +74,6 @@ export default function BasicTabs() {
         Item Three
       </TabPanel>
     </Grid>
-   
+
   );
 }
