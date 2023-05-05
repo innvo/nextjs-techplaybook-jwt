@@ -520,7 +520,8 @@ const Results: FC<ResultsProps> = ({ projects }) => {
               }}
               rowSelectionModel={rowSelectionModel}
               slots={{
-                toolbar: CustomToolbar,
+                // toolbar: CustomToolbar, GridToolbar
+               toolbar:  GridToolbar
               }}
 
               filterModel={{
