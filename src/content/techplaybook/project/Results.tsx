@@ -34,7 +34,7 @@ import {
   GridRowId,
   GridRowHeightParams,
   GridToolbarContainer,
-  GridRowSelectionModel, GridToolbarDensitySelector
+  GridRowSelectionModel, GridToolbarDensitySelector, GridFilterModel, GridLogicOperator
 } from '@mui/x-data-grid';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import { DataGridPremium } from '@mui/x-data-grid-premium';
@@ -263,57 +263,24 @@ const Results: FC<ResultsProps> = ({ projects }) => {
    */
 
   const handleStatusChange = (e: ChangeEvent<HTMLInputElement>): void => {
-
-    setProjectStatusName (e.target.value)
-    var data = projects.filter(row => 
-      row.projectName?.includes(projectName) && 
-      row.statusName?.includes(e.target.value) && 
-      (row.tagName?.includes(projectTagName) || row.tagName === null )
-     );
-
-    setRows(data) 
+    setProjectStatusName (e.target.value);
   };
 
   const handleNameChange = (searchValue) => {
-    setProjectName(searchValue.target.value);
-    var data = projects.filter(row => 
-      row.projectName?.includes(searchValue.target.value) && 
-      (row.statusName?.includes(projectStatusName) || row.statusName === null ) &&
-      (row.tagName?.includes(projectTagName) || row.tagName === null )
-     );
-   setRows(data) 
+    setProjectName(searchValue.target.value); 
   };
 
 
   let newSelectedTags=[];
 
   const handleTagChange = (searchValue) => {
-    setProjectTagName(searchValue.target.innerText);
-
-    
-    console.log(newSelectedTags.includes(searchValue.target.innerText));
-
     if ( selectedTags.includes(searchValue.target.innerText)) {
-      console.log('newSelectedTags')
       let index = selectedTags.indexOf(searchValue.target.innerText);
       selectedTags.splice(index,1);
-
     }else{
        newSelectedTags=[...selectedTags,searchValue.target.innerText]
     }
     setSelectedTags(newSelectedTags)
-    console.log(newSelectedTags)
-    console.log(selectedTags)
-
-    var data = projects.filter(row => {
-     return row.tags?.includes(searchValue.target.innerText) && 
-      row.projectName?.includes(projectName) && 
-      (row.statusName?.includes(projectStatusName) || row.statusName === null ) 
-    }
-     );
-
-   setRows(data) 
-
   };
 
   // const filteredProjects = applyFilters(projects, query, filters);
@@ -369,7 +336,6 @@ const Results: FC<ResultsProps> = ({ projects }) => {
         if (cellValues.row.tags.length > 0 ) {
           return cellValues.row.tags.map(function (tag: any) {
             return (<Chip
-                  color="primary"
                   aria-label="add an alarm"
                   label={tag}
                 /> 
@@ -428,6 +394,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
       </GridToolbarContainer>
     );
   }
+
 
   return (
     <>
@@ -536,6 +503,8 @@ const Results: FC<ResultsProps> = ({ projects }) => {
               getRowId={(row) => row.projectId}
               rows={rows}
               columns={columns}
+              {...rows}
+              
               // initialState={{
               //   pagination: {
               //     paginationModel: {
@@ -553,6 +522,11 @@ const Results: FC<ResultsProps> = ({ projects }) => {
               slots={{
                 toolbar: CustomToolbar,
               }}
+
+              filterModel={{
+                items: [{ field: 'projectName', operator: 'contains', value: projectName }],
+              }}
+              
             />
             {/* </TableContainer> */}
           </Box>
