@@ -43,7 +43,7 @@ import { useTranslation } from 'react-i18next';
 import SearchTwoToneIcon from '@mui/icons-material/SearchTwoTone';
 import { useSnackbar } from 'notistack';
 import { useDispatch } from '@/store';
-import {  deleteProject } from '@/slices/projects';
+import { deleteProject } from '@/slices/projects';
 import { blue } from '@mui/material/colors';
 
 /**
@@ -190,7 +190,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
   const [filters, setFilters] = useState<Filters>({ status: null });
   const [tags, setTags] = useState<string[]>([]);
   const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
-  const dispatch= useDispatch(); 
+  const dispatch = useDispatch();
 
   const [projectName, setProjectName] = useState('');
   const [projectStatusName, setProjectStatusName] = useState('');
@@ -206,7 +206,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
  * @type {Array<Object>}
  * @property {string} title - The title of the project tag.
  */
-  const projectTags = [ 'jhipster' , 'rest' , 'agile'];
+  const projectTags = ['jhipster', 'rest', 'agile'];
 
   /**
    * An array of status option objects, each containing an id and a name representing a project status.
@@ -217,10 +217,10 @@ const Results: FC<ResultsProps> = ({ projects }) => {
    * @property {string} name - The translated name of the project status option.
    */
 
-   useEffect(() => {
+  useEffect(() => {
     setRows(projects);
-   }, [projects]);
- 
+  }, [projects]);
+
   const statusOptions = [
     {
       id: 'all',
@@ -263,22 +263,22 @@ const Results: FC<ResultsProps> = ({ projects }) => {
    */
 
   const handleStatusChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setProjectStatusName (e.target.value);
+    setProjectStatusName(e.target.value);
   };
 
   const handleNameChange = (searchValue) => {
-    setProjectName(searchValue.target.value); 
+    setProjectName(searchValue.target.value);
   };
 
 
-  let newSelectedTags=[];
+  let newSelectedTags = [];
 
   const handleTagChange = (searchValue) => {
-    if ( selectedTags.includes(searchValue.target.innerText)) {
+    if (selectedTags.includes(searchValue.target.innerText)) {
       let index = selectedTags.indexOf(searchValue.target.innerText);
-      selectedTags.splice(index,1);
-    }else{
-       newSelectedTags=[...selectedTags,searchValue.target.innerText]
+      selectedTags.splice(index, 1);
+    } else {
+      newSelectedTags = [...selectedTags, searchValue.target.innerText]
     }
     setSelectedTags(newSelectedTags)
   };
@@ -299,7 +299,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
    * @property {function} setOpenConfirmDelete - The function to update the openConfirmDelete state.
    */
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
-  
+
   const closeConfirmDelete = () => {
     setOpenConfirmDelete(false);
   };
@@ -333,21 +333,21 @@ const Results: FC<ResultsProps> = ({ projects }) => {
       width: 250,
       editable: false,
       renderCell: (cellValues) => {
-        if (cellValues.row.tags.length > 0 ) {
+        if (cellValues.row.tags.length > 0) {
           return cellValues.row.tags.map(function (tag: any) {
             return (<Chip
-                  aria-label="add an alarm"
-                  label={tag}
-                /> 
+              aria-label="add an alarm"
+              label={tag}
+            />
             );
           });
         }
-        else{
-          return null; 
+        else {
+          return null;
         }
       },
     },
-    
+
     {
       field: 'statusName',
       headerName: 'Status',
@@ -456,7 +456,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
               <FormControl fullWidth variant="outlined">
                 <InputLabel>{t('Status')}</InputLabel>
                 <Select
-                 // value={projectStatusName}
+                  // value={projectStatusName}
                   onChange={handleStatusChange}
                   label={t('Status')}
                 >
@@ -504,7 +504,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
               rows={rows}
               columns={columns}
               {...rows}
-              
+
               // initialState={{
               //   pagination: {
               //     paginationModel: {
@@ -521,15 +521,16 @@ const Results: FC<ResultsProps> = ({ projects }) => {
               rowSelectionModel={rowSelectionModel}
               slots={{
                 // toolbar: CustomToolbar, GridToolbar
-               toolbar:  GridToolbar
+                toolbar: GridToolbar
               }}
 
               filterModel={{
-                items: [{ field: 'projectName', operator: 'contains', value: projectName },
-              //  { field: 'statusName', operator: 'contains', value: projectStatusName }
-            ],
+                items: [
+                  { id: 1, field: 'projectName', operator: 'contains', value: projectName },
+                  { id: 2, field: 'statusName', operator: 'contains', value: projectStatusName }
+                ],
               }}
-              
+
             />
             {/* </TableContainer> */}
           </Box>
