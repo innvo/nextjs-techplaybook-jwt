@@ -34,7 +34,7 @@ import {
   GridRowId,
   GridRowHeightParams,
   GridToolbarContainer,
-  GridRowSelectionModel, GridToolbarDensitySelector, GridFilterModel, GridLogicOperator
+  GridRowSelectionModel, GridToolbarDensitySelector, GridFilterModel, GridLogicOperator, GridToolbar
 } from '@mui/x-data-grid';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import { DataGridPremium } from '@mui/x-data-grid-premium';
@@ -525,7 +525,9 @@ const Results: FC<ResultsProps> = ({ projects }) => {
               }}
 
               filterModel={{
-                items: [{ field: 'projectName', operator: 'contains', value: projectName }],
+                items: [{ field: 'projectName', operator: 'contains', value: projectName },
+              //  { field: 'statusName', operator: 'contains', value: projectStatusName }
+            ],
               }}
               
             />
