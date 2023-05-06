@@ -322,15 +322,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
 
 
 
-  const filterModel: GridFilterModel = {
-    items: [
-      { id: 1, field: 'projectName', operator: 'contains', value: 'Elit' },
-    ],
-
-  };
-
-
-  /**
+   /**
  * `columns` is an array of column definitions to be used in a data grid.
  * It contains definitions for the ID and project name columns.
  * @type {Array}
@@ -348,39 +340,39 @@ const Results: FC<ResultsProps> = ({ projects }) => {
       width: 300,
       editable: false,
     },
-    //   {
-    //     field: 'tagName',
-    //     headerName: 'Tags',
-    //     width: 250,
-    //     editable: false,
-    //     renderCell: (cellValues) => {
-    //       if (cellValues.row.tags.length > 0) {
-    //         return cellValues.row.tags.map(function (tag: any) {
-    //           return (<Chip
-    //             aria-label="add an alarm"
-    //             label={tag}
-    //           />
-    //           );
-    //         });
-    //       }
-    //       else {
-    //         return null;
-    //       }
-    //     },
-    //   },
+      {
+        field: 'tagName',
+        headerName: 'Tags',
+        width: 250,
+        editable: false,
+        renderCell: (cellValues) => {
+          if (cellValues.row.tags.length > 0) {
+            return cellValues.row.tags.map(function (tag: any) {
+              return (<Chip
+                aria-label="add an alarm"
+                label={tag}
+              />
+              );
+            });
+          }
+          else {
+            return null;
+          }
+        },
+      },
 
-    //   {
-    //     field: 'statusName',
-    //     headerName: 'Status',
-    //     width: 250,
-    //     editable: false,
-    //   },
-    //   {
-    //     field: 'lastmodifieddatetime',
-    //     headerName: 'Last Modified',
-    //     width: 250,
-    //     editable: false,
-    //   },
+      {
+        field: 'statusName',
+        headerName: 'Status',
+        width: 250,
+        editable: false,
+      },
+      {
+        field: 'lastmodifieddatetime',
+        headerName: 'Last Modified',
+        width: 250,
+        editable: false,
+      },
     //   {
     //     field: 'actions',
     //     headerName: 'Actions',
@@ -426,6 +418,25 @@ const Results: FC<ResultsProps> = ({ projects }) => {
   const handlePageSizeChange = (params) => {
     setPageSize(params.pageSize);
   };
+
+ // Define the initial filter model
+ const FilterModel = {
+  items: [
+    {
+      id: 1,
+      columnField: 'projectName',
+      operatorValue: 'contains',
+      value: projectName,
+    },
+    {
+      id: 2,
+      columnField: 'statusName',
+      operatorValue: 'contains',
+      value: projectStatusName,
+    },
+  ],
+};
+
   //ECHASIN
 
   return (
@@ -539,6 +550,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
               rowsPerPageOptions={[5, 10, 20]}
               onPageSizeChange={handlePageSizeChange}
               checkboxSelection
+              filterModel={FilterModel}
               components={{
                 Toolbar: GridToolbar,
               }}
