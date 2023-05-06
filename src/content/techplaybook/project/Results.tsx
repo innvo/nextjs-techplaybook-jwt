@@ -26,6 +26,7 @@ import {
   lighten,
   styled,
   Chip,
+  Stack,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -38,7 +39,7 @@ import EditIcon from '@mui/icons-material/Edit';
 //   GridToolbarContainer,
 //   GridRowSelectionModel, GridToolbarDensitySelector, GridFilterModel, GridLogicOperator, GridToolbar
 // } from '@mui/x-data-grid', GridToolbar;
-import { DataGridPro, GridActionsCellItem, GridRowId, GridRowHeightParams, GridFilterModel, GridLogicOperator, GridSelectionModel, GridToolbar, GridToolbarContainer, GridToolbarDensitySelector } from '@mui/x-data-grid-pro';
+import { DataGridPro, GridActionsCellItem, GridFilterActiveItemsLookup, GridRowId, GridRowHeightParams, GridFilterModel, GridLogicOperator, GridSelectionModel, GridToolbar, GridToolbarContainer, GridToolbarDensitySelector, GridComparatorFn, getGridSingleSelectOperators, GridFilterItem, GridColDef, GridCellParams, GridLinkOperator } from '@mui/x-data-grid-pro';
 // import { DataGridPremium } from '@mui/x-data-grid-premium';
 import type { Project, ProjectStatus } from 'src/models/project';
 import { useTranslation } from 'react-i18next';
@@ -202,7 +203,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
   const [selectedProjectId, setSelectedProjectId] = useState(0);
 
   const [selectedTags, setSelectedTags] = useState([]);
-
+  console.log("selectedTags:",selectedTags)
   /**
  * An array of project tag objects, each containing a title representing a tag associated with a project.
  * 
@@ -275,6 +276,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
 
 
   let newSelectedTags = [];
+  console.log("newSelectedTags:", newSelectedTags) //NOT USED
 
   const handleTagChange = (searchValue) => {
     if (selectedTags.includes(searchValue.target.innerText)) {
@@ -322,7 +324,39 @@ const Results: FC<ResultsProps> = ({ projects }) => {
 
 
 
-   /**
+ //ECHASIN
+ //https://stackoverflow.com/questions/70972370/react-materil-ui-mui-data-grid-pro-with-muliple-select-in-filter-definition
+ const tagsSortComparator: GridComparatorFn<any> = (tags1: any, tags2: any) => {
+  return tags1.length - tags2.length
+}
+
+const tagsFilterOperators = getGridSingleSelectOperators()
+.filter((operator) => operator.value === "isAnyOf")
+.map((operator) => {
+  const newOperator = { ...operator }
+  const newGetApplyFilterFn = (filterItem: GridFilterItem, column: GridColDef) => {
+    return (params: GridCellParams): boolean => {
+      let isOk = true
+      filterItem?.value?.forEach((fv: any) => {
+        console.log('newOperator', newOperator);
+        console.log('newGetApplyFilterFn', newGetApplyFilterFn);
+        
+        isOk = isOk && params.value.includes(fv)
+      })
+      return isOk
+    }
+  }
+  newOperator.getApplyFilterFn = newGetApplyFilterFn
+  return newOperator
+})
+
+// Split the filter input value into an array of tags
+const filterTags = selectedTags
+console.log("filterTags:",filterTags )
+
+
+
+ /**
  * `columns` is an array of column definitions to be used in a data grid.
  * It contains definitions for the ID and project name columns.
  * @type {Array}
@@ -340,26 +374,70 @@ const Results: FC<ResultsProps> = ({ projects }) => {
       width: 300,
       editable: false,
     },
-      {
-        field: 'tagName',
-        headerName: 'Tags',
-        width: 250,
-        editable: false,
-        renderCell: (cellValues) => {
-          if (cellValues.row.tags.length > 0) {
-            return cellValues.row.tags.map(function (tag: any) {
-              return (<Chip
-                aria-label="add an alarm"
-                label={tag}
-              />
-              );
-            });
-          }
-          else {
-            return null;
-          }
-        },
-      },
+      // {
+      //   field: 'tagName',
+      //   headerName: 'Tags',
+      //   width: 250,
+      //   editable: false,
+      //   renderCell: (cellValues) => {
+      //     if (cellValues.row.tags.length > 0) {
+      //       return cellValues.row.tags.map(function (tag: any) {
+      //         return (<Chip
+      //           aria-label="add an alarm"
+      //           label={tag}
+      //         />
+      //         );
+      //       });
+      //     }
+      //     else {
+      //       return null;
+      //     }
+      //   },
+      // },
+    //   {field: "tagsName",
+    //   headerName: "Tags1",
+    //   width: 300,
+    //   valueOptions: [...new Set(rows.map((o) => {
+    //     return o.tags;
+    //   }).flat())],
+    //   renderCell: (cellValues) => (
+    //     <Stack direction="row" spacing={0.25}>
+    //       {cellValues.row.tags.map((tag: string) => {
+    //         return (
+    //           <Chip label={tag} />
+    //         );
+    //       })}
+    //     </Stack>
+    //   ),
+    //   // sortComparator: tagsSortComparator,
+    //   // filterOperators: tagsFilterOperators
+    //  },
+    //  {
+    //     field: 'tags',
+    //     headerName: 'Tags2',
+    //     width: 150,
+    //     renderCell: (params) => (
+    //       <div>
+    //         {params.value.map((tag, index) => (
+    //           <Chip key={index} label={tag} style={{ margin: 2 }} />
+    //         ))}
+    //       </div>
+    //     ),
+    //  },
+    {
+        field: 'tags',
+        headerName: 'Tags2',
+        width: 150,
+        renderCell: (cellValues) => (
+              <Stack direction="row" spacing={0.25}>
+                {cellValues.row.tags.map((tag: string) => {
+                  return (
+                    <Chip label={tag} />
+                  );
+                })}
+              </Stack>
+        )
+     },
 
       {
         field: 'statusName',
@@ -422,18 +500,29 @@ const Results: FC<ResultsProps> = ({ projects }) => {
  // Define the initial filter model
  const FilterModel = {
   items: [
-    {
-      id: 1,
-      columnField: 'projectName',
+    // {
+    //   id: 1,
+    //   columnField: 'projectName',
+    //   operatorValue: 'contains',
+    //   value: projectName,
+    // },
+    // {
+    //   id: 2,
+    //   columnField: 'statusName',
+    //   operatorValue: 'contains',
+    //   value: projectStatusName,
+    // },
+    {id: 3,
+      columnField: 'tags',
       operatorValue: 'contains',
-      value: projectName,
+      value: selectedTags[0],
     },
-    {
-      id: 2,
-      columnField: 'statusName',
+    {id: 4,
+      columnField: 'tags',
       operatorValue: 'contains',
-      value: projectStatusName,
-    },
+      value: selectedTags[1],
+      GridLinkOperator: "or",
+    }
   ],
 };
 
