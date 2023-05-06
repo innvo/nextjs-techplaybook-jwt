@@ -6,49 +6,40 @@ import {
   useState,
   useEffect
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Avatar,
   Autocomplete,
   Box,
-  Card,
-  Grid,
-  IconButton,
-  InputAdornment,
-  MenuItem,
-  TextField,
   Button,
-  Typography,
+  Card,
+  Chip,
   Dialog,
   FormControl,
-  Select,
+  Grid,
+  InputAdornment,
   InputLabel,
-  Zoom,
-  lighten,
-  styled,
-  Chip,
+  MenuItem,
+  Select,
   Stack,
+  styled,
+  TextField,
+  Typography,
+  ToggleButtonGroup,
+  ToggleButton,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-// import {
-//   DataGrid,
-//   GridActionsCellItem,
-//   GridRowId,
-//   GridRowHeightParams,
-//   GridToolbarContainer,
-//   GridRowSelectionModel, GridToolbarDensitySelector, GridFilterModel, GridLogicOperator, GridToolbar
-// } from '@mui/x-data-grid', GridToolbar;
-import { DataGridPro, GridActionsCellItem, GridFilterActiveItemsLookup, GridRowId, GridRowHeightParams, GridFilterModel, GridLogicOperator, GridSelectionModel, GridToolbar, GridToolbarContainer, GridToolbarDensitySelector, GridComparatorFn, getGridSingleSelectOperators, GridFilterItem, GridColDef, GridCellParams, GridLinkOperator } from '@mui/x-data-grid-pro';
-// import { DataGridPremium } from '@mui/x-data-grid-premium';
-import type { Project, ProjectStatus } from 'src/models/project';
-import { useTranslation } from 'react-i18next';
+import { DataGridPro, GridActionsCellItem, GridRowId, GridToolbarContainer, GridToolbarDensitySelector, GridToolbarColumnsButton, GridToolbarExport } from '@mui/x-data-grid-pro';
 import SearchTwoToneIcon from '@mui/icons-material/SearchTwoTone';
+import { TableContainer } from '@material-ui/core';
+
+import type { Project } from 'src/models/project';
 import { useSnackbar } from 'notistack';
 import { useDispatch } from '@/store';
 import { deleteProject } from '@/slices/projects';
-import { blue } from '@mui/material/colors';
-import { TableContainer } from '@material-ui/core';
+
 
 /**
  * Creates a styled Dialog component using the styled-components library.
@@ -81,35 +72,6 @@ const AvatarError = styled(Avatar)(
 );
 
 /**
- * Creates a styled Card component using the styled-components library.
- * The CardWrapper component is a custom Card with modified styles
- * based on the theme provided.
- */
-const CardWrapper = styled(Card)(
-  ({ theme }) => `
-
-  position: relative;
-  overflow: visible;
-
-  &::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    border-radius: inherit;
-    z-index: 1;
-    transition: ${theme.transitions.create(['box-shadow'])};
-  }
-      
-    &.Mui-selected::after {
-      box-shadow: 0 0 0 3px ${theme.colors.primary.main};
-    }
-  `
-);
-
-/**
  * Creates a styled Button component using the styled-components library.
  * The ButtonError component is a custom Button with modified styles
  * based on the theme provided.
@@ -124,22 +86,6 @@ const ButtonError = styled(Button)(
      }
     `
 );
-/**
- * Creates a styled IconButton component using the styled-components library.
- * The IconButtonError component is a custom IconButton with modified styles
- * based on the theme provided.
- */
-const IconButtonError = styled(IconButton)(
-  ({ theme }) => `
-     background: ${theme.colors.error.lighter};
-     color: ${theme.colors.error.main};
-     padding: ${theme.spacing(0.75)};
-
-     &:hover {
-      background: ${lighten(theme.colors.error.lighter, 0.4)};
-     }
-`
-);
 
 /**
  * ResultsProps is a TypeScript interface that represents the type of properties
@@ -151,84 +97,30 @@ interface ResultsProps {
   projects: Project[];
 }
 
-/**
- * Filters is a TypeScript interface that represents the type of filter criteria
- * to be applied to a list of projects. The filters are optional.
- * @typedef {Object} Filters
- * @property {ProjectStatus} [status] - An optional property representing the status filter of a project.
- */
-interface Filters {
-  status?: ProjectStatus;
-}
-
-
-/**
- * getProjectStatusLabel is a function that takes a project status value and
- * returns a JSX Element containing the corresponding status label text and color.
- * @function
- * @param {ProjectStatus} projectStatus - The project status value to be mapped to a label and color.
- * @returns {JSX.Element} - A JSX Element containing the label text and color based on the project status value.
- */
-const getProjectStatusLabel = (projectStatus: ProjectStatus): JSX.Element => {
-  const map = {
-    not_started: {
-      text: 'Not started',
-      color: 'error'
-    },
-    in_progress: {
-      text: 'In progress',
-      color: 'info'
-    },
-    completed: {
-      text: 'Completed',
-      color: 'success'
-    }
-  };
-};
-
 const Results: FC<ResultsProps> = ({ projects }) => {
-
   const { t }: { t: any } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const [query, setQuery] = useState<string>('');
-  const [filters, setFilters] = useState<Filters>({ status: null });
-  const [tags, setTags] = useState<string[]>([]);
-  const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
   const dispatch = useDispatch();
-
   const [projectName, setProjectName] = useState('');
   const [projectStatusName, setProjectStatusName] = useState('');
-  const [projectTagName, setProjectTagName] = useState('');
   const [rows, setRows] = useState(projects);
   const [selectedProjectId, setSelectedProjectId] = useState(0);
-
   const [selectedTags, setSelectedTags] = useState([]);
-  console.log("selectedTags:",selectedTags)
+
+  // THIS MUST BE SET FROM DATABASE
   /**
  * An array of project tag objects, each containing a title representing a tag associated with a project.
- * 
- * @type {Array<Object>}
- * @property {string} title - The title of the project tag.
  */
   const projectTags = ['jhipster', 'rest', 'agile'];
 
+  // THIS MUST BE SET FROM DATABASE
   /**
-   * An array of status option objects, each containing an id and a name representing a project status.
-   * The names are translated using the 't' function from the 'useTranslation' hook.
-   * 
-   * @type {Array<Object>}
-   * @property {string} id - The identifier of the project status option.
-   * @property {string} name - The translated name of the project status option.
-   */
-
-  useEffect(() => {
-    setRows(projects);
-  }, [projects]);
-
+  * An array of project status objects, each containing a name representing a status associated with a project.
+  */
   const statusOptions = [
     {
       id: 'all',
-      name: 'All'
+      name: 'all'
     },
     {
       id: 'Not started',
@@ -244,9 +136,15 @@ const Results: FC<ResultsProps> = ({ projects }) => {
     }
   ];
 
+
+  useEffect(() => {
+    setRows(projects);
+  }, [projects]);
+
+
   /**
-    * Edit Project
-  */
+   * Edit Project
+ */
   const editProject = (id: GridRowId) => {
     // Add your project deletion logic here
   };
@@ -258,26 +156,21 @@ const Results: FC<ResultsProps> = ({ projects }) => {
     setSelectedProjectId(id);
     setOpenConfirmDelete(true);
   };
-  /**
-   * Handles changes in the status filter by updating the `filters` state based on the selected value.
-   * 
-   * @function
-   * @param {ChangeEvent<HTMLInputElement>} e - The change event from the status filter input element.
-   * @returns {void}
-   */
 
-  const handleStatusChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setProjectStatusName(e.target.value);
-  };
+  /**
+   * Search Datagrid
+   *    handleNameChang
+   *  handleStatusChange
+   *    newSelectedTags
+   */
 
   const handleNameChange = (searchValue) => {
     setProjectName(searchValue.target.value);
   };
-
-
+  const handleStatusChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setProjectStatusName(e.target.value);
+  };
   let newSelectedTags = [];
-  console.log("newSelectedTags:", newSelectedTags) //NOT USED
-
   const handleTagChange = (searchValue) => {
     if (selectedTags.includes(searchValue.target.innerText)) {
       let index = selectedTags.indexOf(searchValue.target.innerText);
@@ -288,245 +181,157 @@ const Results: FC<ResultsProps> = ({ projects }) => {
     setSelectedTags(newSelectedTags)
   };
 
-  // const filteredProjects = applyFilters(projects, query, filters);
-  // console.log("filters:", filters)
-
   /**
-   * @typedef {Object} anchorOrigin
-   * @property {string} vertical - The vertical position of the snackbar.
-   * @property {string} horizontal - The horizontal position of the snackbar.
-   */
-
-  /**
+   * Delete functions
    * State variable and function to manage the visibility of the confirm delete dialog.
-   * @type {Array}
-   * @property {boolean} openConfirmDelete - The state that determines the visibility of the confirm delete dialog.
-   * @property {function} setOpenConfirmDelete - The function to update the openConfirmDelete state.
    */
   const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
-
   const closeConfirmDelete = () => {
     setOpenConfirmDelete(false);
   };
-
   const handleDeleteCompleted = () => {
     setOpenConfirmDelete(false);
     dispatch(deleteProject(selectedProjectId, enqueueSnackbar));
   };
 
-
-  // const = filterModel=[]
-  //   items: [
-  //     { field: 'projectName', operator: 'contains', value: 'projectName' },
-  //     // { id: 2, field: 'statusName', operator: 'contains', value: projectStatusName }
-  //   ],
-  // }}
-
-
-
- //ECHASIN
- //https://stackoverflow.com/questions/70972370/react-materil-ui-mui-data-grid-pro-with-muliple-select-in-filter-definition
- const tagsSortComparator: GridComparatorFn<any> = (tags1: any, tags2: any) => {
-  return tags1.length - tags2.length
-}
-
-const tagsFilterOperators = getGridSingleSelectOperators()
-.filter((operator) => operator.value === "isAnyOf")
-.map((operator) => {
-  const newOperator = { ...operator }
-  const newGetApplyFilterFn = (filterItem: GridFilterItem, column: GridColDef) => {
-    return (params: GridCellParams): boolean => {
-      let isOk = true
-      filterItem?.value?.forEach((fv: any) => {
-        console.log('newOperator', newOperator);
-        console.log('newGetApplyFilterFn', newGetApplyFilterFn);
-        
-        isOk = isOk && params.value.includes(fv)
-      })
-      return isOk
-    }
-  }
-  newOperator.getApplyFilterFn = newGetApplyFilterFn
-  return newOperator
-})
-
-// Split the filter input value into an array of tags
-const filterTags = selectedTags
-console.log("filterTags:",filterTags )
-
-
-
- /**
+  /**
  * `columns` is an array of column definitions to be used in a data grid.
  * It contains definitions for the ID and project name columns.
- * @type {Array}
- * @property {Object} column - An object representing a column definition.
- * @property {string} column.field - The field identifier for the column.
- * @property {string} column.headerName - The header name to display for the column.
- * @property {number} column.width - The width of the column.
- * @property {boolean} [column.editable] - Optional property specifying if the column is editable. Defaults to true.
  */
   const columns = [
     { field: 'projectId', headerName: 'ID', width: 90 },
     {
       field: 'projectName',
       headerName: 'Project name',
+      width: 400,
+      editable: false,
+    },
+    {
+      field: 'tags',
+      headerName: 'Tags',
+      width: 250,
+      renderCell: (cellValues) => (
+        <Stack direction="row" spacing={0.25}>
+          {cellValues.row.tags.map((tag: string) => {
+            return (
+              <Chip label={tag} />
+            );
+          })}
+        </Stack>
+      )
+    },
+    {
+      field: 'statusName',
+      headerName: 'Status',
+      width: 250,
+      editable: false,
+    },
+    {
+      field: 'lastmodifieddatetime',
+      headerName: 'Last Modified',
       width: 300,
       editable: false,
     },
-      // {
-      //   field: 'tagName',
-      //   headerName: 'Tags',
-      //   width: 250,
-      //   editable: false,
-      //   renderCell: (cellValues) => {
-      //     if (cellValues.row.tags.length > 0) {
-      //       return cellValues.row.tags.map(function (tag: any) {
-      //         return (<Chip
-      //           aria-label="add an alarm"
-      //           label={tag}
-      //         />
-      //         );
-      //       });
-      //     }
-      //     else {
-      //       return null;
-      //     }
-      //   },
-      // },
-    //   {field: "tagsName",
-    //   headerName: "Tags1",
-    //   width: 300,
-    //   valueOptions: [...new Set(rows.map((o) => {
-    //     return o.tags;
-    //   }).flat())],
-    //   renderCell: (cellValues) => (
-    //     <Stack direction="row" spacing={0.25}>
-    //       {cellValues.row.tags.map((tag: string) => {
-    //         return (
-    //           <Chip label={tag} />
-    //         );
-    //       })}
-    //     </Stack>
-    //   ),
-    //   // sortComparator: tagsSortComparator,
-    //   // filterOperators: tagsFilterOperators
-    //  },
-    //  {
-    //     field: 'tags',
-    //     headerName: 'Tags2',
-    //     width: 150,
-    //     renderCell: (params) => (
-    //       <div>
-    //         {params.value.map((tag, index) => (
-    //           <Chip key={index} label={tag} style={{ margin: 2 }} />
-    //         ))}
-    //       </div>
-    //     ),
-    //  },
     {
-        field: 'tags',
-        headerName: 'Tags2',
-        width: 150,
-        renderCell: (cellValues) => (
-              <Stack direction="row" spacing={0.25}>
-                {cellValues.row.tags.map((tag: string) => {
-                  return (
-                    <Chip label={tag} />
-                  );
-                })}
-              </Stack>
-        )
-     },
-
-      {
-        field: 'statusName',
-        headerName: 'Status',
-        width: 250,
-        editable: false,
-      },
-      {
-        field: 'lastmodifieddatetime',
-        headerName: 'Last Modified',
-        width: 250,
-        editable: false,
-      },
-    //   {
-    //     field: 'actions',
-    //     headerName: 'Actions',
-    //     type: 'actions',
-    //     width: 80,
-    //     getActions: (params) => [
-    //       <GridActionsCellItem
-    //         icon={<EditIcon />}
-    //         label="Edit"
-    //         onClick={id => editProject(params.id)}
-    //       />,
-    //       <GridActionsCellItem
-    //         icon={<DeleteIcon />}
-    //         label="Delete"
-    //         onClick={id => handleDeleteProject(params.id)}
-    //       />,
-    //     ],
-    //   },
-    //   ,
+      field: 'actions',
+      headerName: 'Actions',
+      type: 'actions',
+      width: 80,
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<EditIcon />}
+          label="Edit"
+          onClick={id => editProject(params.id)}
+        />,
+        <GridActionsCellItem
+          icon={<DeleteIcon />}
+          label="Delete"
+          onClick={id => handleDeleteProject(params.id)}
+        />,
+      ],
+    },
+    ,
   ];
 
   /**
- * CustomToolbar is a React functional component that renders a custom toolbar
- * for a data grid, containing a density selector.
- * @function
- * @returns {ReactElement} - A GridToolbarContainer element containing a GridToolbarDensitySelector.
- */
+  * 'CustomToolbar' is a React functional component that renders a custom toolbar
+  * for a data grid, containing a density selector.
+  */
   function CustomToolbar() {
     return (
       <GridToolbarContainer>
-        <GridToolbarDensitySelector />
+        <GridToolbarColumnsButton nonce={undefined} onResize={undefined} onResizeCapture={undefined} />
+        {/* <GridToolbarFilterButton /> */}
+        <GridToolbarDensitySelector nonce={undefined} onResize={undefined} onResizeCapture={undefined} />
+        <GridToolbarExport />
       </GridToolbarContainer>
+
     );
   }
 
-
-  //ECHASIN
-  const data = rows;
-  console.log("data:", data)
-
+  /**
+ * 'PageSize' set the number of rows 
+ */
   const [pageSize, setPageSize] = useState(10);
-
   const handlePageSizeChange = (params) => {
     setPageSize(params.pageSize);
   };
 
- // Define the initial filter model
- const FilterModel = {
-  items: [
-    // {
-    //   id: 1,
-    //   columnField: 'projectName',
-    //   operatorValue: 'contains',
-    //   value: projectName,
-    // },
-    // {
-    //   id: 2,
-    //   columnField: 'statusName',
-    //   operatorValue: 'contains',
-    //   value: projectStatusName,
-    // },
-    {id: 3,
-      columnField: 'tags',
-      operatorValue: 'contains',
-      value: selectedTags[0],
-    },
-    {id: 4,
-      columnField: 'tags',
-      operatorValue: 'contains',
-      value: selectedTags[1],
-      GridLinkOperator: "or",
-    }
-  ],
-};
+  /**
+   * FilterModel, which represents a set of filter conditions to be applied to some data. 
+   * The object has a single property items, which is an array of objects, each representing an individual filter condition. 
+   */
+  const FilterModel = {
+    items: [
+      {
+        id: 1,
+        columnField: 'projectName',
+        operatorValue: 'contains',
+        value: projectName,
+      },
+      {
+        id: 2,
+        columnField: 'statusName',
+        operatorValue: 'contains',
+        value: projectStatusName,
+      },
+      {
+        id: 3,
+        columnField: 'tags',
+        operatorValue: 'contains',
+        value: selectedTags[0],
+      },
+      {
+        id: 4,
+        columnField: 'tags',
+        operatorValue: 'contains',
+        value: selectedTags[1],
+        GridLinkOperator: "or",
+      },
+      {
+        id: 5,
+        columnField: 'tags',
+        operatorValue: 'contains',
+        value: selectedTags[2],
+      },
+      {
+        id: 6,
+        columnField: 'tags',
+        operatorValue: 'contains',
+        value: selectedTags[3],
+        GridLinkOperator: "or"
+      },
+      {
+        id: 7,
+        columnField: 'tags',
+        operatorValue: 'contains',
+        value: selectedTags[4],
+        GridLinkOperator: "or"
+      }
+    ],
+  };
 
-  //ECHASIN
+
 
   return (
     <>
@@ -577,7 +382,7 @@ console.log("filterTags:",filterTags )
                     fullWidth
                     variant="outlined"
                     label={t('Tags')}
-                    placeholder={t('Select tags...')}
+                    placeholder={t('Select up to  5 tags...')}
                   />
                 )}
               />
@@ -609,18 +414,7 @@ console.log("filterTags:",filterTags )
             justifyContent={{ xs: 'center', md: 'flex-end' }}
           >
             <Box p={1}>
-              {/* <ToggleButtonGroup
-                value={toggleView}
-                exclusive
-                onChange={handleViewOrientation}
-              >
-                <ToggleButton disableRipple value="table_view">
-                  <TableRowsTwoToneIcon />
-                </ToggleButton>
-                <ToggleButton disableRipple value="grid_view">
-                  <GridViewTwoToneIcon />
-                </ToggleButton>
-              </ToggleButtonGroup> */}
+             {/* Placeholder for button */}
             </Box>
           </Grid>
         </Grid>
@@ -632,7 +426,7 @@ console.log("filterTags:",filterTags )
             <DataGridPro
 
               getRowId={(row) => row.projectId}
-              rows={data}
+              rows={rows}
               columns={columns}
               pageSize={pageSize}
               pagination
@@ -641,48 +435,12 @@ console.log("filterTags:",filterTags )
               checkboxSelection
               filterModel={FilterModel}
               components={{
-                Toolbar: GridToolbar,
+                Toolbar: CustomToolbar,
               }}
             />
           </Box>
         </TableContainer>
-        {/* <TableContainer> */}
-        {/* <Box p={1} sx={{ height: 600, width: '100%' }}> */}
-        {/* DataGrid version 6 */}
-        {/* <DataGridPro
-              getRowId={(row) => row.projectId}
-              rows={rows}
-              // columns={columns}
-              {...rows}
-
-              // initialState={{
-              //   pagination: {
-              //     paginationModel: {
-              //       pageSize: 5
-              //     },
-              //   },
-              // }}
-              pagination
-              pageSizeOptions={[5, 10, 25, 50, 100]}
-              checkboxSelection
-              onRowSelectionModelChange={(newRowSelectionModel) => {
-                setRowSelectionModel(newRowSelectionModel);
-              }}
-              rowSelectionModel={rowSelectionModel}
-              slots={{
-                // toolbar: CustomToolbar, GridToolbar
-                toolbar: GridToolbar
-              }}
-              // filterModel={filterModel}
-            
-
-            /> */}
-        {/* </TableContainer> */}
-        {/* </Box>
-      */}
       </Card>
-      {/* )} */}
-
 
       <DialogWrapper
         open={openConfirmDelete}
@@ -755,13 +513,5 @@ console.log("filterTags:",filterTags )
     </>
   );
 };
-
-// Results.propTypes = {
-//   projects: PropTypes.array.isRequired
-// };
-
-// Results.defaultProps = {
-//   projects: []
-// };
 
 export default Results;
