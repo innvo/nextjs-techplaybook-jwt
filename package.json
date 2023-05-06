@@ -28,7 +28,7 @@
     "@mui/styles": "5.8.0",
     "@mui/x-data-grid": "latest",
     "@mui/x-data-grid-generator": "latest",
-    "@mui/x-data-grid-pro": "latest",
+    "@mui/x-data-grid-pro": "5.17.26",
     "@mui/x-data-grid-premium": "latest",
     "@material-ui/core": "latest",
     "@material-ui/icons": "latest",

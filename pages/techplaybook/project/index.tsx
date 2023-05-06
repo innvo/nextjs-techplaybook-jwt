@@ -15,11 +15,14 @@ import type { Project } from 'src/models/project';
 
 import axiosInt from '@/utils/axios';//ECHASIN
 import Results from '@/content/techplaybook/project/Results';//ECHASIN
+import { useDispatch, useSelector } from '@/store';
+import { getProject } from '@/slices/projects_board';
+import { getProjects } from '@/slices/projects';
 
 function Projects() {
   console.log("In Project.index.ts"); //ECHASIN
   const isMountedRef = useRefMounted();
-  const [projects, setProjects] = useState<Project[]>([]);
+  //const [projects, setProjects] = useState<Project[]>([]);
 
   /**
  * Initializes the component by fetching project data using the `getProjects` function.
@@ -29,12 +32,14 @@ function Projects() {
  * @effect
  * @returns {void}
  */
-  useEffect(() => {
-    console.log("In index.tsx>useEffect")
-    // Call the 'getProjects' function to fetch project data
-    getProjects();
-  }, []); // The empty dependency array ensures this effect runs only once on component mount
 
+
+  const dispatch= useDispatch();  
+  const projects = useSelector((state) => state.project.projects);
+
+  useEffect(() => {
+   dispatch(getProjects('Dolor Industries','rest','Completed')) ;
+  }, []);
 
 /**
  * Fetches project data from the '/api/projects' endpoint using Axios and updates the `projects` state.
@@ -47,22 +52,7 @@ function Projects() {
  * @returns {void}
  * @throws Will throw an error if the request fails or the component is unmounted.
  */
-  const getProjects = useCallback(async () => {
-    try {
-      // Send a GET request to the '/api/projects' endpoint
-      console.log("In project>index.tsx>getProjects")
-      const response = await axiosInt.get('/api/projects');
-      // Check if the component is still mounted before updating the state
-      if (isMountedRef()) {
-        // Update the 'projects' state with the received data
-        setProjects(response.data);
-        console.log('response.data:', response.data)
-      }
-    } catch (err) {
-      // Log any error encountered during the request
-      console.error('Error getting projects:', err);
-    }
-  }, [isMountedRef]);
+  
 
   return (
     <>
