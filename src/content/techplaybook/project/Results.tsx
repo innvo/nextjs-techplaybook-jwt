@@ -1,3 +1,5 @@
+
+import * as React from 'react';
 import {
   FC,
   ChangeEvent,
@@ -28,16 +30,16 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import {
-  DataGrid,
-  GridActionsCellItem,
-  GridRowId,
-  GridRowHeightParams,
-  GridToolbarContainer,
-  GridRowSelectionModel, GridToolbarDensitySelector, GridFilterModel, GridLogicOperator, GridToolbar
-} from '@mui/x-data-grid';
-import { DataGridPro } from '@mui/x-data-grid-pro';
-import { DataGridPremium } from '@mui/x-data-grid-premium';
+// import {
+//   DataGrid,
+//   GridActionsCellItem,
+//   GridRowId,
+//   GridRowHeightParams,
+//   GridToolbarContainer,
+//   GridRowSelectionModel, GridToolbarDensitySelector, GridFilterModel, GridLogicOperator, GridToolbar
+// } from '@mui/x-data-grid', GridToolbar;
+import { DataGridPro, GridActionsCellItem, GridRowId, GridRowHeightParams, GridFilterModel, GridLogicOperator, GridSelectionModel, GridToolbar, GridToolbarContainer, GridToolbarDensitySelector } from '@mui/x-data-grid-pro';
+// import { DataGridPremium } from '@mui/x-data-grid-premium';
 import type { Project, ProjectStatus } from 'src/models/project';
 import { useTranslation } from 'react-i18next';
 import SearchTwoToneIcon from '@mui/icons-material/SearchTwoTone';
@@ -45,6 +47,7 @@ import { useSnackbar } from 'notistack';
 import { useDispatch } from '@/store';
 import { deleteProject } from '@/slices/projects';
 import { blue } from '@mui/material/colors';
+import { TableContainer } from '@material-ui/core';
 
 /**
  * Creates a styled Dialog component using the styled-components library.
@@ -309,6 +312,24 @@ const Results: FC<ResultsProps> = ({ projects }) => {
     dispatch(deleteProject(selectedProjectId, enqueueSnackbar));
   };
 
+
+  // const = filterModel=[]
+  //   items: [
+  //     { field: 'projectName', operator: 'contains', value: 'projectName' },
+  //     // { id: 2, field: 'statusName', operator: 'contains', value: projectStatusName }
+  //   ],
+  // }}
+
+
+
+  const filterModel: GridFilterModel = {
+    items: [
+      { id: 1, field: 'projectName', operator: 'contains', value: 'Elit' },
+    ],
+
+  };
+
+
   /**
  * `columns` is an array of column definitions to be used in a data grid.
  * It contains definitions for the ID and project name columns.
@@ -327,58 +348,58 @@ const Results: FC<ResultsProps> = ({ projects }) => {
       width: 300,
       editable: false,
     },
-    {
-      field: 'tagName',
-      headerName: 'Tags',
-      width: 250,
-      editable: false,
-      renderCell: (cellValues) => {
-        if (cellValues.row.tags.length > 0) {
-          return cellValues.row.tags.map(function (tag: any) {
-            return (<Chip
-              aria-label="add an alarm"
-              label={tag}
-            />
-            );
-          });
-        }
-        else {
-          return null;
-        }
-      },
-    },
+    //   {
+    //     field: 'tagName',
+    //     headerName: 'Tags',
+    //     width: 250,
+    //     editable: false,
+    //     renderCell: (cellValues) => {
+    //       if (cellValues.row.tags.length > 0) {
+    //         return cellValues.row.tags.map(function (tag: any) {
+    //           return (<Chip
+    //             aria-label="add an alarm"
+    //             label={tag}
+    //           />
+    //           );
+    //         });
+    //       }
+    //       else {
+    //         return null;
+    //       }
+    //     },
+    //   },
 
-    {
-      field: 'statusName',
-      headerName: 'Status',
-      width: 250,
-      editable: false,
-    },
-    {
-      field: 'lastmodifieddatetime',
-      headerName: 'Last Modified',
-      width: 250,
-      editable: false,
-    },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      type: 'actions',
-      width: 80,
-      getActions: (params) => [
-        <GridActionsCellItem
-          icon={<EditIcon />}
-          label="Edit"
-          onClick={id => editProject(params.id)}
-        />,
-        <GridActionsCellItem
-          icon={<DeleteIcon />}
-          label="Delete"
-          onClick={id => handleDeleteProject(params.id)}
-        />,
-      ],
-    },
-    ,
+    //   {
+    //     field: 'statusName',
+    //     headerName: 'Status',
+    //     width: 250,
+    //     editable: false,
+    //   },
+    //   {
+    //     field: 'lastmodifieddatetime',
+    //     headerName: 'Last Modified',
+    //     width: 250,
+    //     editable: false,
+    //   },
+    //   {
+    //     field: 'actions',
+    //     headerName: 'Actions',
+    //     type: 'actions',
+    //     width: 80,
+    //     getActions: (params) => [
+    //       <GridActionsCellItem
+    //         icon={<EditIcon />}
+    //         label="Edit"
+    //         onClick={id => editProject(params.id)}
+    //       />,
+    //       <GridActionsCellItem
+    //         icon={<DeleteIcon />}
+    //         label="Delete"
+    //         onClick={id => handleDeleteProject(params.id)}
+    //       />,
+    //     ],
+    //   },
+    //   ,
   ];
 
   /**
@@ -395,6 +416,17 @@ const Results: FC<ResultsProps> = ({ projects }) => {
     );
   }
 
+
+  //ECHASIN
+  const data = rows;
+  console.log("data:", data)
+
+  const [pageSize, setPageSize] = useState(10);
+
+  const handlePageSizeChange = (params) => {
+    setPageSize(params.pageSize);
+  };
+  //ECHASIN
 
   return (
     <>
@@ -495,14 +527,31 @@ const Results: FC<ResultsProps> = ({ projects }) => {
       </Card>
 
       <Card>
-        <>
-          {/* <TableContainer> */}
+        <TableContainer>
           <Box p={1} sx={{ height: 600, width: '100%' }}>
-            {/* DataGrid version 6 */}
             <DataGridPro
+
+              getRowId={(row) => row.projectId}
+              rows={data}
+              columns={columns}
+              pageSize={pageSize}
+              pagination
+              rowsPerPageOptions={[5, 10, 20]}
+              onPageSizeChange={handlePageSizeChange}
+              checkboxSelection
+              components={{
+                Toolbar: GridToolbar,
+              }}
+            />
+          </Box>
+        </TableContainer>
+        {/* <TableContainer> */}
+        {/* <Box p={1} sx={{ height: 600, width: '100%' }}> */}
+        {/* DataGrid version 6 */}
+        {/* <DataGridPro
               getRowId={(row) => row.projectId}
               rows={rows}
-              columns={columns}
+              // columns={columns}
               {...rows}
 
               // initialState={{
@@ -523,18 +572,13 @@ const Results: FC<ResultsProps> = ({ projects }) => {
                 // toolbar: CustomToolbar, GridToolbar
                 toolbar: GridToolbar
               }}
+              // filterModel={filterModel}
+            
 
-              filterModel={{
-                items: [
-                  { id: 1, field: 'projectName', operator: 'contains', value: projectName },
-                  { id: 2, field: 'statusName', operator: 'contains', value: projectStatusName }
-                ],
-              }}
-
-            />
-            {/* </TableContainer> */}
-          </Box>
-        </>
+            /> */}
+        {/* </TableContainer> */}
+        {/* </Box>
+      */}
       </Card>
       {/* )} */}
 

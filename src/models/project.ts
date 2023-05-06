@@ -9,6 +9,7 @@ export interface Member {
 }
 
 export interface Project {
+  projectId: GridRowId;
   id: number;
   name: string;
   nameshort: string;
