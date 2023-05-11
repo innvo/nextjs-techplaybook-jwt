@@ -37,8 +37,10 @@ import { TableContainer } from '@material-ui/core';
 
 import type { Project } from 'src/models/project';
 import { useSnackbar } from 'notistack';
-import { useDispatch } from '@/store';
+import { useDispatch, useSelector } from '@/store';
 import { deleteProject } from '@/slices/projects';
+import { getTags } from '@/slices/tag';
+import { getProjectstatuss } from '@/slices/projectstatus';
 
 
 /**
@@ -111,12 +113,18 @@ const Results: FC<ResultsProps> = ({ projects }) => {
   /**
  * An array of project tag objects, each containing a title representing a tag associated with a project.
  */
-  const projectTags = ['jhipster', 'rest', 'agile'];
+ // const projectTags = ['jhipster', 'rest', 'agile'];
+  const projectTags = useSelector((state) => state.tag.tags);
+  const statusOptions = useSelector((state) => state.projectstatus.projectstatuss);
+
+  console.log('777777777777777777')
+  console.log(statusOptions)
 
   // THIS MUST BE SET FROM DATABASE
   /**
   * An array of project status objects, each containing a name representing a status associated with a project.
   */
+ /** 
   const statusOptions = [
     {
       id: 'all',
@@ -135,9 +143,11 @@ const Results: FC<ResultsProps> = ({ projects }) => {
       name: t('In Progress')
     }
   ];
-
+*/
 
   useEffect(() => {
+    dispatch(getTags());
+    dispatch(getProjectstatuss());
     setRows(projects);
   }, [projects]);
 
@@ -168,17 +178,9 @@ const Results: FC<ResultsProps> = ({ projects }) => {
     setProjectName(searchValue.target.value);
   };
   const handleStatusChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    console.log(e);
+    console.log(e.target.value);
     setProjectStatusName(e.target.value);
-  };
-  let newSelectedTags = [];
-  const handleTagChange = (searchValue) => {
-    if (selectedTags.includes(searchValue.target.innerText)) {
-      let index = selectedTags.indexOf(searchValue.target.innerText);
-      selectedTags.splice(index, 1);
-    } else {
-      newSelectedTags = [...selectedTags, searchValue.target.innerText]
-    }
-    setSelectedTags(newSelectedTags)
   };
 
   /**
@@ -372,10 +374,20 @@ const Results: FC<ResultsProps> = ({ projects }) => {
                 }}
                 limitTags={2}
                 // @ts-ignore
-                value={selectedTags}
-                onChange={handleTagChange}
+              //  value={selectedTags}
+                onChange={(e, value, situation, option) => {
+                  let newSelectedTags = [];
+                  if (value.length) {
+                    value.forEach(element => {
+                      newSelectedTags = [...newSelectedTags, element.name]
+                      setSelectedTags(newSelectedTags)  
+                    });
+                  }else{
+                    setSelectedTags([])
+                  }
+                }}
                 options={projectTags}
-                getOptionLabel={(option) => option}
+                getOptionLabel={(option) => option.name}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -396,9 +408,13 @@ const Results: FC<ResultsProps> = ({ projects }) => {
                   // value={projectStatusName}
                   onChange={handleStatusChange}
                   label={t('Status')}
+                  
                 >
+                  <MenuItem key='' value=''>
+                      All
+                    </MenuItem>
                   {statusOptions.map((statusOption) => (
-                    <MenuItem key={statusOption.id} value={statusOption.id}>
+                    <MenuItem key={statusOption.id} value={statusOption.name}>
                       {statusOption.name}
                     </MenuItem>
                   ))}
