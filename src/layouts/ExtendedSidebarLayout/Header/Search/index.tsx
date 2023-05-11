@@ -188,6 +188,8 @@ function HeaderSearch() {
 
   return (
     <>
+      
+      SEARCH GOES HERE
       <Tooltip arrow title={t('Search')}>
         <IconButtonWrapper color="primary" onClick={handleClickOpen}>
           <SearchTwoToneIcon fontSize="small" />

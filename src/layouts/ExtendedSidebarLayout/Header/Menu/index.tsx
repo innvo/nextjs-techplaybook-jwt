@@ -176,7 +176,7 @@ function HeaderMenu() {
           display: { xs: 'none', md: 'inline-flex' }
         }}
       >
-        <Button
+        {/* <Button
           ref={ref}
           onClick={handleOpen}
           endIcon={<KeyboardArrowDownTwoToneIcon />}
@@ -240,7 +240,7 @@ function HeaderMenu() {
           }}
         >
           {t('Dashboards')}
-        </Button>
+        </Button> */}
       </Box>
       <Popover
         disableScrollLock
