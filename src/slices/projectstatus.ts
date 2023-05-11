@@ -52,7 +52,6 @@ const slice = createSlice({
 
 
 // The reducer function is destructured from the slice object and exported using the ES6 shorthand syntax. This makes it easy to import the reducer function in another file by using:
-
 export const { reducer } = slice;
 
 export const getProjectstatuss =
