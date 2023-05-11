@@ -456,6 +456,10 @@ const Results: FC<ResultsProps> = ({ projects }) => {
               onPageSizeChange={handlePageSizeChange}
               checkboxSelection
               filterModel={FilterModel}
+              disableColumnFilter
+              initialState={{
+                sorting: {sortModel:[{field: 'lastmodifieddatetime', sort: 'desc'}]},
+              }}
               components={{
                 Toolbar: CustomToolbar,
               }}
