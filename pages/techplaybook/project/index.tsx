@@ -1,6 +1,5 @@
 import Head from 'next/head';
-
-import { useState, useEffect, useCallback } from 'react';
+import {useEffect } from 'react';
 
 import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
 import { Authenticated } from 'src/components/Authenticated';
@@ -10,19 +9,14 @@ import Footer from 'src/components/Footer';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 
 import { Grid } from '@mui/material';
-import { useRefMounted } from 'src/hooks/useRefMounted';
-import type { Project } from 'src/models/project';
 
-import axiosInt from '@/utils/axios';//ECHASIN
-import Results from '@/content/techplaybook/project/Results';//ECHASIN
+import Results from '@/content/techplaybook/project/Results';
 import { useDispatch, useSelector } from '@/store';
-import { getProject } from '@/slices/projects_board';
 import { getProjects } from '@/slices/projects';
 
 function Projects() {
-  console.log("In Project.index.ts"); //ECHASIN
-  const isMountedRef = useRefMounted();
-  //const [projects, setProjects] = useState<Project[]>([]);
+  console.log("In Project.index.ts");
+
 
   /**
  * Initializes the component by fetching project data using the `getProjects` function.
@@ -38,7 +32,7 @@ function Projects() {
   const projects = useSelector((state) => state.project.projects);
 
   useEffect(() => {
-   dispatch(getProjects('Dolor Industries','rest','Completed')) ;
+   dispatch(getProjects()) ;
   }, []);
 
 /**

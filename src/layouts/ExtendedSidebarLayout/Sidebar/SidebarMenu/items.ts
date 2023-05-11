@@ -29,8 +29,25 @@ export interface MenuItems {
 }
 
 const menuItems: MenuItems[] = [
+  // {
+  //   heading: 'Playbook',
+  //   items: [
+  //     {
+  //       name: 'Teammates',
+  //       icon: BackupTableTwoToneIcon,
+  //       link: '/techplaybook/teammate',
+  //       badgeTooltip: 'Add, update, and delete teammates'
+  //     },
+  //     {
+  //       name: 'Projects',
+  //       icon: BackupTableTwoToneIcon,
+  //       link: '/techplaybook/project',
+  //       badgeTooltip: 'Add, update, and delete projects'
+  //     }
+  //   ]
+  // }, 
   {
-    heading: 'Playbook',
+    heading: 'Techplaybook',
     items: [
       {
         name: 'Teammates',
@@ -44,11 +61,7 @@ const menuItems: MenuItems[] = [
         link: '/techplaybook/project',
         badgeTooltip: 'Add, update, and delete projects'
       }
-    ]
-  }, 
-  {
-    heading: 'Techplaybook',
-    items: [
+,
       {
         name: 'Management',
         icon: BackupTableTwoToneIcon,
@@ -57,6 +70,22 @@ const menuItems: MenuItems[] = [
             name: 'User Management',
             link: '/techplaybook/user-management',
             badgeTooltip: 'Add, update, and delete users'
+          },
+        ]
+      },
+      {
+        name: 'Knowledge Bases',
+        icon: BackupTableTwoToneIcon,
+        items: [
+          {
+            name: 'AI Prompt Management',
+            link: '/techplaybook/user-management',
+            badgeTooltip: 'Add, update, and delete prompts'
+          },
+          {
+            name: 'Workspaces',
+            link: '/techplaybook/user-management',
+            badgeTooltip: 'Add, update, and delete workspaces'
           },
         ]
       }
