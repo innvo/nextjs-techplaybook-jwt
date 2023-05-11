@@ -41,6 +41,7 @@ import { useDispatch, useSelector } from '@/store';
 import { deleteProject } from '@/slices/projects';
 import { getTags } from '@/slices/tag';
 import { getProjectstatuss } from '@/slices/projectstatus';
+import moment from 'moment';
 
 
 /**
@@ -107,6 +108,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
   const [projectStatusName, setProjectStatusName] = useState('');
   const [rows, setRows] = useState(projects);
   const [selectedProjectId, setSelectedProjectId] = useState(0);
+  const [selectedProjectName, setSelectedProjectName] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
 
   // THIS MUST BE SET FROM DATABASE
@@ -162,8 +164,10 @@ const Results: FC<ResultsProps> = ({ projects }) => {
   /**
    * Delete Project
  */
-  const handleDeleteProject = (id: number) => {
+  const handleDeleteProject = (id: number, name: string) => {
     setSelectedProjectId(id);
+    setSelectedProjectName(name);
+    console.log(name)
     setOpenConfirmDelete(true);
   };
 
@@ -233,6 +237,8 @@ const Results: FC<ResultsProps> = ({ projects }) => {
       headerName: 'Last Modified',
       width: 300,
       editable: false,
+      valueFormatter: params => 
+      moment(params?.value).format("DD/MM/YYYY hh:mm A"),
     },
     {
       field: 'actions',
@@ -243,12 +249,12 @@ const Results: FC<ResultsProps> = ({ projects }) => {
         <GridActionsCellItem
           icon={<EditIcon />}
           label="Edit"
-          onClick={id => editProject(params.id)}
+          onClick={id => editProject(params.row.projectId)}
         />,
         <GridActionsCellItem
           icon={<DeleteIcon />}
           label="Delete"
-          onClick={id => handleDeleteProject(params.id)}
+          onClick={id => handleDeleteProject(params.row.projectId, params.row.projectName)}
         />,
       ],
     },
@@ -484,11 +490,11 @@ const Results: FC<ResultsProps> = ({ projects }) => {
             }}
             variant="h3"
           >
-            {t('Do you really want to delete this project')}?
+            {t('Do you really want to delete this project')} (  { selectedProjectName } )  ?
           </Typography>
 
           <Typography
-            align="center"
+            align="center"   
             sx={{
               pt: 2,
               pb: 4,
