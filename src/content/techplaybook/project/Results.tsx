@@ -238,7 +238,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
       width: 300,
       editable: false,
       valueFormatter: params => 
-      moment(params?.value).format("DD/MM/YYYY hh:mm A"),
+      moment(params?.value).format("YYYY-MM-DD hh:mm A Z"),
     },
     {
       field: 'actions',
