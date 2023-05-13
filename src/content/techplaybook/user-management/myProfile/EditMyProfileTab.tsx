@@ -205,6 +205,7 @@ const EditMyProfileTab: FC<ResultsProps> = ({ user }) => {
           await wait(1000);
           setStatus({ success: true });
           _values.avatar=avatar;
+          console.log(avatar)
           _values.activated=activated;
           handleUpdateUserSuccess(_values);
         } catch (err) {
