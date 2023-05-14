@@ -21,7 +21,7 @@ import SecurityTab from    'src/content/techplaybook/user-management/profile/Sec
 import { useRouter } from 'next/router';
 import { getUser } from '@/slices/user';
 import { useDispatch, useSelector } from '@/store';
-import ProjectContent from '@/content/techplaybook/project/edit/ProjectContent';
+import ProjectContent from '@/content/techplaybook/project/edit/ProjectEdit';
 
 const TabsWrapper = styled(Tabs)(
   () => `

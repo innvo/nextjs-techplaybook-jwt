@@ -46,7 +46,7 @@ const LinearProgressWrapper = styled(LinearProgress)(
 `
 );
 
-function TeamOverview() {
+function TabTeamPanel() {
   const { t }: { t: any } = useTranslation();
   const theme = useTheme();
 
@@ -226,4 +226,4 @@ function TeamOverview() {
   );
 }
 
-export default TeamOverview;
+export default TabTeamPanel;
