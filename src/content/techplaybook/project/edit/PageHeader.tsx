@@ -3,7 +3,13 @@ import { useTranslation } from 'react-i18next';
 import AddAlertTwoToneIcon from '@mui/icons-material/AddAlertTwoTone';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SaveIcon from '@mui/icons-material/Save';
-
+import { Project } from '@/models/project';
+import { FC, useEffect } from 'react';
+import { useFormikContext } from 'formik';
+import { createProject, updateProject } from '@/slices/projects';
+import { useSnackbar } from 'notistack';
+import { useDispatch, useSelector } from '@/store';
+import  TabProfilePanel  from './profile/TabProfilePanel';
 // CSS
 
 const AvatarPageTitle = styled(Avatar)(
@@ -29,8 +35,22 @@ const AvatarPageTitle = styled(Avatar)(
       };
 `
 );
+
+
+
+
 // Functional Component
-function PageHeader() {
+//const PageHeader: FC = () => {
+const PageHeader: FC<any> = () => {
+
+  const dispatch= useDispatch();  
+  const { enqueueSnackbar } = useSnackbar();
+  const project = useSelector((state) => state.project.currentProject);
+
+  const editCurrentProject = () => {
+    dispatch(updateProject(project,enqueueSnackbar)) ;
+  }
+
   const { t }: { t: any } = useTranslation();
 
   return (
@@ -65,6 +85,7 @@ function PageHeader() {
         </Button>
   
         <Button 
+        onClick={ editCurrentProject}
         variant="contained" 
         sx={{
           mr: 1

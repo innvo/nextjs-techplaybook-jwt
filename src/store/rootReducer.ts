@@ -6,6 +6,7 @@ import { reducer as userReducer } from 'src/slices/user';
 import { reducer as projectReducer } from 'src/slices/projects';
 import { reducer as tagReducer } from 'src/slices/tag';
 import { reducer as projectstatusReducer } from 'src/slices/projectstatus';
+import { reducer as userProfilesReducer } from 'src/slices/userProfile';
 
 export const rootReducer = combineReducers({
   calendar: calendarReducer,
@@ -14,5 +15,6 @@ export const rootReducer = combineReducers({
   user: userReducer,
   project: projectReducer,
   tag: tagReducer,
-  projectstatus: projectstatusReducer
+  projectstatus: projectstatusReducer,
+  userProfiles: userProfilesReducer 
 });

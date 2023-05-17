@@ -21,6 +21,7 @@ import {
 
 import TabProfilePanel from './profile/TabProfilePanel';
 import TabTeamPanel from './profile/TabTeamPanel';
+import { Project } from '@/models/project';
 
 
 interface TabPanelProps {
@@ -142,7 +143,13 @@ function tabProps(index: number) {
   };
 }
 
-export default function BasicTabs() {
+interface ResultsProps {
+  project: Project
+}
+
+ // function BasicTabs() {
+const BasicTabs: React.FC<ResultsProps> = ({ project }) => {
+
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -169,7 +176,7 @@ export default function BasicTabs() {
             <Tab label="Checklists" {...tabProps(5)} />
           </Tabs>
           <TabPanel value={value} index={0}>
-            <TabProfilePanel></TabProfilePanel>
+            <TabProfilePanel project={project}></TabProfilePanel>
           </TabPanel>
           <TabPanel value={value} index={1}>
             Item Two
@@ -189,3 +196,4 @@ export default function BasicTabs() {
     </Grid>
   );
 }
+export default  BasicTabs;

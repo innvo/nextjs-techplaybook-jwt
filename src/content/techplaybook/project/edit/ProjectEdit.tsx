@@ -1,4 +1,4 @@
-import { Fragment, ChangeEvent, useState, useEffect } from 'react';
+import { Fragment, ChangeEvent, useState, useEffect, FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   styled,
@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
 import TabPanel from '@/content/techplaybook/project/edit/TabPanel';
+import { Project } from '@/models/project';
 
 // CSS
 const TabsContainerWrapper = styled(Box)(
@@ -112,11 +113,18 @@ interface TabPanelProps {
   value: number;
 }
 
+interface ResultsProps {
+  project: Project
+}
 
 // Functional Component
-function ProjectEdit() {
+const ProjectEdit: FC<ResultsProps> = ({ project }) => {
+
   const { t }: { t: any } = useTranslation();
 
+  console.log(project)
+
+  
   return (
     <Grid
       sx={{ px: 4 }}
@@ -128,7 +136,7 @@ function ProjectEdit() {
     >
 
       <Grid item xs={12}>
-        <TabPanel></TabPanel>
+        <TabPanel project={project}></TabPanel>
       </Grid>
 
     </Grid>
