@@ -20,7 +20,8 @@ import {
   Dialog,
   DialogTitle,
   Typography,
-  DialogContent
+  DialogContent,
+  Checkbox
 } from '@mui/material';
 import { DataGridPro } from '@mui/x-data-grid-pro';
 import { useTranslation } from 'next-i18next';
@@ -32,11 +33,13 @@ import { useDispatch, useSelector } from '@/store';
 import slice, {  addProjectrelusers } from '@/slices/projects';
 import { useSnackbar } from 'notistack';
 import moment from 'moment';
-import { getProjectUserProfiles, getUserProfiles } from '@/slices/userProfile';
+import { deleteProjectUserProfiles, getProjectUserProfiles, getUserProfiles } from '@/slices/userProfile';
 import { GridDeleteIcon } from '@mui/x-data-grid';
 import dynamic from 'next/dynamic';
 import { getProjectstatuss } from '@/slices/projectstatus';
 import { projectreluser } from '@/models/projectreluser';
+import { getTags, getTagsByProject } from '@/slices/tag';
+import { Tag } from '@/models/tag';
 
 
 // Rendering
@@ -98,18 +101,16 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
   const statusOptions = useSelector((state) => state.projectstatus.projectstatuss);
   const userProfiles = useSelector((state) => state.userProfiles.userProfiles);
   const userProjectProfiles = useSelector((state) => state.userProfiles.userProjectProfiles);
-
-
-  console.log('5555555555555555555555555554')
-  console.log(userProjectProfiles)
+  const currentprojectTags = useSelector((state) => state.tag.ProjectTags);
 
   const [addTeamMemberDialog, setAddTeamMemberDialog] = useState(false);
   const [projectName, setProjectName] = useState(project?.name);
   const [nameShort, setNameShort] = useState(project?.nameshort);
   const [projectDescription, setProjectDescription] = useState(project?.description);
-  const [projectStatus, setProjectStatus] = useState(project?.projectstatus?.id);
+  const [projectStatus, setProjectStatus] = useState(null);
   const [projectstartdatetime, setProjectstartdatetime] = useState(project?.projectstartdatetime);
   const [projectenddatetime, setProjectenddatetime] = useState(project?.projectenddatetime);
+  let [selectedTags, setSelectedTags] = useState<Tag[]>(currentprojectTags);
 
   const [teamMemeber, setTeamMemeber] = useState();
   const [memberRole, setMemberRole] = useState();
@@ -124,9 +125,32 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
 
   let currentProject: any;
 
+  useEffect(() => {
+    dispatch(getUserProfiles());
+    dispatch(getProjectstatuss());
+    dispatch(getProjectUserProfiles(project.id));
+    dispatch(getTags());
+    dispatch(getTagsByProject(project.id));
+
+    setRows(userProjectProfiles);
+    setProjectName(project?.name)
+    setNameShort(project?.nameshort)
+    setProjectDescription(project?.description)
+    setProjectStatus(project?.projectstatus)
+    setProjectstartdatetime(project?.projectstartdatetime)
+    setProjectenddatetime(project?.projectenddatetime)    
+  }, [project?.name, project.projectstatus]);
+
+
+  useEffect(() => {
+    setSelectedTags(currentprojectTags)
+  }, [currentprojectTags]);
+
+
   const handleBlur= () => {
+    console.log(selectedTags)
     currentProject={
-      tags: [],
+      tags: selectedTags,
       projectId: project.id,
       id: project.id,
       name: projectName,
@@ -139,29 +163,18 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
       createddatetime: Date.now(),
       lastmodifiedby: user.login,
       lastmodifieddatetime: Date.now(),
-      projectstatus: project.projectstatus,
+      projectstatus: projectStatus,
     }
     dispatch(slice.actions.getProject(currentProject));
   }  
 
-  useEffect(() => {
-    dispatch(getUserProfiles());
-    dispatch(getProjectstatuss());
-    dispatch(getProjectUserProfiles(project.id));
-    setRows(userProjectProfiles);
-    setProjectName(project?.name)
-    setNameShort(project?.nameshort)
-    setProjectDescription(project?.description)
-    setProjectStatus(project?.projectstatus?.id)
-    setProjectstartdatetime(project?.projectstartdatetime)
-    setProjectenddatetime(project?.projectenddatetime)
-  }, [project?.name, project.id]);
-
-
+  const handleAddSelectedTags = (tags) => {
+    selectedTags =[...tags]
+    setSelectedTags(selectedTags)
+      handleBlur();   
+  }
 
   const AddProjectTeamMember= () => {
-    console.log(teamMemeber);
-    console.log(memberRole);
     const projectrelusers: projectreluser = {
       role: memberRole,
       comment: 'No comment',
@@ -174,13 +187,16 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
       project: project
     }
 
-
     dispatch(addProjectrelusers(projectrelusers, enqueueSnackbar));
     setAddTeamMemberDialog(false);
     setTeamMemeber(null);
     setMemberRole(null);
   };
 
+  const handleProjectStatusChange = (value) => {
+   setProjectStatus(value)
+   //project.projectstatus.id=value;
+  };
   //team grid section
 
   const [rows, setRows] = useState(userProjectProfiles);
@@ -196,6 +212,11 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
  */
    const columns = [
     {
+      field: 'id',
+      headerName: 'Id',
+      hide: true
+    },
+    {
       field: 'login',
       headerName: 'Name',
       width: 200,
@@ -208,10 +229,17 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
       editable: false,
     },
     {
-      field: 'Activated',
-      headerName: 'activated',
+      field: 'activated',
+      headerName: 'Activated',
+      //type: 'boolean',
       width: 200,
       editable: false,
+      renderCell: (params) =>(
+        <Checkbox
+          checked={params.row?.activated}
+       //   onChange={() => handleConfirmChange(params.row.rowId)}
+        />
+      )
     },
     {
       field: 'email',
@@ -234,8 +262,9 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
       width: 80,
       renderCell: (params) => {
         const onClick = (e) => {
-          const currentRow = params.row;
-          return alert(JSON.stringify(currentRow, null, 4));
+        //  const currentRow = params.row;
+          dispatch(deleteProjectUserProfiles(project.id,params.row?.id)); 
+        //  return alert(JSON.stringify(currentRow, null, 4));
         };
         return (
           <Stack direction="row" spacing={2}>
@@ -386,7 +415,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                     }}
                     alignSelf="center"
                   >
-                    <b>{t('Project Start Date')}:</b>
+                    <b>{t('Project Tags')}:</b>
                   </Box>
                 </Grid>
                 <Grid
@@ -400,25 +429,19 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                 >
                   <Autocomplete
                     multiple
+                    id='ddddd'
                     sx={{
                       m: 0
                     }}
                     limitTags={2}
-                    // @ts-ignore
-                  //  value={selectedTags}
+                    value={selectedTags}
+                    defaultValue={selectedTags}
+                    isOptionEqualToValue={(option, value) => option.id === value.id}
                     onChange={(e, value, situation, option) => {
-                      let newSelectedTags = [];
-                      if (value.length) {
-                        value.forEach(element => {
-                         // newSelectedTags = [...newSelectedTags, element.name]
-                        //  setSelectedTags(newSelectedTags)  
-                        });
-                      }else{
-                      //  setSelectedTags([])
-                      }
+                      handleAddSelectedTags(value);
                     }}
                     options={projectTags}
-                    getOptionLabel={(option) => option.name}
+                    getOptionLabel={(option: Tag) => option.name}
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -426,6 +449,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                         variant="outlined"
                         label={t('Tags')}
                         placeholder={t('Select up to  5 tags...')}
+                        
                       />
                     )}
                   />
@@ -505,26 +529,31 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                   xs={12}
                   sm={8}
                   md={9}
-                >                 
-                    <FormControl fullWidth variant="outlined">
-                      <InputLabel>{t('Status')}</InputLabel>
+                >          
+                    <FormControl fullWidth variant="outlined">                    </FormControl>
+
+                      <InputLabel>{t('')}</InputLabel>
                       <Select
-                        value={projectStatus}
-                        defaultValue={projectStatus}
-                        // onChange={handleStatusChange}
-                        label={t('Status')}
+                        value={JSON.stringify(projectStatus)} 
+                        defaultValue={JSON.stringify(projectStatus)}
+                        onChange={(e)=> {setProjectStatus(JSON.parse(e.target.value));handleBlur()}}
+                        label={t('')}
                         
                       >
                           <MenuItem key='' value=''>
                             All
                           </MenuItem>
-                          {statusOptions.map((statusOption) => (
-                            <MenuItem key={statusOption.id} value={statusOption.id}>
+                          {statusOptions.map((statusOption: any) =>{ 
+                          //  console.log('pppppppppppppppppppppppppppp;');
+                           // console.log(statusOption);
+                           // console.log(projectStatus)
+
+                            return (
+                            <MenuItem key={statusOption.id} value={JSON.stringify(statusOption)}>
                               {statusOption.name}
                             </MenuItem>
-                          ))}
+                          )} )}
                       </Select>
-                    </FormControl>
                 </Grid>
 
 
@@ -724,7 +753,6 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                       // @ts-ignore
                     //  value={selectedTags}
                       onChange={(e, value: any) => {
-                        console.log(value)
                         setTeamMemeber(value); 
                       }}
                       options={userProfiles}

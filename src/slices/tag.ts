@@ -7,12 +7,14 @@ import { Zoom } from '@mui/material';
 
 interface TagState {
   tags: Tag[];
+  ProjectTags: Tag[],
   currentTag: Tag;
 }
 
 
 const initialState: TagState = {
   tags: [],
+  ProjectTags: [],
   currentTag: {
     id: 0,
     name: '',
@@ -27,6 +29,9 @@ const slice = createSlice({
   reducers: {
     getTags(state: TagState, action: PayloadAction<Tag[]>): void {
       state.tags = action.payload;
+    },
+    getTagsByProject(state: TagState, action: PayloadAction<Tag[]>): void {
+      state.ProjectTags = action.payload;
     },
     getTag(state: TagState, action: PayloadAction<Tag>): void {
       state.currentTag = action.payload;
@@ -62,6 +67,14 @@ export const getTags =
     console.log('In tag.ts:getTags');
     const data = await axiosInt.get('/api/tags'  )
     dispatch(slice.actions.getTags(data.data));
+};
+
+export const getTagsByProject=
+  (projectId): AppThunk =>
+  async (dispatch): Promise<void> => {
+    console.log('In tag.ts:getTags By Project id' + projectId);
+    const data = await axiosInt.get('/api/tags/project/' + projectId  )
+    dispatch(slice.actions.getTagsByProject(data.data));
 };
 
 export const getTag =

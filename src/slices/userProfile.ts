@@ -82,6 +82,14 @@ export const getProjectUserProfiles =
     dispatch(slice.actions.getProjectUserProfiles(data.data));
 };
 
+export const deleteProjectUserProfiles =
+  (projectId: number,userProfileId: number): AppThunk =>
+  async (dispatch): Promise<void> => {
+    console.log('In userProfile.ts:deleteProjectUserProfiles');
+    const data = await axiosInt.delete('/api/userprofiles/project/' + projectId + '/' + userProfileId  )
+    dispatch(slice.actions.getProjectUserProfiles(data.data));
+};
+
 export const getUserProfile =
   (id: number): AppThunk =>
   async (dispatch): Promise<void> => {
