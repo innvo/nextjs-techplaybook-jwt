@@ -756,7 +756,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                         setTeamMemeber(value); 
                       }}
                       options={userProfiles}
-                      getOptionLabel={(option: any) => option?.login}
+                      getOptionLabel={(option: any) => option?.firstname  + ' ' + option?.lastname}
                       renderInput={(params) => (
                         <TextField
                           {...params}

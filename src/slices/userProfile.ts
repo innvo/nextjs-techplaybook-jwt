@@ -70,7 +70,7 @@ export const getUserProfiles =
   (): AppThunk =>
   async (dispatch): Promise<void> => {
     console.log('In userProfile.ts:getUserProfiles');
-    const data = await axiosInt.get('/api/userprofiles'  )
+    const data = await axiosInt.get('/api/allUserUserprofiles'  )
     dispatch(slice.actions.getUserProfiles(data.data));
 };
 
