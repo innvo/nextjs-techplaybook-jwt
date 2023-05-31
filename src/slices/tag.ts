@@ -18,7 +18,11 @@ const initialState: TagState = {
   currentTag: {
     id: 0,
     name: '',
-    lastModifiedDate: ''
+    status: '',
+    createdby: '',
+    createddatetime: Date.now(),
+    lastmodifiedby: '',
+    lastmodifieddatetime: Date.now()
   }  
 };
 
@@ -86,13 +90,13 @@ export const getTag =
 };
 
 export const createTag =  
-  (tag: Tag, enqueueSnackbar): AppThunk =>
+  (tag: any, enqueueSnackbar): AppThunk =>
   async (dispatch): Promise<void> => {
     console.log('In tag.ts:createTag');
     try {
       const data = await axiosInt.post('/api/tags', tag)
       dispatch(slice.actions.getTags(data.data));
-      enqueueSnackbar('The tag account was created successfully', {
+      enqueueSnackbar('The tag was created successfully', {
         variant: 'success',
         anchorOrigin: {
           vertical: 'top',

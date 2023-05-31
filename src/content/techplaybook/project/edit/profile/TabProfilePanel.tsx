@@ -38,7 +38,7 @@ import { GridDeleteIcon } from '@mui/x-data-grid';
 import dynamic from 'next/dynamic';
 import { getProjectstatuss } from '@/slices/projectstatus';
 import { projectreluser } from '@/models/projectreluser';
-import { getTags, getTagsByProject } from '@/slices/tag';
+import { createTag, getTags, getTagsByProject } from '@/slices/tag';
 import { Tag } from '@/models/tag';
 
 
@@ -115,6 +115,9 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
   const [teamMemeber, setTeamMemeber] = useState();
   const [memberRole, setMemberRole] = useState();
 
+  let newTagInput = React.useRef<any>();
+
+
   const roles = [
     'Project Manager',
     'Developer',
@@ -169,10 +172,28 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
   }  
 
   const handleAddSelectedTags = (tags) => {
+
+    console.log(tags);
+
     selectedTags =[...tags]
     setSelectedTags(selectedTags)
       handleBlur();   
   }
+
+  const addNewTag = (tagName) => {
+    let newTag = {
+      name: tagName,
+      status: 'ACTIVE',
+      createdby: user.login,
+      createddatetime: Date.now(),
+      lastmodifiedby: user.login,
+      lastmodifieddatetime: Date.now()
+    }
+
+    console.log(tagName);
+    dispatch(createTag(newTag, enqueueSnackbar));
+  }
+
 
   const AddProjectTeamMember= () => {
     const projectrelusers: projectreluser = {
@@ -429,7 +450,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                 >
                   <Autocomplete
                     multiple
-                    id='ddddd'
+                    id='tags'
                     sx={{
                       m: 0
                     }}
@@ -440,6 +461,13 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                     onChange={(e, value, situation, option) => {
                       handleAddSelectedTags(value);
                     }}
+                    noOptionsText={
+                      <Button onClick={() => {
+                        addNewTag(newTagInput?.current?.value);
+                      }}>
+                        Create New Tag
+                          </Button>
+                    }
                     options={projectTags}
                     getOptionLabel={(option: Tag) => option.name}
                     renderInput={(params) => (
@@ -449,7 +477,8 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                         variant="outlined"
                         label={t('Tags')}
                         placeholder={t('Select up to  5 tags...')}
-                        
+                        inputRef={newTagInput}
+                        name='tags'
                       />
                     )}
                   />

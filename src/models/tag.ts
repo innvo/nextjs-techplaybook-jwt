@@ -4,8 +4,8 @@ export interface Tag {
   name: string;
   status: string;
   createdby: string;
-  createdatetime: number;
+  createddatetime: number;
   lastmodifiedby: string;
-  lastmodifiedatetime: number;
+  lastmodifieddatetime: number;
 }
 
