@@ -40,6 +40,7 @@ import { getProjectstatuss } from '@/slices/projectstatus';
 import { projectreluser } from '@/models/projectreluser';
 import { createTag, getTags, getTagsByProject } from '@/slices/tag';
 import { Tag } from '@/models/tag';
+import { getProjectbillingtypes } from '@/slices/projectbillingtype';
 
 
 // Rendering
@@ -99,6 +100,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
   const { enqueueSnackbar } = useSnackbar();
   const projectTags = useSelector((state) => state.tag.tags);
   const statusOptions = useSelector((state) => state.projectstatus.projectstatuss);
+  const billingtypeOptions = useSelector((state) => state.projectbillingtype.projectbillingtype);
   const userProfiles = useSelector((state) => state.userProfiles.userProfiles);
   const userProjectProfiles = useSelector((state) => state.userProfiles.userProjectProfiles);
   const currentprojectTags = useSelector((state) => state.tag.ProjectTags);
@@ -107,7 +109,8 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
   const [projectName, setProjectName] = useState(project?.name);
   const [nameShort, setNameShort] = useState(project?.nameshort);
   const [projectDescription, setProjectDescription] = useState(project?.description);
-  const [projectStatus, setProjectStatus] = useState(null);
+  const [projectStatus, setProjectStatus] = useState('');
+  const [projectBillingtype, setProjectBillingtype] = useState('');
   const [projectstartdatetime, setProjectstartdatetime] = useState(project?.projectstartdatetime);
   const [projectenddatetime, setProjectenddatetime] = useState(project?.projectenddatetime);
   let [selectedTags, setSelectedTags] = useState<Tag[]>(currentprojectTags);
@@ -117,6 +120,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
 
   let newTagInput = React.useRef<any>();
 
+  console.log(billingtypeOptions)
 
   const roles = [
     'Project Manager',
@@ -131,18 +135,19 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
   useEffect(() => {
     dispatch(getUserProfiles());
     dispatch(getProjectstatuss());
+    dispatch(getProjectbillingtypes());
     dispatch(getProjectUserProfiles(project.id));
     dispatch(getTags());
     dispatch(getTagsByProject(project.id));
-
     setRows(userProjectProfiles);
     setProjectName(project?.name)
     setNameShort(project?.nameshort)
     setProjectDescription(project?.description)
     setProjectStatus(project?.projectstatus)
+    setProjectBillingtype(project?.projectbillingtype)
     setProjectstartdatetime(project?.projectstartdatetime)
     setProjectenddatetime(project?.projectenddatetime)    
-  }, [project?.name, project.projectstatus]);
+  }, [project?.name]);
 
 
   useEffect(() => {
@@ -150,8 +155,16 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
   }, [currentprojectTags]);
 
 
+  useEffect(() => {
+    setProjectStatus(projectStatus)
+  }, [projectStatus]);
+
+  useEffect(() => {
+    setProjectBillingtype(projectBillingtype)
+  }, [projectBillingtype]);
+
   const handleBlur= () => {
-    console.log(selectedTags)
+    console.log(projectStatus)
     currentProject={
       tags: selectedTags,
       projectId: project.id,
@@ -167,6 +180,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
       lastmodifiedby: user.login,
       lastmodifieddatetime: Date.now(),
       projectstatus: projectStatus,
+      projectbillingtype: projectBillingtype,
     }
     dispatch(slice.actions.getProject(currentProject));
   }  
@@ -214,10 +228,6 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
     setMemberRole(null);
   };
 
-  const handleProjectStatusChange = (value) => {
-   setProjectStatus(value)
-   //project.projectstatus.id=value;
-  };
   //team grid section
 
   const [rows, setRows] = useState(userProjectProfiles);
@@ -511,19 +521,26 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                   sm={8}
                   md={9}
                   >
-                    <FormControl fullWidth variant="outlined">
+                    <FormControl fullWidth variant="outlined">                    </FormControl>
+
                       <InputLabel>{t('Status')}</InputLabel>
                       <Select
-                        // value={projectStatusName}
-                       // onChange={handleStatusChange}
+                        value={JSON.stringify(projectBillingtype)} 
+                        defaultValue={JSON.stringify(projectBillingtype)}
+                        onChange={(e)=> setProjectBillingtype(JSON.parse(e.target.value))}
+                        onBlur={handleBlur}
                         label={t('Status')}
-                        
                       >
                         <MenuItem key='' value=''>
                             All
                           </MenuItem>
+                          {billingtypeOptions.map((billingtypeOption: any) =>{ 
+                            return (
+                            <MenuItem key={billingtypeOption.id} value={JSON.stringify(billingtypeOption)}>
+                              {billingtypeOption.name}
+                            </MenuItem>
+                          )} )}
                       </Select>
-                    </FormControl>
                 </Grid>
               </Grid>
         </Card>
@@ -565,7 +582,8 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                       <Select
                         value={JSON.stringify(projectStatus)} 
                         defaultValue={JSON.stringify(projectStatus)}
-                        onChange={(e)=> {setProjectStatus(JSON.parse(e.target.value));handleBlur()}}
+                        onChange={(e)=> setProjectStatus(JSON.parse(e.target.value))}
+                        onBlur={handleBlur}
                         label={t('')}
                         
                       >
@@ -573,10 +591,6 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                             All
                           </MenuItem>
                           {statusOptions.map((statusOption: any) =>{ 
-                          //  console.log('pppppppppppppppppppppppppppp;');
-                           // console.log(statusOption);
-                           // console.log(projectStatus)
-
                             return (
                             <MenuItem key={statusOption.id} value={JSON.stringify(statusOption)}>
                               {statusOption.name}

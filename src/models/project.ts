@@ -25,5 +25,6 @@ export interface Project {
   lastmodifiedatetime: number;
   domain: number;
   projectstatus?: any;
+  projectbillingtype?: any;
 }
 
