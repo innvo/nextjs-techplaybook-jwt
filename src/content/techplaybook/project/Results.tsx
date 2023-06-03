@@ -161,7 +161,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
    * Edit Project
  */
   const editProject = (id: GridRowId) => {
-     router.push('/techplaybook/project/edit/1');
+     router.push('/techplaybook/project/edit/' + id);
   };
 
   /**

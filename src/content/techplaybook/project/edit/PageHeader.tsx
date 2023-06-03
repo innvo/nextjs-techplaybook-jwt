@@ -10,6 +10,7 @@ import { createProject, updateProject } from '@/slices/projects';
 import { useSnackbar } from 'notistack';
 import { useDispatch, useSelector } from '@/store';
 import  TabProfilePanel  from './profile/TabProfilePanel';
+import { useRouter } from 'next/router';
 // CSS
 
 const AvatarPageTitle = styled(Avatar)(
@@ -43,7 +44,9 @@ const AvatarPageTitle = styled(Avatar)(
 //const PageHeader: FC = () => {
 const PageHeader: FC<any> = () => {
 
-  const dispatch= useDispatch();  
+  const dispatch= useDispatch();
+  const router = useRouter();   
+  const { t }: { t: any } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const project = useSelector((state) => state.project.currentProject);
 
@@ -51,7 +54,9 @@ const PageHeader: FC<any> = () => {
     dispatch(updateProject(project,enqueueSnackbar)) ;
   }
 
-  const { t }: { t: any } = useTranslation();
+  const projectHome = () => {
+    router.push('/techplaybook/project');
+  };
 
   return (
     <Box
@@ -80,6 +85,7 @@ const PageHeader: FC<any> = () => {
         sx={{
           mr: 1
         }}
+        onClick={projectHome}
         endIcon={<CancelIcon />}>
           {t('Cancel')}
         </Button>

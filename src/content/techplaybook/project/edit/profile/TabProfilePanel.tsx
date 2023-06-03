@@ -109,18 +109,20 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
   const [projectName, setProjectName] = useState(project?.name);
   const [nameShort, setNameShort] = useState(project?.nameshort);
   const [projectDescription, setProjectDescription] = useState(project?.description);
-  const [projectStatus, setProjectStatus] = useState('');
-  const [projectBillingtype, setProjectBillingtype] = useState('');
-  const [projectstartdatetime, setProjectstartdatetime] = useState(project?.projectstartdatetime);
+  const [projectStatus, setProjectStatus] = useState(null);
+  const [projectBillingtype, setProjectBillingtype] = useState(null);
+  const [projectstartdatetime, setProjectstartdatetime] = useState(null);
   const [projectenddatetime, setProjectenddatetime] = useState(project?.projectenddatetime);
   let [selectedTags, setSelectedTags] = useState<Tag[]>(currentprojectTags);
+
+  let [deletedTags, setDeletedTags] = useState<Tag[]>([]);
+
+  //let deletedTags: Tag[] = [];
 
   const [teamMemeber, setTeamMemeber] = useState();
   const [memberRole, setMemberRole] = useState();
 
   let newTagInput = React.useRef<any>();
-
-  console.log(billingtypeOptions)
 
   const roles = [
     'Project Manager',
@@ -130,7 +132,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
     'Data Engineer'
   ];
 
-  let currentProject: any;
+  let currentProject: Project;
 
   useEffect(() => {
     dispatch(getUserProfiles());
@@ -147,26 +149,21 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
     setProjectBillingtype(project?.projectbillingtype)
     setProjectstartdatetime(project?.projectstartdatetime)
     setProjectenddatetime(project?.projectenddatetime)    
-  }, [project?.name]);
+  }, [project?.id]);
 
 
   useEffect(() => {
     setSelectedTags(currentprojectTags)
   }, [currentprojectTags]);
 
-
   useEffect(() => {
-    setProjectStatus(projectStatus)
-  }, [projectStatus]);
-
-  useEffect(() => {
-    setProjectBillingtype(projectBillingtype)
-  }, [projectBillingtype]);
+    setProjectstartdatetime(projectstartdatetime)
+  }, [projectstartdatetime]);
 
   const handleBlur= () => {
-    console.log(projectStatus)
     currentProject={
       tags: selectedTags,
+      deletedtags: deletedTags,
       projectId: project.id,
       id: project.id,
       name: projectName,
@@ -186,11 +183,14 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
   }  
 
   const handleAddSelectedTags = (tags) => {
-
-    console.log(tags);
-
     selectedTags =[...tags]
     setSelectedTags(selectedTags)
+      handleBlur();   
+  }
+
+  const handleDeleteAllTags = (tags) => {
+    deletedTags =[...tags]
+    setDeletedTags(deletedTags)
       handleBlur();   
   }
 
@@ -204,10 +204,8 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
       lastmodifieddatetime: Date.now()
     }
 
-    console.log(tagName);
     dispatch(createTag(newTag, enqueueSnackbar));
   }
-
 
   const AddProjectTeamMember= () => {
     const projectrelusers: projectreluser = {
@@ -247,11 +245,14 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
       headerName: 'Id',
       hide: true
     },
-    {
-      field: 'login',
+    {             
+      field: 'firstName',
       headerName: 'Name',
       width: 200,
       editable: false,
+      renderCell: (params) =>(
+        <Typography >{params.row.firstName} {params.row.lastName}</Typography>
+      )
     },
     {
       field: 'role',
@@ -469,8 +470,30 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                     defaultValue={selectedTags}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
                     onChange={(e, value, situation, option) => {
-                      handleAddSelectedTags(value);
-                    }}
+
+                      console.log (situation) 
+                      if (situation === 'removeOption') {
+                        deletedTags=[...deletedTags, option.option]
+                        setDeletedTags(deletedTags)
+                        handleAddSelectedTags(value);
+
+                      }
+                      if (situation === 'selectOption') {
+                          if (deletedTags.find(x => x.name === option.option.name)) {
+                              const index = deletedTags.findIndex(x => x.name === option.option.name);
+                              if (index > -1) {
+                                deletedTags=[...deletedTags]
+                                setDeletedTags(deletedTags)
+                                deletedTags.splice(index, 1);
+                              }
+                            }
+                          handleAddSelectedTags(value);
+                      }
+                      if (situation === 'clear') { 
+                        handleDeleteAllTags(selectedTags);
+                        handleAddSelectedTags(value);
+                      }
+                    }}                    
                     noOptionsText={
                       <Button onClick={() => {
                         addNewTag(newTagInput?.current?.value);
@@ -521,8 +544,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                   sm={8}
                   md={9}
                   >
-                    <FormControl fullWidth variant="outlined">                    </FormControl>
-
+                    <FormControl fullWidth variant="outlined">                  
                       <InputLabel>{t('Status')}</InputLabel>
                       <Select
                         value={JSON.stringify(projectBillingtype)} 
@@ -531,9 +553,6 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                         onBlur={handleBlur}
                         label={t('Status')}
                       >
-                        <MenuItem key='' value=''>
-                            All
-                          </MenuItem>
                           {billingtypeOptions.map((billingtypeOption: any) =>{ 
                             return (
                             <MenuItem key={billingtypeOption.id} value={JSON.stringify(billingtypeOption)}>
@@ -541,6 +560,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                             </MenuItem>
                           )} )}
                       </Select>
+                    </FormControl>
                 </Grid>
               </Grid>
         </Card>
@@ -576,7 +596,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                   sm={8}
                   md={9}
                 >          
-                    <FormControl fullWidth variant="outlined">                    </FormControl>
+                    <FormControl fullWidth variant="outlined">                    
 
                       <InputLabel>{t('')}</InputLabel>
                       <Select
@@ -587,9 +607,6 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                         label={t('')}
                         
                       >
-                          <MenuItem key='' value=''>
-                            All
-                          </MenuItem>
                           {statusOptions.map((statusOption: any) =>{ 
                             return (
                             <MenuItem key={statusOption.id} value={JSON.stringify(statusOption)}>
@@ -597,6 +614,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                             </MenuItem>
                           )} )}
                       </Select>
+                      </FormControl>
                 </Grid>
 
 
@@ -630,7 +648,9 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                 >
                   <DatePicker
                     value={projectstartdatetime}
-                    onChange={(newValue) =>  {console.log(newValue); setProjectstartdatetime(newValue);handleBlur()}}
+                    onChange={(newValue) =>  {console.log(newValue); setProjectstartdatetime(newValue);}}
+                    onAccept={handleBlur}
+                    onViewChange={handleBlur}
                     renderInput={(params) => (
                       <TextField
                         placeholder={t('Select project start date...')}

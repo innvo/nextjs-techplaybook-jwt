@@ -121,9 +121,6 @@ interface ResultsProps {
 const ProjectEdit: FC<ResultsProps> = ({ project }) => {
 
   const { t }: { t: any } = useTranslation();
-
-  console.log(project)
-
   
   return (
     <Grid
