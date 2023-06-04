@@ -3,13 +3,10 @@ import { useTranslation } from 'react-i18next';
 import AddAlertTwoToneIcon from '@mui/icons-material/AddAlertTwoTone';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SaveIcon from '@mui/icons-material/Save';
-import { Project } from '@/models/project';
-import { FC, useEffect } from 'react';
-import { useFormikContext } from 'formik';
-import { createProject, updateProject } from '@/slices/projects';
+import { FC } from 'react';
+import { updateProject } from '@/slices/projects';
 import { useSnackbar } from 'notistack';
 import { useDispatch, useSelector } from '@/store';
-import  TabProfilePanel  from './profile/TabProfilePanel';
 import { useRouter } from 'next/router';
 // CSS
 

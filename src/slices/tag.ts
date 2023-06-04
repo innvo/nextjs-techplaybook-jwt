@@ -90,11 +90,11 @@ export const getTag =
 };
 
 export const createTag =  
-  (tag: any, enqueueSnackbar): AppThunk =>
-  async (dispatch): Promise<void> => {
+  (tag: any, enqueueSnackbar): any =>
+  async (dispatch): Promise<Tag[]> => {
     console.log('In tag.ts:createTag');
     try {
-      const data = await axiosInt.post('/api/tags', tag)
+      const data = await axiosInt.post('/api/tags', tag)      
       dispatch(slice.actions.getTags(data.data));
       enqueueSnackbar('The tag was created successfully', {
         variant: 'success',
@@ -104,6 +104,8 @@ export const createTag =
         },
         TransitionComponent: Zoom
       });
+      
+      return Promise.resolve(data.data);
     
     } catch (err) {
       enqueueSnackbar('Error in creating the tag', {

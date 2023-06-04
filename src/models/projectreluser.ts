@@ -3,7 +3,8 @@ import { UserProfile } from "./userProfile";
 
 export interface projectreluser {
   id?: number;
-  role: string;
+  role?: string;
+  roles?: [];
   comment: string;
   status: string;
   createdby: string;

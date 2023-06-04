@@ -114,7 +114,6 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
   const [projectstartdatetime, setProjectstartdatetime] = useState(null);
   const [projectenddatetime, setProjectenddatetime] = useState(project?.projectenddatetime);
   let [selectedTags, setSelectedTags] = useState<Tag[]>(currentprojectTags);
-
   let [deletedTags, setDeletedTags] = useState<Tag[]>([]);
 
   //let deletedTags: Tag[] = [];
@@ -157,10 +156,15 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
   }, [currentprojectTags]);
 
   useEffect(() => {
-    setProjectstartdatetime(projectstartdatetime)
+    handleBlur();
   }, [projectstartdatetime]);
 
+  useEffect(() => {
+    handleBlur();
+  }, [projectenddatetime]);
+
   const handleBlur= () => {
+    console.log(projectstartdatetime)
     currentProject={
       tags: selectedTags,
       deletedtags: deletedTags,
@@ -194,7 +198,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
       handleBlur();   
   }
 
-  const addNewTag = (tagName) => {
+  function addNewTag(tagName): Promise<void> {
     let newTag = {
       name: tagName,
       status: 'ACTIVE',
@@ -204,12 +208,12 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
       lastmodifieddatetime: Date.now()
     }
 
-    dispatch(createTag(newTag, enqueueSnackbar));
+    return Promise.resolve(dispatch(createTag(newTag, enqueueSnackbar)));
   }
 
   const AddProjectTeamMember= () => {
     const projectrelusers: projectreluser = {
-      role: memberRole,
+      roles: memberRole,
       comment: 'No comment',
       status: 'ACTIVE',
       createdby: user.login,
@@ -471,7 +475,6 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                     isOptionEqualToValue={(option, value) => option.id === value.id}
                     onChange={(e, value, situation, option) => {
 
-                      console.log (situation) 
                       if (situation === 'removeOption') {
                         deletedTags=[...deletedTags, option.option]
                         setDeletedTags(deletedTags)
@@ -495,8 +498,12 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                       }
                     }}                    
                     noOptionsText={
-                      <Button onClick={() => {
-                        addNewTag(newTagInput?.current?.value);
+                      <Button  onClick={() => {
+                         addNewTag(newTagInput?.current?.value).then((tags: any) => {
+                         selectedTags=[...selectedTags, tags.find(x => x.name === newTagInput?.current?.value)]
+                         setSelectedTags(selectedTags)
+                         handleBlur();
+                        });
                       }}>
                         Create New Tag
                           </Button>
@@ -649,8 +656,6 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                   <DatePicker
                     value={projectstartdatetime}
                     onChange={(newValue) =>  {console.log(newValue); setProjectstartdatetime(newValue);}}
-                    onAccept={handleBlur}
-                    onViewChange={handleBlur}
                     renderInput={(params) => (
                       <TextField
                         placeholder={t('Select project start date...')}
@@ -691,12 +696,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                 >
                   <DatePicker
                     value={project.projectenddatetime}
-                    onChange={(date) =>{}
-                 //   handleChange({
-                  //    target: { name: 'projectstartdatetime', value: date },
-                   // })
-                  }
-                    // onChange={(newValue) => setStartdate(newValue)}
+                    onChange={(newValue) => setProjectenddatetime(newValue)}
                     renderInput={(params) => (
                       <TextField
                         placeholder={t('Select project start date...')}
@@ -862,6 +862,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                   md={9}
                 >
                   <Autocomplete
+                    multiple
                     sx={{
                       m: 0
                     }}
@@ -869,6 +870,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
                     // @ts-ignore
                   //  value={selectedTags}
                     onChange={(e, value: any) => {
+                      console.log(value);
                       setMemberRole(value);
                     }}
                     options={roles}
