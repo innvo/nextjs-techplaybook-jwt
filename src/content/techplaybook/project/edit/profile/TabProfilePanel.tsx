@@ -259,8 +259,8 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
       )
     },
     {
-      field: 'role',
-      headerName: 'Role',
+      field: 'roles',
+      headerName: 'Roles',
       width: 200,
       editable: false,
     },
@@ -732,7 +732,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
           <TableContainer>
             <Box p={1} sx={{ height: 600, width: '100%' }}>
               <DataGridPro
-                getRowId={(row: any) => row.role}
+                getRowId={(row: any) => row.id}
                 rows={userProjectProfiles}
                 columns={columns}
                 pageSize={pageSize}
