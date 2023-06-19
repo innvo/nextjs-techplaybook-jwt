@@ -43,6 +43,12 @@ const menuItems: MenuItems[] = [
         icon: BackupTableTwoToneIcon,
         link: '/techplaybook/project',
         badgeTooltip: 'Add, update, and delete projects'
+      },
+      {
+        name: 'Contents',
+        icon: BackupTableTwoToneIcon,
+        link: '/techplaybook/content',
+        badgeTooltip: 'Add, update, and delete contents'
       }
     ]
   }, 
