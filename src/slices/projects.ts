@@ -4,6 +4,7 @@ import type { AppThunk } from 'src/store';
 import type { Project } from 'src/models/project';
 import axiosInt from '@/utils/axios';
 import { Zoom } from '@mui/material';
+import { getProjectUserProfiles } from './userProfile';
 
 interface ProjectState {
   projects: Project[];
@@ -68,12 +69,12 @@ export const getProject =
   (id: number): AppThunk =>
   async (dispatch): Promise<void> => {
     console.log('In project.ts:getProject');
-    const data = await axiosInt.get('/api/projects/id/' + id)
+    const data = await axiosInt.get('/api/projects/' + id)
     dispatch(slice.actions.getProject(data.data));
 };
 
 export const createProject =  
-  (project: Project, enqueueSnackbar): AppThunk =>
+  (project: any, enqueueSnackbar): AppThunk =>
   async (dispatch): Promise<void> => {
     console.log('In project.ts:createProject');
     try {
@@ -106,7 +107,7 @@ export const updateProject =
   async (dispatch): Promise<void> => {
     console.log('In project.ts:updateProject');
     try {
-      const data = await axiosInt.put('/api/admin/projects', project)
+      const data = await axiosInt.put('/api/projects/'+ project.id, project)
       dispatch(slice.actions.getProjects(data.data));
       enqueueSnackbar('The project account was updated successfully', {
         variant: 'success',
@@ -155,5 +156,38 @@ export const deleteProject =
       });
     }
   };
+
+
+  export const addProjectrelusers =  
+  (projectrelusers: any, enqueueSnackbar): AppThunk =>
+  async (dispatch): Promise<void> => {
+    console.log('In project.ts:addprojectrelusers');
+    try {
+      const data = await axiosInt.post('/api/projectrelusers', projectrelusers)
+      dispatch(slice.actions.getProjects(data.data));
+
+      dispatch(getProjectUserProfiles(projectrelusers?.project?.id));
+
+      enqueueSnackbar('The Team Member  was added successfully', {
+        variant: 'success',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        },
+        TransitionComponent: Zoom
+      });
+    
+    } catch (err) {
+      enqueueSnackbar('Error in adding the memeber', {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        },
+        TransitionComponent: Zoom
+      });
+    }
+
+  };  
 
 export default slice;

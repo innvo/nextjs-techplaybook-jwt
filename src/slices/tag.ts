@@ -7,16 +7,22 @@ import { Zoom } from '@mui/material';
 
 interface TagState {
   tags: Tag[];
+  ProjectTags: Tag[],
   currentTag: Tag;
 }
 
 
 const initialState: TagState = {
   tags: [],
+  ProjectTags: [],
   currentTag: {
     id: 0,
     name: '',
-    lastModifiedDate: ''
+    status: '',
+    createdby: '',
+    createddatetime: Date.now(),
+    lastmodifiedby: '',
+    lastmodifieddatetime: Date.now()
   }  
 };
 
@@ -27,6 +33,9 @@ const slice = createSlice({
   reducers: {
     getTags(state: TagState, action: PayloadAction<Tag[]>): void {
       state.tags = action.payload;
+    },
+    getTagsByProject(state: TagState, action: PayloadAction<Tag[]>): void {
+      state.ProjectTags = action.payload;
     },
     getTag(state: TagState, action: PayloadAction<Tag>): void {
       state.currentTag = action.payload;
@@ -64,6 +73,14 @@ export const getTags =
     dispatch(slice.actions.getTags(data.data));
 };
 
+export const getTagsByProject=
+  (projectId): AppThunk =>
+  async (dispatch): Promise<void> => {
+    console.log('In tag.ts:getTags By Project id' + projectId);
+    const data = await axiosInt.get('/api/tags/project/' + projectId  )
+    dispatch(slice.actions.getTagsByProject(data.data));
+};
+
 export const getTag =
   (id: number): AppThunk =>
   async (dispatch): Promise<void> => {
@@ -73,13 +90,13 @@ export const getTag =
 };
 
 export const createTag =  
-  (tag: Tag, enqueueSnackbar): AppThunk =>
-  async (dispatch): Promise<void> => {
+  (tag: any, enqueueSnackbar): any =>
+  async (dispatch): Promise<Tag[]> => {
     console.log('In tag.ts:createTag');
     try {
-      const data = await axiosInt.post('/api/tags', tag)
+      const data = await axiosInt.post('/api/tags', tag)      
       dispatch(slice.actions.getTags(data.data));
-      enqueueSnackbar('The tag account was created successfully', {
+      enqueueSnackbar('The tag was created successfully', {
         variant: 'success',
         anchorOrigin: {
           vertical: 'top',
@@ -87,6 +104,8 @@ export const createTag =
         },
         TransitionComponent: Zoom
       });
+      
+      return Promise.resolve(data.data);
     
     } catch (err) {
       enqueueSnackbar('Error in creating the tag', {

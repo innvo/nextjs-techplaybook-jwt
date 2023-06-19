@@ -24,9 +24,11 @@ import {
   Stack,
   styled,
   TextField,
+
   Typography,
   ToggleButtonGroup,
   ToggleButton,
+  
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -34,7 +36,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { DataGridPro, GridActionsCellItem, GridRowId, GridToolbarContainer, GridToolbarDensitySelector, GridToolbarColumnsButton, GridToolbarExport } from '@mui/x-data-grid-pro';
 import SearchTwoToneIcon from '@mui/icons-material/SearchTwoTone';
 import { TableContainer } from '@material-ui/core';
-
+import { useRouter } from 'next/router';
 import type { Project } from 'src/models/project';
 import { useSnackbar } from 'notistack';
 import { useDispatch, useSelector } from '@/store';
@@ -42,6 +44,7 @@ import { deleteProject } from '@/slices/projects';
 import { getTags } from '@/slices/tag';
 import { getProjectstatuss } from '@/slices/projectstatus';
 import moment from 'moment';
+import Link from 'next/link';
 
 
 /**
@@ -110,6 +113,8 @@ const Results: FC<ResultsProps> = ({ projects }) => {
   const [selectedProjectId, setSelectedProjectId] = useState(0);
   const [selectedProjectName, setSelectedProjectName] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
+  const router = useRouter(); 
+
 
   // THIS MUST BE SET FROM DATABASE
   /**
@@ -119,8 +124,6 @@ const Results: FC<ResultsProps> = ({ projects }) => {
   const projectTags = useSelector((state) => state.tag.tags);
   const statusOptions = useSelector((state) => state.projectstatus.projectstatuss);
 
-  console.log('777777777777777777')
-  console.log(statusOptions)
 
   // THIS MUST BE SET FROM DATABASE
   /**
@@ -158,7 +161,7 @@ const Results: FC<ResultsProps> = ({ projects }) => {
    * Edit Project
  */
   const editProject = (id: GridRowId) => {
-    // Add your project deletion logic here
+     router.push('/techplaybook/project/edit/' + id);
   };
 
   /**
@@ -167,7 +170,6 @@ const Results: FC<ResultsProps> = ({ projects }) => {
   const handleDeleteProject = (id: number, name: string) => {
     setSelectedProjectId(id);
     setSelectedProjectName(name);
-    console.log(name)
     setOpenConfirmDelete(true);
   };
 
@@ -182,8 +184,6 @@ const Results: FC<ResultsProps> = ({ projects }) => {
     setProjectName(searchValue.target.value);
   };
   const handleStatusChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    console.log(e);
-    console.log(e.target.value);
     setProjectStatusName(e.target.value);
   };
 
@@ -205,7 +205,14 @@ const Results: FC<ResultsProps> = ({ projects }) => {
  * It contains definitions for the ID and project name columns.
  */
   const columns = [
-    { field: 'projectId', headerName: 'ID', width: 90 },
+    { 
+      field: 'projectId', 
+      headerName: 'ID', 
+      width: 90,
+      renderCell: (params) => (
+        <Link  key={params.value}  href={`/techplaybook/project/edit/${params.value}`}><a>{params.value}</a></Link>
+      )
+    },
     {
       field: 'projectName',
       headerName: 'Project name',

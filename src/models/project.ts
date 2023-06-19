@@ -1,4 +1,6 @@
+import { GridRowId } from '@mui/x-data-grid';
 import {Projectstatus} from  './projectstatus';
+import { Tag } from './tag';
 
 export type ProjectStatus = 'not_started' | 'in_progress' | 'completed';
 
@@ -10,19 +12,21 @@ export interface Member {
 
 export interface Project {
   tags: any;
+  deletedtags: Tag[];
   projectId: GridRowId;
   id: number;
   name: string;
   nameshort: string;
   description: string;
   projectstartdatetime: any;
+  projectenddatetime: any;
   status: string;
   createdby: string;
-  createdatetime: number;
+  createddatetime: number;
   lastmodifiedby: string;
-  lastmodifiedatetime: number;
-  domain: number;
+  lastmodifieddatetime: number;
+  domain?: number;
   projectstatus?: any;
-  submit: any;
+  projectbillingtype?: any;
 }
 
