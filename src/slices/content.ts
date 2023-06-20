@@ -111,11 +111,11 @@ export const getContent =
 };
 
 export const createContent =  
-  (content: any, enqueueSnackbar): AppThunk =>
+  (formData: FormData,enqueueSnackbar): AppThunk =>
   async (dispatch): Promise<void> => {
     console.log('In content.ts:createContent');
     try {
-      const data = await axiosInt.post('/api/contents', content)
+      const data = await axiosInt.post('/api/contents', formData)
       dispatch(slice.actions.getContents(data.data));
       enqueueSnackbar('The content account was created successfully', {
         variant: 'success',

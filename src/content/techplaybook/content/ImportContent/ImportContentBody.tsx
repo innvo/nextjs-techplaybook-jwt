@@ -37,7 +37,8 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  TableContainer
 } from '@mui/material';
 import DatePicker from '@mui/lab/DatePicker';
 import { useDropzone } from 'react-dropzone';
@@ -51,6 +52,8 @@ import { Content } from '@/models/content';
 import { useDispatch } from '@/store';
 import { createContent } from '@/slices/content';
 import { useAuth } from '@/hooks/useAuth';
+import { DataGridPro, GridActionsCellItem } from '@mui/x-data-grid-pro';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const BoxUploadWrapper = styled(Box)(
   ({ theme }) => `
@@ -197,46 +200,19 @@ function ImportContentBody() {
         reader.onerror = () => console.log('file reading has failed')
         reader.onload = () => {
 
-          let binaryStr: any = reader.result         
-          let newContent: Content = {
-            title: file.name,
-            istemplate: false,
-            isfeatured: false,
-            content_html: '',
-            content_txt: '',
-            content_summary: '',
-            file: binaryStr.replace(regex,""),
-            fileContentType: '',
-            description: '',
-            url: '',
-            authors: '',
-            datepublished: 0,
-            poststartdatetime: 0,
-            postenddatetime: 0,
-            preview_image_small: '',
-            preview_image_smallContentType: '',
-            preview_image_medium: '',
-            preview_image_mediumContentType: '',
-            preview_image_large: '',
-            preview_image_largeContentType: '',
-            status: 'ACTIVE',
-            createdby: user.login,
-            createddatetime: Date.now(),
-            lastmodifiedby: user.login,
-            lastmodifieddatetime: Date.now(),
-          }  
+          let formData = new FormData();
+          formData.append('files', file);
 
-          dispatch(createContent(newContent, enqueueSnackbar));
+          dispatch(createContent(formData, enqueueSnackbar));
 
         }
         //reader.readAsArrayBuffer(file)
-        reader.readAsDataURL(file);
+//reader.readAsDataURL(file);
 
       })
       
     }, [])
 
-    
     const {  
       acceptedFiles,
       isDragActive,
@@ -244,20 +220,51 @@ function ImportContentBody() {
       isDragReject,
       getRootProps, 
       getInputProps} = useDropzone({
+        accept: {
+          "image/*": [".docx", ".pdf", ".txt", ".ppt"],
+        },
+      useFsAccessApi: false,
       onDrop: onDrop,
     })
 
-
-
-    const files = acceptedFiles.map((file, index) => (
-      <ListItem disableGutters component="div" key={index}>
-        <ListItemText primary={file.name} />
-        <b>{file.size} bytes</b>
-        <Divider />
-      </ListItem>
-    ));
+    const files = acceptedFiles;
 
     
+
+    const columns = [
+      {
+        field: 'name',
+        headerName: 'name',
+        width: 200,
+        editable: false,
+      },
+      {
+        field: 'size',
+        headerName: 'size',
+        width: 200,
+        editable: false,
+      },
+      {
+        field: 'actions',
+        headerName: 'Actions',
+        type: 'actions',
+        width: 80,
+        getActions: (params) => [
+          <GridActionsCellItem
+            icon={<DeleteIcon />}
+            label="Delete"
+            //onClick={id => handleDeleteContent(params.row.contentId, params.row.contentName)}
+          />,
+        ],
+      },
+      ,
+    ];
+
+    const [pageSize, setPageSize] = useState(10);
+    const handlePageSizeChange = (params) => {
+      setPageSize(params.pageSize);
+    };
+
   return (
     <>
        <Card
@@ -416,6 +423,8 @@ function ImportContentBody() {
               </>
             )}
           </BoxUploadWrapper>
+
+          {/*  
           {files.length > 0 && (
             <>
               <Alert
@@ -432,13 +441,12 @@ function ImportContentBody() {
                   mt: 2
                 }}
               />
-              <List disablePadding component="div">
-                {files}
-              </List>
             </>
           )}
+        */}
         </UploadBox>
-
+        </Grid>
+        <Grid>
         <Button
           variant="text"
           size="large"
@@ -478,10 +486,39 @@ function ImportContentBody() {
           // onClick={closeConfirmDelete}
         >{t('enter web url')}
         </Button>
+        
+        </Grid>
+        </Grid>
+      </Card>   
 
-        </Grid>
-        </Grid>
-      </Card>            
+       <Card>
+          <Grid container spacing={0} pl={10}>
+            <Grid
+                  item
+                  xs={10}
+                  sm={10}
+                  md={10}
+                  justifyContent="flex-end"
+                  textAlign={{ sm: 'right' }}
+                >
+                  <TableContainer>
+                    <Box p={1} sx={{ height: 600, width: '100%' }}>
+                      <DataGridPro
+                        getRowId={(row: any) => row.name}
+                        rows={acceptedFiles}
+                        columns={columns}
+                        pageSize={pageSize}
+                        pagination
+                        rowsPerPageOptions={[5, 10, 20]}
+                        onPageSizeChange={handlePageSizeChange}
+                        checkboxSelection
+                      />
+                    </Box>
+                  </TableContainer>
+                
+            </Grid>
+          </Grid>   
+       </Card>          
       
     </>
   );

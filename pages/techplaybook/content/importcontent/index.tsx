@@ -20,6 +20,7 @@ import { getProject } from '@/slices/projects';
 import ImportContent from '@/content/techplaybook/content/ImportContent/ImportContent';
 import ImportContentHeader from '@/content/techplaybook/content/ImportContent/ImportContent';
 import ImportContentBody from '@/content/techplaybook/content/ImportContent/ImportContentBody';
+import Footer from '@/components/Footer';
 
 function ProjectEdit() {
 
@@ -40,10 +41,8 @@ function ProjectEdit() {
     <PageTitleWrapper>
        <ImportContentHeader></ImportContentHeader>
     </PageTitleWrapper>
-
     <ImportContentBody></ImportContentBody>
-    
-       
+    <Footer />       
   </>
   );
 }

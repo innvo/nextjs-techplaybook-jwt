@@ -6,7 +6,7 @@ export interface Content {
   content_html: string;
   content_txt: string;
   content_summary: string;
-  file: any;
+  file?: any;
   fileContentType: string;
   content_metadata?: string;
   processing_metadata?: string;
