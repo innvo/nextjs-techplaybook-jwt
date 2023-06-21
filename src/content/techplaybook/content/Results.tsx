@@ -93,10 +93,12 @@ const Results: FC<ResultsProps> = ({ contents }) => {
   const { t }: { t: any } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
-  const [contentName, setContentName] = useState('');
   const [selectedContentId, setSelectedContentId] = useState(0);
   const [selectedContentName, setSelectedContentName] = useState('');
+  const [contentTitle, setContentTitle] = useState('');
   const router = useRouter(); 
+
+
   
   useEffect(() => {
   }, []);
@@ -125,8 +127,8 @@ const Results: FC<ResultsProps> = ({ contents }) => {
    *    newSelectedTags
    */
 
-  const handleNameChange = (searchValue) => {
-    setContentName(searchValue.target.value);
+  const handleContentTitleChange = (searchValue) => {
+    setContentTitle(searchValue.target.value);
   };
 
   /**
@@ -232,7 +234,16 @@ const Results: FC<ResultsProps> = ({ contents }) => {
     setPageSize(params.pageSize);
   };
 
-
+  const FilterModel = {
+    items: [
+      {
+        id: 1,
+        columnField: 'title',
+        operatorValue: 'contains',
+        value: contentTitle,
+      }
+    ] 
+  };
 
   return (
     <>
@@ -256,9 +267,9 @@ const Results: FC<ResultsProps> = ({ contents }) => {
                     </InputAdornment>
                   )
                 }}
-                onChange={handleNameChange}
+                onChange={handleContentTitleChange}
                 placeholder={t('Search by content name...')}
-                value={contentName}
+                value={contentTitle}
                 fullWidth
                 variant="outlined"
               />
@@ -279,6 +290,7 @@ const Results: FC<ResultsProps> = ({ contents }) => {
               onPageSizeChange={handlePageSizeChange}
               checkboxSelection
               disableColumnFilter
+              filterModel={FilterModel}
               initialState={{
                 sorting: {sortModel:[{field: 'lastmodifieddatetime', sort: 'desc'}]},
               }}
