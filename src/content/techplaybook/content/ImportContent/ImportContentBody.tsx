@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -40,20 +40,20 @@ import {
   MenuItem,
   TableContainer
 } from '@mui/material';
-import DatePicker from '@mui/lab/DatePicker';
 import { useDropzone } from 'react-dropzone';
 import { useSnackbar } from 'notistack';
-import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
 import CloudUploadTwoToneIcon from '@mui/icons-material/CloudUploadTwoTone';
 import CloseTwoToneIcon from '@mui/icons-material/CloseTwoTone';
 import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
 import { useRouter } from 'next/router';
-import { Content } from '@/models/content';
-import { useDispatch } from '@/store';
+import { useDispatch, useSelector } from '@/store';
 import { createContent } from '@/slices/content';
 import { useAuth } from '@/hooks/useAuth';
 import { DataGridPro, GridActionsCellItem } from '@mui/x-data-grid-pro';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { getWorkspaces } from '@/slices/workspace';
+import { getKnowledgebases } from '@/slices/knowledgebase';
+import { Content } from '@/models/content';
 
 const BoxUploadWrapper = styled(Box)(
   ({ theme }) => `
@@ -89,37 +89,6 @@ const DividerContrast = styled(Divider)(
   `
 );
 
-const EditorWrapper = styled(Box)(
-  ({ theme }) => `
-
-    .ql-editor {
-      min-height: 100px;
-    }
-
-    .ql-toolbar.ql-snow {
-      border-top-left-radius: ${theme.general.borderRadius};
-      border-top-right-radius: ${theme.general.borderRadius};
-    }
-
-    .ql-toolbar.ql-snow,
-    .ql-container.ql-snow {
-      border-color: ${theme.colors.alpha.black[30]};
-    }
-
-    .ql-container.ql-snow {
-      border-bottom-left-radius: ${theme.general.borderRadius};
-      border-bottom-right-radius: ${theme.general.borderRadius};
-    }
-
-    &:hover {
-      .ql-toolbar.ql-snow,
-      .ql-container.ql-snow {
-        border-color: ${theme.colors.alpha.black[50]};
-      }
-    }
-`
-);
-
 const AvatarWrapper = styled(Avatar)(
   ({ theme }) => `
     background: ${theme.colors.primary.lighter};
@@ -145,13 +114,6 @@ const AvatarDanger = styled(Avatar)(
 `
 );
 
-const ContentTags = [
-  { title: 'Development' },
-  { title: 'Design Content' },
-  { title: 'Marketing Research' },
-  { title: 'Software' }
-];
-
 function ImportContentBody() {
   const { t }: { t: any } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -159,79 +121,55 @@ function ImportContentBody() {
   const router = useRouter(); 
   const theme = useTheme();
   const dispatch = useDispatch();
-
   const { user }  = useAuth();
 
+  const [workspace, setWorkspace] = useState<any>(null);
+  const [knowledgebase, setKnowledgebase] = useState();
 
-  // const theme = useTheme();
+  useEffect(() => {
+    dispatch(getWorkspaces());
+    dispatch(getKnowledgebases());
+  }, []);
 
-  // const members = [
-  //   {
-  //     avatar: '/static/images/avatars/1.jpg',
-  //     name: 'Maren Lipshutz'
-  //   },
-  //   {
-  //     avatar: '/static/images/avatars/2.jpg',
-  //     name: 'Zain Vetrovs'
-  //   },
-  //   {
-  //     avatar: '/static/images/avatars/3.jpg',
-  //     name: 'Hanna Siphron'
-  //   },
-  //   {
-  //     avatar: '/static/images/avatars/4.jpg',
-  //     name: 'Cristofer Aminoff'
-  //   },
-  //   {
-  //     avatar: '/static/images/avatars/5.jpg',
-  //     name: 'Maria Calzoni'
-  //   }
-  // ];
+  const workspaces = useSelector((state) => state.workspace.workspaces);
+  const knowledgebases = useSelector((state) => state.knowledgebase.knowledgebases);
 
- 
+  const handleChangeWorkspace = (value) => {
+    console.log(value.target.value);
+    setWorkspace(value.target.value)
+  }
 
+  const onDrop = useCallback((acceptedFiles) => {
+     acceptedFiles.forEach((file) => {
+      const reader = new FileReader(); 
+      reader.onabort = () => console.log('file reading was aborted')
+      reader.onerror = () => console.log('file reading has failed')
+      reader.onload = () => {
+        console.log(workspace)
+        let formData = new FormData();
+        formData.append('files', file);
+        formData.append('workspace', workspace );
+        dispatch(createContent(formData, enqueueSnackbar));
+      }
+      reader.readAsDataURL(file);
+    })
+  }, [])
 
-
-    const onDrop = useCallback((acceptedFiles) => {
-      const regex = /data:.*base64,/
-      acceptedFiles.forEach((file) => {
-        const reader = new FileReader()
-        reader.onabort = () => console.log('file reading was aborted')
-        reader.onerror = () => console.log('file reading has failed')
-        reader.onload = () => {
-
-          let formData = new FormData();
-          formData.append('files', file);
-
-          dispatch(createContent(formData, enqueueSnackbar));
-
-        }
-        //reader.readAsArrayBuffer(file)
-//reader.readAsDataURL(file);
-
-      })
-      
-    }, [])
-
-    const {  
-      acceptedFiles,
-      isDragActive,
-      isDragAccept,
-      isDragReject,
-      getRootProps, 
-      getInputProps} = useDropzone({
-        accept: {
-          "image/*": [".docx", ".pdf", ".txt", ".ppt"],
-        },
+  const {  
+    acceptedFiles,
+    isDragActive,
+    isDragAccept,
+    isDragReject,
+    getRootProps, 
+    getInputProps} = useDropzone({
+      accept: {
+         "image/*": [".docx", ".pdf", ".txt", ".ppt"],
+      },
       useFsAccessApi: false,
       onDrop: onDrop,
-    })
-
-    const files = acceptedFiles;
-
+  })
     
-
-    const columns = [
+  const columns = [
       {
         field: 'name',
         headerName: 'name',
@@ -305,17 +243,17 @@ function ImportContentBody() {
                     <FormControl fullWidth variant="outlined">                  
                       <InputLabel>{t('Workspace')}</InputLabel>
                       <Select
-                       // value={JSON.stringify(projectBillingtype)} 
-                       // defaultValue={JSON.stringify(projectBillingtype)}
-                       // onChange={(e)=> setProjectBillingtype(JSON.parse(e.target.value))}
-                       // onBlur={handleBlur}
+                        value={workspace} 
+                        onChange={(e)=>{console.log(e.target.value); setWorkspace(e.target.value)}}
+                        onBlur={handleChangeWorkspace}
                         label={t('Workspace')}
                       >
-                         
-                            <MenuItem key='{billingtypeOption.id}' value='{JSON.stringify(billingtypeOption)}'>
-                              Workspace
-                            </MenuItem>
-
+                              {workspaces.map((workspaceOption: any) =>{ 
+                                return (
+                                   <MenuItem key={workspaceOption.id} value={workspaceOption.id}>
+                                   {workspaceOption.name}
+                                  </MenuItem>
+                              )} )}
                       </Select>
                     </FormControl>
                 </Grid>
@@ -358,11 +296,14 @@ function ImportContentBody() {
                        // onBlur={handleBlur}
                         label={t('Knowledgebase')}
                       >
-                         
                             <MenuItem key='{billingtypeOption.id}' value='{JSON.stringify(billingtypeOption)}'>
-                              Knowledgebase
+                              {knowledgebases.map((knowledgebaseOption: any) =>{ 
+                                return (
+                                   <MenuItem key={knowledgebaseOption.id} value={knowledgebaseOption}>
+                                   {knowledgebaseOption.name}
+                                  </MenuItem>
+                              )} )}
                             </MenuItem>
-
                       </Select>
                     </FormControl>
                 </Grid>
@@ -381,7 +322,7 @@ function ImportContentBody() {
           <BoxUploadWrapper {...getRootProps()}>
             <input {...getInputProps()} />
             {isDragAccept && (
-              <>
+              <>4
                 <AvatarSuccess variant="rounded">
                   <CheckTwoToneIcon />
                 </AvatarSuccess>
@@ -447,7 +388,7 @@ function ImportContentBody() {
         </UploadBox>
         </Grid>
         <Grid>
-        <Button
+        <Button {...getRootProps()}
           variant="text"
           size="large"
           sx={{
@@ -455,9 +396,10 @@ function ImportContentBody() {
           }}
           // onClick={closeConfirmDelete}
         >{t('Brwose folder')}
+         <input {...getInputProps()} />
         </Button>
 
-        <Button
+        <Button {...getRootProps()}
           variant="text"
           size="large"
           sx={{
@@ -465,6 +407,7 @@ function ImportContentBody() {
           }}
           // onClick={closeConfirmDelete}
         >{t('Brwose files')}
+         <input {...getInputProps()} />
         </Button>
         
         <Button

@@ -9,6 +9,8 @@ import { reducer as projectstatusReducer } from 'src/slices/projectstatus';
 import { reducer as projectbillingtypeReducer } from 'src/slices/projectbillingtype';
 import { reducer as userProfilesReducer } from 'src/slices/userProfile';
 import { reducer as contentReducer } from 'src/slices/content';
+import { reducer as workspaceReducer } from 'src/slices/workspace';
+import { reducer as knowledgebaseReducer } from 'src/slices/knowledgebase';
 
 export const rootReducer = combineReducers({
   calendar: calendarReducer,
@@ -20,5 +22,7 @@ export const rootReducer = combineReducers({
   projectstatus: projectstatusReducer,
   projectbillingtype: projectbillingtypeReducer,
   userProfiles: userProfilesReducer,
-  content: contentReducer  
+  content: contentReducer,
+  workspace: workspaceReducer, 
+  knowledgebase: knowledgebaseReducer  
 });
