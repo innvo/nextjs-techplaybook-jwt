@@ -1,41 +1,14 @@
-import { useCallback, useEffect, useState } from 'react';
-import * as Yup from 'yup';
-import { Formik } from 'formik';
+import {  useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { wait } from 'src/utils/wait';
-import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css';
-
-import axiosInt from '@/utils/axios';//ECHASIN
-
-import NewContentDialog from '../NewContentDialog';
-
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
-
 import {
   styled,
   Grid,
-  Dialog,
-  DialogTitle,
-  Divider,
-  Alert,
-  Chip,
-  DialogContent,
   Box,
-  Zoom,
-  ListItem,
-  List,
-  ListItemText,
   Typography,
-  TextField,
-  CircularProgress,
   Avatar,
-  Autocomplete,
   Button,
   useTheme,
   Card,
-  FormControl,
-  InputLabel,
   Select,
   MenuItem,
   TableContainer
@@ -45,15 +18,12 @@ import { useSnackbar } from 'notistack';
 import CloudUploadTwoToneIcon from '@mui/icons-material/CloudUploadTwoTone';
 import CloseTwoToneIcon from '@mui/icons-material/CloseTwoTone';
 import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
-import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from '@/store';
 import { createContent } from '@/slices/content';
-import { useAuth } from '@/hooks/useAuth';
 import { DataGridPro, GridActionsCellItem } from '@mui/x-data-grid-pro';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { getWorkspaces } from '@/slices/workspace';
 import { getKnowledgebases } from '@/slices/knowledgebase';
-import { Content } from '@/models/content';
 
 const BoxUploadWrapper = styled(Box)(
   ({ theme }) => `
@@ -83,12 +53,6 @@ const UploadBox = styled(Box)(
 `
 );
 
-const DividerContrast = styled(Divider)(
-  ({ theme }) => `
-    background: ${theme.colors.alpha.trueWhite[10]};
-  `
-);
-
 const AvatarWrapper = styled(Avatar)(
   ({ theme }) => `
     background: ${theme.colors.primary.lighter};
@@ -116,15 +80,12 @@ const AvatarDanger = styled(Avatar)(
 
 function ImportContentBody() {
   const { t }: { t: any } = useTranslation();
-  const [open, setOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const router = useRouter(); 
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { user }  = useAuth();
 
-  const [workspace, setWorkspace] = useState<any>(null);
-  const [knowledgebase, setKnowledgebase] = useState();
+  const [workspace, setWorkspace] = useState<any>('');
+  const [knowledgebase, setKnowledgebase] = useState('');
 
   useEffect(() => {
     dispatch(getWorkspaces());
@@ -134,26 +95,21 @@ function ImportContentBody() {
   const workspaces = useSelector((state) => state.workspace.workspaces);
   const knowledgebases = useSelector((state) => state.knowledgebase.knowledgebases);
 
-  const handleChangeWorkspace = (value) => {
-    console.log(value.target.value);
-    setWorkspace(value.target.value)
-  }
-
-  const onDrop = useCallback((acceptedFiles) => {
+  const onDrop = (acceptedFiles) => {
      acceptedFiles.forEach((file) => {
       const reader = new FileReader(); 
       reader.onabort = () => console.log('file reading was aborted')
       reader.onerror = () => console.log('file reading has failed')
       reader.onload = () => {
-        console.log(workspace)
         let formData = new FormData();
         formData.append('files', file);
         formData.append('workspace', workspace );
+        formData.append('knowledgebase', knowledgebase );
         dispatch(createContent(formData, enqueueSnackbar));
       }
       reader.readAsDataURL(file);
     })
-  }, [])
+  }
 
   const {  
     acceptedFiles,
@@ -240,12 +196,11 @@ function ImportContentBody() {
                   sm={6}
                   md={4}
                   >
-                    <FormControl fullWidth variant="outlined">                  
-                      <InputLabel>{t('Workspace')}</InputLabel>
+                      
                       <Select
+                        fullWidth
                         value={workspace} 
-                        onChange={(e)=>{console.log(e.target.value); setWorkspace(e.target.value)}}
-                        onBlur={handleChangeWorkspace}
+                        onChange={(e)=>setWorkspace(e.target.value)}
                         label={t('Workspace')}
                       >
                               {workspaces.map((workspaceOption: any) =>{ 
@@ -255,7 +210,7 @@ function ImportContentBody() {
                                   </MenuItem>
                               )} )}
                       </Select>
-                    </FormControl>
+                    
                 </Grid>
         </Grid>
          <Grid container spacing={0} >
@@ -287,25 +242,19 @@ function ImportContentBody() {
                   sm={6}
                   md={4}
                   >
-                    <FormControl fullWidth variant="outlined">                  
-                      <InputLabel>{t('Knowledgebase')}</InputLabel>
                       <Select
-                       // value={JSON.stringify(projectBillingtype)} 
-                       // defaultValue={JSON.stringify(projectBillingtype)}
-                       // onChange={(e)=> setProjectBillingtype(JSON.parse(e.target.value))}
-                       // onBlur={handleBlur}
+                       fullWidth
+                        value={knowledgebase} 
+                        onChange={(e)=> setKnowledgebase(e.target.value)}
                         label={t('Knowledgebase')}
                       >
-                            <MenuItem key='{billingtypeOption.id}' value='{JSON.stringify(billingtypeOption)}'>
                               {knowledgebases.map((knowledgebaseOption: any) =>{ 
                                 return (
-                                   <MenuItem key={knowledgebaseOption.id} value={knowledgebaseOption}>
+                                   <MenuItem key={knowledgebaseOption.id} value={knowledgebaseOption.id}>
                                    {knowledgebaseOption.name}
                                   </MenuItem>
                               )} )}
-                            </MenuItem>
                       </Select>
-                    </FormControl>
                 </Grid>
         </Grid>
 

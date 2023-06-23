@@ -24,11 +24,7 @@ import {
   Stack,
   styled,
   TextField,
-
   Typography,
-  ToggleButtonGroup,
-  ToggleButton,
-  
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -114,7 +110,6 @@ const Results: FC<ResultsProps> = ({ projects }) => {
   const [selectedProjectName, setSelectedProjectName] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
   const router = useRouter(); 
-
 
   // THIS MUST BE SET FROM DATABASE
   /**
