@@ -86,6 +86,9 @@ function ImportContentBody() {
 
   const [workspace, setWorkspace] = useState<any>('');
   const [knowledgebase, setKnowledgebase] = useState('');
+  const [validateDrop, setValidateDrop] = useState<boolean>(true);
+  const [validateMessage, setValidateMessage] = useState<string>('');
+
 
   useEffect(() => {
     dispatch(getWorkspaces());
@@ -94,6 +97,12 @@ function ImportContentBody() {
 
   const workspaces = useSelector((state) => state.workspace.workspaces);
   const knowledgebases = useSelector((state) => state.knowledgebase.knowledgebases);
+
+  const checkValidateDrop = () => {
+    if (validateDrop) {
+      setValidateMessage('Workspace is required!');      
+    }
+  }
 
   const onDrop = (acceptedFiles) => {
      acceptedFiles.forEach((file) => {
@@ -119,10 +128,11 @@ function ImportContentBody() {
     getRootProps, 
     getInputProps} = useDropzone({
       accept: {
-         "image/*": [".docx", ".pdf", ".txt", ".ppt"],
+         "*": [".docx", ".pdf", ".txt", ".ppt"],
       },
       useFsAccessApi: false,
       onDrop: onDrop,
+      disabled: validateDrop
   })
     
   const columns = [
@@ -200,7 +210,7 @@ function ImportContentBody() {
                       <Select
                         fullWidth
                         value={workspace} 
-                        onChange={(e)=>setWorkspace(e.target.value)}
+                        onChange={(e)=>{setWorkspace(e.target.value);setValidateDrop(false);setValidateMessage('');}}
                         label={t('Workspace')}
                       >
                               {workspaces.map((workspaceOption: any) =>{ 
@@ -210,7 +220,7 @@ function ImportContentBody() {
                                   </MenuItem>
                               )} )}
                       </Select>
-                    
+                      <Typography color='red'>{validateMessage}</Typography>
                 </Grid>
         </Grid>
          <Grid container spacing={0} >
@@ -267,12 +277,12 @@ function ImportContentBody() {
                   justifyContent="flex-end"
                   textAlign={{ sm: 'right' }}
                 >
-        <UploadBox>
-          <BoxUploadWrapper {...getRootProps()}>
+        <UploadBox >
+          <BoxUploadWrapper {...getRootProps()} >
             <input {...getInputProps()} />
             {isDragAccept && (
-              <>4
-                <AvatarSuccess variant="rounded">
+              <>
+                <AvatarSuccess variant="rounded" >
                   <CheckTwoToneIcon />
                 </AvatarSuccess>
                 <Typography
@@ -301,9 +311,9 @@ function ImportContentBody() {
             {!isDragActive && (
               <>
                 <AvatarWrapper variant="rounded">
-                  <CloudUploadTwoToneIcon />
+                  <CloudUploadTwoToneIcon  onClick={checkValidateDrop}/>
                 </AvatarWrapper>
-                <Typography
+                <Typography onClick={checkValidateDrop}
                   sx={{
                     mt: 2
                   }}
@@ -343,7 +353,7 @@ function ImportContentBody() {
           sx={{
             mx: 5
           }}
-          // onClick={closeConfirmDelete}
+          onClick={checkValidateDrop}
         >{t('Brwose folder')}
          <input {...getInputProps()} />
         </Button>

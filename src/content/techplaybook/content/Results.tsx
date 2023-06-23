@@ -98,10 +98,6 @@ const Results: FC<ResultsProps> = ({ contents }) => {
   const [contentTitle, setContentTitle] = useState('');
   const router = useRouter(); 
 
-
-  console.log('44444444444444446666666666666666666666666')
-  console.log(contents)
-
   useEffect(() => {
   }, []);
 
