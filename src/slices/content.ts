@@ -116,7 +116,9 @@ export const createContent =
     console.log('In content.ts:createContent');
     try {
       const data = await axiosInt.post('/api/contents', formData)
+
       dispatch(slice.actions.getContents(data.data));
+
       enqueueSnackbar('The content account was created successfully', {
         variant: 'success',
         anchorOrigin: {

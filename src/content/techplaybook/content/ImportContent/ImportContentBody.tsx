@@ -11,7 +11,9 @@ import {
   Card,
   Select,
   MenuItem,
-  TableContainer
+  TableContainer,
+  CircularProgress,
+  CircularProgressProps
 } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import { useSnackbar } from 'notistack';
@@ -24,6 +26,7 @@ import { DataGridPro, GridActionsCellItem } from '@mui/x-data-grid-pro';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { getWorkspaces } from '@/slices/workspace';
 import { getKnowledgebases } from '@/slices/knowledgebase';
+import { resolve } from 'path';
 
 const BoxUploadWrapper = styled(Box)(
   ({ theme }) => `
@@ -78,6 +81,34 @@ const AvatarDanger = styled(Avatar)(
 `
 );
 
+function CircularProgressWithLabel(
+  props: CircularProgressProps & { value: number },
+) {
+  return (
+    <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+      <CircularProgress variant="determinate" {...props} size={150}/>
+      <Box
+        sx={{
+          top: 0,
+          left: 0,
+          bottom: 0,
+          right: 0,
+          position: 'absolute',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Typography
+          variant="h1"
+          component="div"
+          color="text.secondary"
+        >{`${Math.round(props.value)}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
+
 function ImportContentBody() {
   const { t }: { t: any } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
@@ -88,11 +119,50 @@ function ImportContentBody() {
   const [knowledgebase, setKnowledgebase] = useState('');
   const [validateDrop, setValidateDrop] = useState<boolean>(true);
   const [validateMessage, setValidateMessage] = useState<string>('');
-
+  const [data, setData] = useState([]);
+  const [numberOfUploadedFiles, setNumberOfUploadedFiles] = useState(0);
+  const [progress, setProgress] = useState(10);
+  const contents = useSelector((state) => state.content.contents);
 
   useEffect(() => {
     dispatch(getWorkspaces());
     dispatch(getKnowledgebases());
+
+    const eventSource = new EventSource('http://localhost:8080/api/contents/stream');
+
+    eventSource.onmessage = (event: any) => {
+      console.log('Received SSE event:', event.data);
+     // const newData = JSON.parse(event.data);
+      //setData(event.data);
+      setData(JSON.parse(event.data));
+      console.log('pppppppppppppppppppppppppppppppp')
+      console.log(event.data)
+      console.log(JSON.parse(event.data).length)
+      setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 10));
+    };
+  
+  
+  
+    eventSource.onerror = (event) => {
+        console.error('Error in SSE connection:', event);
+     //   eventSource.close();
+    };
+    
+   
+    return () => {
+      console.log('UNMOUNTED');
+      eventSource.close();
+    }
+  }, []);
+
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      
+    }, 800);
+    return () => {
+      clearInterval(timer);
+    };
   }, []);
 
   const workspaces = useSelector((state) => state.workspace.workspaces);
@@ -105,20 +175,30 @@ function ImportContentBody() {
   }
 
   const onDrop = (acceptedFiles) => {
-     acceptedFiles.forEach((file) => {
-      const reader = new FileReader(); 
-      reader.onabort = () => console.log('file reading was aborted')
-      reader.onerror = () => console.log('file reading has failed')
-      reader.onload = () => {
-        let formData = new FormData();
-        formData.append('files', file);
-        formData.append('workspace', workspace );
-        formData.append('knowledgebase', knowledgebase );
-        dispatch(createContent(formData, enqueueSnackbar));
-      }
-      reader.readAsDataURL(file);
-    })
-  }
+    setNumberOfUploadedFiles(acceptedFiles.length)    
+    let formData = new FormData();
+    formData.append('workspace', workspace );
+    formData.append('knowledgebase', knowledgebase );
+
+    return new Promise( (resolve, reject) => {
+      acceptedFiles.forEach(function(file){ 
+        const reader = new FileReader(); 
+  
+        //  reader.onabort = () => console.log('file reading was aborted')
+       // reader.onerror = () => console.log('file reading has failed')
+       ///   reader.onload = () => {
+            formData.append('files', file);
+          ///}
+          
+          reader.readAsDataURL(file);
+          resolve(file);
+
+        })
+    }).then(() => {
+      dispatch(createContent(formData, enqueueSnackbar));
+    });
+
+  };
 
   const {  
     acceptedFiles,
@@ -137,32 +217,25 @@ function ImportContentBody() {
     
   const columns = [
       {
-        field: 'name',
-        headerName: 'name',
+        field: 'id',
+        headerName: 'id',
         width: 200,
         editable: false,
       },
       {
-        field: 'size',
-        headerName: 'size',
+        field: 'title',
+        headerName: 'Title',
         width: 200,
         editable: false,
-      },
-      {
-        field: 'actions',
-        headerName: 'Actions',
-        type: 'actions',
-        width: 80,
-        getActions: (params) => [
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            //onClick={id => handleDeleteContent(params.row.contentId, params.row.contentName)}
-          />,
-        ],
-      },
-      ,
+      },{
+        field: 'status',
+        headerName: 'Status',
+        width: 200,
+        editable: false,
+      }
     ];
+
+    
 
     const [pageSize, setPageSize] = useState(10);
     const handlePageSizeChange = (params) => {
@@ -171,13 +244,20 @@ function ImportContentBody() {
 
   return (
     <>
-       <Card
+    
+      <Card
         sx={{
           p: 1,
           mb: 3
         }}
       >
-         <Grid container spacing={0}>
+        <Grid container spacing={0}>
+          <Grid  
+             item
+             xs={8}
+             sm={8}
+             md={8}>
+          <Grid container spacing={0}>
             <Grid
                   item
                   xs={8}
@@ -268,6 +348,17 @@ function ImportContentBody() {
                 </Grid>
         </Grid>
 
+          </Grid>
+          <Grid 
+              item
+              xs={4}
+              sm={4}
+              md={4}>
+               <CircularProgressWithLabel value={progress} />
+          </Grid>
+        </Grid>
+         
+
         <Grid container spacing={0} pl={20}>
             <Grid
                   item
@@ -354,7 +445,7 @@ function ImportContentBody() {
             mx: 5
           }}
           onClick={checkValidateDrop}
-        >{t('Brwose folder')}
+        >{t('Browse folder')}
          <input {...getInputProps()} />
         </Button>
 
@@ -365,7 +456,7 @@ function ImportContentBody() {
             mx: 5
           }}
           // onClick={closeConfirmDelete}
-        >{t('Brwose files')}
+        >{t('Browse files')}
          <input {...getInputProps()} />
         </Button>
         
@@ -406,8 +497,8 @@ function ImportContentBody() {
                   <TableContainer>
                     <Box p={1} sx={{ height: 600, width: '100%' }}>
                       <DataGridPro
-                        getRowId={(row: any) => row.name}
-                        rows={acceptedFiles}
+                        getRowId={(row) => row.title}
+                        rows={data}
                         columns={columns}
                         pageSize={pageSize}
                         pagination
