@@ -120,9 +120,12 @@ function ImportContentBody() {
   const [validateDrop, setValidateDrop] = useState<boolean>(true);
   const [validateMessage, setValidateMessage] = useState<string>('');
   const [data, setData] = useState([]);
-  const [numberOfUploadedFiles, setNumberOfUploadedFiles] = useState(0);
-  const [progress, setProgress] = useState(10);
+  const [fileCounter, setFileCounter] = useState(0);
+  const [progressRate, setProgressRate] = useState(0);
+
+  const [progress, setProgress] = useState(0);
   const contents = useSelector((state) => state.content.contents);
+
 
   useEffect(() => {
     dispatch(getWorkspaces());
@@ -138,17 +141,14 @@ function ImportContentBody() {
       console.log('pppppppppppppppppppppppppppppppp')
       console.log(event.data)
       console.log(JSON.parse(event.data).length)
-      setProgress((prevProgress) => (prevProgress >= 100 ? 0 : prevProgress + 10));
+      setFileCounter(JSON.parse(event.data).length)
     };
-  
-  
-  
+
     eventSource.onerror = (event) => {
         console.error('Error in SSE connection:', event);
      //   eventSource.close();
     };
-    
-   
+     
     return () => {
       console.log('UNMOUNTED');
       eventSource.close();
@@ -157,13 +157,8 @@ function ImportContentBody() {
 
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      
-    }, 800);
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
+    setProgress((prevProgress) => (prevProgress >= 100 ?  100 : prevProgress + progressRate));
+  }, [fileCounter]);
 
   const workspaces = useSelector((state) => state.workspace.workspaces);
   const knowledgebases = useSelector((state) => state.knowledgebase.knowledgebases);
@@ -175,7 +170,9 @@ function ImportContentBody() {
   }
 
   const onDrop = (acceptedFiles) => {
-    setNumberOfUploadedFiles(acceptedFiles.length)    
+
+    setProgressRate(100/acceptedFiles.length);
+
     let formData = new FormData();
     formData.append('workspace', workspace );
     formData.append('knowledgebase', knowledgebase );

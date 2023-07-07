@@ -10,36 +10,36 @@ import { useEffect } from 'react';
 import Head from 'next/head';
 import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
 import { Authenticated } from 'src/components/Authenticated';
-import PageHeader from 'src/content/techplaybook/project/edit/PageHeader';
+import PageHeader from 'src/content/techplaybook/content/edit/PageHeader';
 // src
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from '@/store';
-import ProjectEditContent from '@/content/techplaybook/project/edit/ProjectEdit';
-import { getProject } from '@/slices/projects';
+import EditContent from '@/content/techplaybook/content/edit/EditContent';
+import { getContent } from '@/slices/content';
 
 function ProjectEdit() {
 
   const router = useRouter(); 
-  var id = router.query.projectId;
+  var id = router.query.contentId;
   const dispatch= useDispatch();  
 
-  const project = useSelector((state) => state.project.currentProject);
+  const content = useSelector((state) => state.content.currentContent);
 
   useEffect(() => {
-    dispatch(getProject(+id)) ;
+    dispatch(getContent(+id)) ;
   }, [id]);
  
   return (
    
     <>
     <Head>
-      <title>Project Edit</title>
+      <title>Content Edit</title>
     </Head>
     <PageTitleWrapper>
         <PageHeader />
     </PageTitleWrapper>
-      <ProjectEditContent project={project} />
+      <EditContent content={content} />
        
   </>
   );

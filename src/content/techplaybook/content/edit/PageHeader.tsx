@@ -52,7 +52,7 @@ const PageHeader: FC<any> = () => {
   }
 
   const projectHome = () => {
-    router.push('/techplaybook/project');
+    router.push('/techplaybook/content');
   };
 
   return (
@@ -68,10 +68,10 @@ const PageHeader: FC<any> = () => {
         </AvatarPageTitle>
         <Box>
           <Typography variant="h3" component="h3" gutterBottom>
-            {t('Project')}
+            {t('Content')}
           </Typography>
           <Typography variant="subtitle2">
-            {t('Edit  your project ')}
+            {t('Edit  your content ')}
           </Typography>
         </Box>
       </Box>
