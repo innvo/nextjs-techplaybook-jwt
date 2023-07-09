@@ -7,7 +7,7 @@ export interface Content {
   content_txt: string;
   content_summary: string;
   file?: any;
-  fileContentType: string;
+  fileContentType?: string;
   content_metadata?: string;
   processing_metadata?: string;
   processing_status?: any;
@@ -19,12 +19,12 @@ export interface Content {
   datepublished: number;
   poststartdatetime: number;
   postenddatetime: number;
-  preview_image_small: any;
-  preview_image_smallContentType: string;
-  preview_image_medium: any;
-  preview_image_mediumContentType: string;
-  preview_image_large: any;
-  preview_image_largeContentType: string;
+  preview_image_small?: any;
+  preview_image_smallContentType?: string;
+  preview_image_medium?: any;
+  preview_image_mediumContentType?: string;
+  preview_image_large?: any;
+  preview_image_largeContentType?: string;
   content_contentclass?: any;
   content_community?: any;
   content_parent?: any;

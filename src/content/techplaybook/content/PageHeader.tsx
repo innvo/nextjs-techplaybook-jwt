@@ -42,6 +42,8 @@ import CloudUploadTwoToneIcon from '@mui/icons-material/CloudUploadTwoTone';
 import CloseTwoToneIcon from '@mui/icons-material/CloseTwoTone';
 import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
 import { useRouter } from 'next/router';
+import { updateContent } from '@/slices/content';
+import { useDispatch } from '@/store';
 
 const BoxUploadWrapper = styled(Box)(
   ({ theme }) => `
@@ -129,8 +131,9 @@ const ContentTags = [
 function PageHeader() {
   const { t }: { t: any } = useTranslation();
   const [open, setOpen] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
   const router = useRouter(); 
+
+
 
   // const theme = useTheme();
 
@@ -200,7 +203,7 @@ function PageHeader() {
       <Grid container justifyContent="space-between" alignItems="center">
         <Grid item>
           <Typography variant="h3" component="h3" gutterBottom>
-            {t('Contents')}
+            {t('Content')}
           </Typography>
           <Typography variant="subtitle2">
             {t('These are your active contents')}

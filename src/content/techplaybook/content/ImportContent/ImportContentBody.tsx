@@ -138,9 +138,6 @@ function ImportContentBody() {
      // const newData = JSON.parse(event.data);
       //setData(event.data);
       setData(JSON.parse(event.data));
-      console.log('pppppppppppppppppppppppppppppppp')
-      console.log(event.data)
-      console.log(JSON.parse(event.data).length)
       setFileCounter(JSON.parse(event.data).length)
     };
 
@@ -176,15 +173,18 @@ function ImportContentBody() {
     let formData = new FormData();
     formData.append('workspace', workspace );
     formData.append('knowledgebase', knowledgebase );
-
+    
     return new Promise( (resolve, reject) => {
       acceptedFiles.forEach(function(file){ 
         const reader = new FileReader(); 
+        console.log(file);
   
         //  reader.onabort = () => console.log('file reading was aborted')
        // reader.onerror = () => console.log('file reading has failed')
        ///   reader.onload = () => {
             formData.append('files', file);
+            formData.append('lastModifiedDate', file.lastModifiedDate.toISOString());
+
           ///}
           
           reader.readAsDataURL(file);
@@ -225,8 +225,8 @@ function ImportContentBody() {
         width: 200,
         editable: false,
       },{
-        field: 'status',
-        headerName: 'Status',
+        field: 'processingstatus',
+        headerName: 'Processingstatus',
         width: 200,
         editable: false,
       }

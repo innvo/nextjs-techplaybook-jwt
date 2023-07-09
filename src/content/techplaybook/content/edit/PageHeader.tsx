@@ -4,11 +4,10 @@ import AddAlertTwoToneIcon from '@mui/icons-material/AddAlertTwoTone';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SaveIcon from '@mui/icons-material/Save';
 import { FC } from 'react';
-import { updateProject } from '@/slices/projects';
 import { useSnackbar } from 'notistack';
 import { useDispatch, useSelector } from '@/store';
 import { useRouter } from 'next/router';
-// CSS
+import { updateContent } from '@/slices/content';
 
 const AvatarPageTitle = styled(Avatar)(
   ({ theme }) => `
@@ -45,13 +44,14 @@ const PageHeader: FC<any> = () => {
   const router = useRouter();   
   const { t }: { t: any } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const project = useSelector((state) => state.project.currentProject);
 
-  const editCurrentProject = () => {
-    dispatch(updateProject(project,enqueueSnackbar)) ;
-  }
+  const currentContent = useSelector((state) => state.content.currentContent);
 
-  const projectHome = () => {
+  const editCurrentContent = () => {
+    dispatch(updateContent(currentContent,enqueueSnackbar)) ;
+  };
+
+  const contentHome = () => {
     router.push('/techplaybook/content');
   };
 
@@ -82,13 +82,13 @@ const PageHeader: FC<any> = () => {
         sx={{
           mr: 1
         }}
-        onClick={projectHome}
+        onClick={contentHome}
         endIcon={<CancelIcon />}>
           {t('Cancel')}
         </Button>
   
         <Button 
-        onClick={ editCurrentProject}
+        onClick={ editCurrentContent}
         variant="contained" 
         sx={{
           mr: 1

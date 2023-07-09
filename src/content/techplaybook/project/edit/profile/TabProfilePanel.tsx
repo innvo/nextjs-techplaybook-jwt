@@ -176,7 +176,7 @@ const TabProfilePanel: React.FC<ResultsProps> = ({ project }) => {
       projectstartdatetime: projectstartdatetime,
       projectenddatetime: projectenddatetime,
       status: 'ACTIVE',
-      createdby: user.login, 
+      createdby: project.createdby, 
       createddatetime: Date.now(),
       lastmodifiedby: user.login,
       lastmodifieddatetime: Date.now(),

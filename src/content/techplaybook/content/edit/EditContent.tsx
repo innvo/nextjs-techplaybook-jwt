@@ -8,10 +8,21 @@ import {
   Card,
   createTheme,
   TextField,
+  Select,
+  Typography,
+  useTheme,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from '@mui/material';
 import { Content } from '@/models/content';
 import { Editor } from '@tinymce/tinymce-react';
 import { makeStyles } from '@mui/styles';
+import { useDispatch, useSelector } from '@/store';
+import { getWorkspaces } from '@/slices/workspace';
+import { getKnowledgebases } from '@/slices/knowledgebase';
+import slice, { updateContent } from '@/slices/content';
+import { useAuth } from '@/hooks/useAuth';
 
 const defaultTheme = createTheme();
 
@@ -75,13 +86,31 @@ const EditContent: FC<ResultsProps> = ({ content }) => {
   const { t }: { t: any } = useTranslation();
   const classes = useStyles();
   const editorRef = useRef(null);
+  const theme = useTheme();
+  const dispatch = useDispatch();
+  const { user }  = useAuth();
+
   const tinyMCE_key = (process.env.REACT_APP_TINYMCE_KEY as string);
 
+  const [contentTitle, setContentTitle] = useState('');
   const [contentHtml, setContentHtml] = useState(content.content_html);
+  const [contentTxt, setContentTxt] = useState(content.content_txt);
   const [editorValue, seteditorValue] = useState<number>(0);
   const [sidebarValue, setsidebarValue] = useState<number>(0);
 
+  const [workspace, setWorkspace] = useState<any>('');
+  const [knowledgebase, setKnowledgebase] = useState('');
+  const [validateMessage, setValidateMessage] = useState<string>('');
+
+  useEffect(() => {
+    dispatch(getWorkspaces());
+    dispatch(getKnowledgebases());
+    setContentTitle(content.title)
+  }, [content?.id]);
   
+  const workspaces = useSelector((state) => state.workspace.workspaces);
+  const knowledgebases = useSelector((state) => state.knowledgebase.knowledgebases);
+
   const handleEditorChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     seteditorValue(newValue);
   };
@@ -95,6 +124,31 @@ const EditContent: FC<ResultsProps> = ({ content }) => {
       id: `simple-tab-${index}`,
       'aria-controls': `simple-tabpanel-${index}`,
     };
+  };
+
+  const editContent = () => {
+    let currentContent = {
+      id: content.id,
+      title: contentTitle,
+      istemplate: false,
+      isfeatured: false,
+      content_html: contentHtml,
+      content_txt: contentTxt,
+      content_summary: '',
+      description: '',
+      url: '',
+      authors: '',
+      datepublished: content.datepublished,
+      poststartdatetime: content.poststartdatetime,
+      postenddatetime: content.postenddatetime,
+      status: '',
+      createdby: user.login,
+      createddatetime: content.createddatetime,
+      lastmodifiedby: content.lastmodifiedby,
+      lastmodifieddatetime: Date.now(),
+    }
+    
+    dispatch(slice.actions.getContent(currentContent));
   };
 
   return (
@@ -111,7 +165,8 @@ const EditContent: FC<ResultsProps> = ({ content }) => {
         <Card
           sx={{
             p: 1,
-            mb: 3
+            mb: 3,
+            height: '100%' 
           }}
         >
          <Tabs
@@ -261,7 +316,7 @@ const EditContent: FC<ResultsProps> = ({ content }) => {
                </Box>}
 
                {editorValue === 1 && <Box>
-                 Text
+                {content.content_txt}
                </Box>}
 
                {editorValue === 2 && <Box>
@@ -275,7 +330,8 @@ const EditContent: FC<ResultsProps> = ({ content }) => {
         <Card
             sx={{
               p: 1,
-              mb: 3
+              mb: 3,
+              height: '100%' 
             }}
           >
             
@@ -308,38 +364,165 @@ const EditContent: FC<ResultsProps> = ({ content }) => {
                />
           </Tabs>     
                {sidebarValue === 0 && <Box>
-                <Grid container spacing={1} sx={{ pt: 4 }}>
-                    <Grid item xs={9}>
-                    {content.title}
-                       <TextField
-                          className={classes.myTextField}
-                          variant='outlined'
-                          label={t('Name ')}
-                          name={content.title}
-                          defaultValue={content.title}
-                          onChange={e => { content.title = e.target.value; }}
-                        />
+                <Grid container spacing={1} sx={{ pt: 3 }}>
+                    <Grid
+                      item
+                      xs={3}
+                      sm={3}
+                      md={3}
+                      justifyContent="flex-end"
+                      textAlign={{ sm: 'right' }}
+                    >
+                      <Box
+                        pr={3}
+                        sx={{
+                          pt: `${theme.spacing(2)}`,
+                          pb: { xs: 1, md: 0 }
+                        }}
+                        alignSelf="center"
+                      >
+                        <b>{t('Title')}:</b>
+                      </Box>
                     </Grid>
-                </Grid>    
+                    <Grid
+                      sx={{
+                        mb: `${theme.spacing(3)}`
+                      }}
+                      item
+                      xs={8}
+                      sm={8}
+                      md={8}
+                      >
+                          <TextField
+                            className={classes.myTextField}
+                            variant='outlined'
+                            label={t('Titless ')}
+                            name={contentTitle}
+                            value={contentTitle}
+                            defaultValue={contentTitle}
+                            onChange={e => setContentTitle(e.target.value)}
+                            onBlur={editContent}
+                        />
+                          <Typography color='red'>{validateMessage}</Typography>
+                    </Grid>
+                    </Grid>
 
-               </Box>}
+                    <Grid container spacing={1} >
+                    <Grid
+                      item
+                      xs={3}
+                      sm={3}
+                      md={3}
+                      justifyContent="flex-end"
+                      textAlign={{ sm: 'right' }}
+                    >
+                      <Box
+                        pr={3}
+                        sx={{
+                          pt: `${theme.spacing(2)}`,
+                          pb: { xs: 1, md: 0 }
+                        }}
+                        alignSelf="center"
+                      >
+                        <b>{t('Workspace')}:</b>
+                      </Box>
+                    </Grid>
+                    <Grid
+                      sx={{
+                        mb: `${theme.spacing(3)}`
+                      }}
+                      item
+                      xs={8}
+                      sm={8}
+                      md={8}
+                      >
+                        <FormControl fullWidth>
+                          <InputLabel id="workspace-label">Workspace</InputLabel>
+                          <Select
+                            fullWidth
+                            value={workspace} 
+                            onChange={(e)=>{setWorkspace(e.target.value);setValidateMessage('');}}
+                            label={t('Workspace')}
+                            id="workspace-label"
+                          >
+                                  {workspaces.map((workspaceOption: any) =>{ 
+                                    return (
+                                      <MenuItem key={workspaceOption.id} value={workspaceOption.id}>
+                                      {workspaceOption.name}
+                                      </MenuItem>
+                                  )} )}
+                          </Select>
+                          </FormControl>
+                          <Typography color='red'>{validateMessage}</Typography>
+                    </Grid>
+                    </Grid>
 
-               {sidebarValue === 1 && <Box>
-                 
-               </Box>}
+                    <Grid container spacing={0} >
+                        <Grid
+                              item
+                              xs={3}
+                              sm={3}
+                              md={3}
+                              justifyContent="flex-end"
+                              textAlign={{ sm: 'right' }}
+                            >
+                              <Box
+                                pr={3}
+                                sx={{
+                                  pt: `${theme.spacing(2)}`,
+                                  pb: { xs: 1, md: 0 }
+                                }}
+                                alignSelf="center"
+                              >
+                                <b>{t('Knowledgebase')}:</b>
+                              </Box>
+                            </Grid>
+                            <Grid
+                              sx={{
+                                mb: `${theme.spacing(3)}`
+                              }}
+                              item
+                              xs={8}
+                              sm={8}
+                              md={8}
+                              >
+                                <FormControl fullWidth>
+                                  <InputLabel id="knowledgebase-label">Knowledgebase</InputLabel>
+                                  <Select
+                                    value={knowledgebase} 
+                                    onChange={(e)=> setKnowledgebase(e.target.value)}
+                                    label={t('Knowledgebase')}
+                                    id="knowledgebase-label"
+                                  >
+                                          {knowledgebases.map((knowledgebaseOption: any) =>{ 
+                                            return (
+                                              <MenuItem key={knowledgebaseOption.id} value={knowledgebaseOption.id}>
+                                              {knowledgebaseOption.name}
+                                              </MenuItem>
+                                          )} )}
+                                  </Select>
+                                </FormControl>
+                          </Grid>
+                    </Grid>    
 
-               {sidebarValue === 2 && <Box>
-                 
-               </Box>}
+                  </Box>}
 
-               {sidebarValue === 3 && <Box>
-                 
-               </Box>}
-                          
-        </Card> 
-      </Grid>
-    </Grid>
-  );
-}
+                  {sidebarValue === 1 && <Box>
+                    
+                  </Box>}
 
-export default EditContent;
+                  {sidebarValue === 2 && <Box>
+                    
+                  </Box>}
+
+                  {sidebarValue === 3 && <Box>
+                    
+                  </Box>}
+                              
+            </Card> 
+          </Grid>
+        </Grid>
+      );
+    }
+
+    export default EditContent;

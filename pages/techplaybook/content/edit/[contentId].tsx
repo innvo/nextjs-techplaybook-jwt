@@ -17,6 +17,7 @@ import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from '@/store';
 import EditContent from '@/content/techplaybook/content/edit/EditContent';
 import { getContent } from '@/slices/content';
+import Footer from '@/components/Footer';
 
 function ProjectEdit() {
 
@@ -39,8 +40,8 @@ function ProjectEdit() {
     <PageTitleWrapper>
         <PageHeader />
     </PageTitleWrapper>
-      <EditContent content={content} />
-       
+    <EditContent content={content} />
+    <Footer />  
   </>
   );
 }
