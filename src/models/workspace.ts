@@ -1,13 +1,13 @@
 export interface Workspace {
-  id: number;
+  id?: number;
   name: string;
   nameshort: string;
   description: string;
   status: string;
   createdby: string;
-  createddatetime: number;
+  createddatetime:  Date;
   lastmodifiedby: string;
-  lastmodifieddatetime: number;
+  lastmodifieddatetime:  Date;
   domain?: number;
 }
 

@@ -8,6 +8,7 @@ import { useSnackbar } from 'notistack';
 import { useDispatch, useSelector } from '@/store';
 import { useRouter } from 'next/router';
 import { updateContent } from '@/slices/content';
+import { createWorkspacerelcontent, updateWorkspacerelcontent } from '@/slices/workspacerelcontent';
 
 const AvatarPageTitle = styled(Avatar)(
   ({ theme }) => `
@@ -46,9 +47,12 @@ const PageHeader: FC<any> = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const currentContent = useSelector((state) => state.content.currentContent);
+  const currentWorkspacerelcontent = useSelector((state) => state.workspacerelcontent.currentWorkspacerelcontent);
 
   const editCurrentContent = () => {
     dispatch(updateContent(currentContent,enqueueSnackbar)) ;
+    dispatch(createWorkspacerelcontent(currentWorkspacerelcontent)) ;
+
   };
 
   const contentHome = () => {

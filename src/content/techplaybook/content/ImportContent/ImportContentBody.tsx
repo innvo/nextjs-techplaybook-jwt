@@ -27,6 +27,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { getWorkspaces } from '@/slices/workspace';
 import { getKnowledgebases } from '@/slices/knowledgebase';
 import { resolve } from 'path';
+import { useRouter } from 'next/router';
 
 const BoxUploadWrapper = styled(Box)(
   ({ theme }) => `
@@ -121,10 +122,12 @@ function ImportContentBody() {
   const [validateMessage, setValidateMessage] = useState<string>('');
   const [data, setData] = useState([]);
   const [fileCounter, setFileCounter] = useState(0);
-  const [progressRate, setProgressRate] = useState(0);
+  const [totalFileCount, setTotalFileCount] = useState(1);
+  const [isUploadCompleted, setIsUploadCompleted] = useState(false);
+  
+  const router = useRouter();   
 
-  const [progress, setProgress] = useState(0);
-  const contents = useSelector((state) => state.content.contents);
+  const [progress, setProgress] = useState(1);
 
 
   useEffect(() => {
@@ -154,7 +157,11 @@ function ImportContentBody() {
 
 
   useEffect(() => {
-    setProgress((prevProgress) => (prevProgress >= 100 ?  100 : prevProgress + progressRate));
+    setProgress((prevProgress) => fileCounter*100/totalFileCount);
+    console.log(fileCounter +'//////////////////////////////////////////'+ totalFileCount) 
+    setIsUploadCompleted(() => (fileCounter == totalFileCount ?  true : false));
+  //  setProgress((prevProgress) => (prevProgress >= 100 ?  100 : prevProgress + progressRate));
+
   }, [fileCounter]);
 
   const workspaces = useSelector((state) => state.workspace.workspaces);
@@ -167,8 +174,8 @@ function ImportContentBody() {
   }
 
   const onDrop = (acceptedFiles) => {
-
-    setProgressRate(100/acceptedFiles.length);
+    setProgress(1);
+    setTotalFileCount(acceptedFiles.length);
 
     let formData = new FormData();
     formData.append('workspace', workspace );
@@ -237,6 +244,10 @@ function ImportContentBody() {
     const [pageSize, setPageSize] = useState(10);
     const handlePageSizeChange = (params) => {
       setPageSize(params.pageSize);
+    };
+
+    const contentHome = () => {
+      router.push('/techplaybook/content');
     };
 
   return (
@@ -352,6 +363,14 @@ function ImportContentBody() {
               sm={4}
               md={4}>
                <CircularProgressWithLabel value={progress} />
+               {isUploadCompleted && (
+                <Button
+                    variant="text"
+                    size="large"
+                    onClick={contentHome}
+                  >{t('Return')}
+                  </Button>
+                )}
           </Grid>
         </Grid>
          

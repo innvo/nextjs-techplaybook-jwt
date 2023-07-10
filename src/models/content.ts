@@ -8,6 +8,8 @@ export interface Content {
   content_summary: string;
   file?: any;
   fileContentType?: string;
+  fileSize?: number;
+  fileDateTime?: number;
   content_metadata?: string;
   processing_metadata?: string;
   processing_status?: any;

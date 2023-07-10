@@ -162,14 +162,14 @@ const Results: FC<ResultsProps> = ({ contents }) => {
       editable: false,
     },
     {
-      field: 'file Size',
+      field: 'fileSize',
       headerName: 'fileSize',
       width: 200,
       editable: false,
     },
     {
-      field: 'Content Type',
-      headerName: 'fileContentType',
+      field: 'fileContentType',
+      headerName: 'ContentType',
       width: 200,
       editable: false,
     },
@@ -208,12 +208,12 @@ const Results: FC<ResultsProps> = ({ contents }) => {
         <GridActionsCellItem
           icon={<EditIcon />}
           label="Edit"
-          onClick={id => editContent(params.row.contentId)}
+          onClick={id => editContent(params.row.id)}
         />,
         <GridActionsCellItem
           icon={<DeleteIcon />}
           label="Delete"
-          onClick={id => handleDeleteContent(params.row.contentId, params.row.contentName)}
+          onClick={id => handleDeleteContent(params.row.id, params.row.title)}
         />,
       ],
     },

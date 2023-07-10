@@ -20,9 +20,9 @@ const initialState: WorkspaceState = {
     description: '',
     status: '',
     createdby: '',
-    createddatetime: 0,
+    createddatetime: new Date(),
     lastmodifiedby: '',
-    lastmodifieddatetime: 0,
+    lastmodifieddatetime: new Date(),
   }  
 };
 
@@ -161,38 +161,5 @@ export const deleteWorkspace =
       });
     }
   };
-
-
-  export const addWorkspacerelusers =  
-  (workspacerelusers: any, enqueueSnackbar): AppThunk =>
-  async (dispatch): Promise<void> => {
-    console.log('In workspace.ts:addworkspacerelusers');
-    try {
-      const data = await axiosInt.post('/api/workspacerelusers', workspacerelusers)
-      dispatch(slice.actions.getWorkspaces(data.data));
-
-      dispatch(getWorkspaceUserProfiles(workspacerelusers?.workspace?.id));
-
-      enqueueSnackbar('The Team Member  was added successfully', {
-        variant: 'success',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right'
-        },
-        TransitionComponent: Zoom
-      });
-    
-    } catch (err) {
-      enqueueSnackbar('Error in adding the memeber', {
-        variant: 'error',
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right'
-        },
-        TransitionComponent: Zoom
-      });
-    }
-
-  };  
 
 export default slice;

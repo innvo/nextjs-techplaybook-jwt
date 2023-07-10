@@ -14,6 +14,8 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  GridSize,
+  Checkbox,
 } from '@mui/material';
 import { Content } from '@/models/content';
 import { Editor } from '@tinymce/tinymce-react';
@@ -21,8 +23,16 @@ import { makeStyles } from '@mui/styles';
 import { useDispatch, useSelector } from '@/store';
 import { getWorkspaces } from '@/slices/workspace';
 import { getKnowledgebases } from '@/slices/knowledgebase';
-import slice, { updateContent } from '@/slices/content';
+import { default as contentslice } from '@/slices/content';
+import { updateContent } from '@/slices/content';
+
+import { default as workspacerelcontentslice } from '@/slices/workspacerelcontent';
+
 import { useAuth } from '@/hooks/useAuth';
+import { Workspace } from '@/models/workspace';
+import { WorkspacesOutlined } from '@mui/icons-material';
+import { Workspacerelcontent } from '@/models/workspacerelcontent';
+import moment from 'moment';
 
 const defaultTheme = createTheme();
 
@@ -92,13 +102,18 @@ const EditContent: FC<ResultsProps> = ({ content }) => {
 
   const tinyMCE_key = (process.env.REACT_APP_TINYMCE_KEY as string);
 
+  const [sidebarStatus, setSidebarStatus] = useState<boolean>(true);
+  const [lgEditorSize, setLgEditorSize] = useState<GridSize>(7);
+  const [lgTabSize, setLgTabSize] = useState<GridSize>(5);
+
   const [contentTitle, setContentTitle] = useState('');
+  const [workspace, setWorkspace] = useState(null);
+
   const [contentHtml, setContentHtml] = useState(content.content_html);
   const [contentTxt, setContentTxt] = useState(content.content_txt);
   const [editorValue, seteditorValue] = useState<number>(0);
   const [sidebarValue, setsidebarValue] = useState<number>(0);
 
-  const [workspace, setWorkspace] = useState<any>('');
   const [knowledgebase, setKnowledgebase] = useState('');
   const [validateMessage, setValidateMessage] = useState<string>('');
 
@@ -147,11 +162,68 @@ const EditContent: FC<ResultsProps> = ({ content }) => {
       lastmodifiedby: content.lastmodifiedby,
       lastmodifieddatetime: Date.now(),
     }
+    dispatch(contentslice.actions.getContent(currentContent));
+  }    
+  
+
+  const editworkspace = () => {
     
-    dispatch(slice.actions.getContent(currentContent));
-  };
+      let Workspacerelcontent: Workspacerelcontent  = {
+        comment: 'New Comment',
+        status: 'ACTIVE',
+        createdby: user.login,
+        createddatetime: new Date(),
+        lastmodifiedby: user.login,
+        lastmodifieddatetime: new Date(),
+        workspacerelcontent_content: content,
+        workspacerelcontent_workspace: workspace
+      }
+      dispatch(workspacerelcontentslice.actions.getWorkspacerelcontent(Workspacerelcontent));
+
+  }  
+
+  const showHideSidebar = (sidebarStatus: boolean) => {
+    if (sidebarStatus === true) {
+      setSidebarStatus(false);
+      setLgEditorSize(12);
+      setLgTabSize(1);
+    }
+    if (sidebarStatus === false) {
+      setSidebarStatus(true);
+      setLgEditorSize(7);
+      setLgTabSize(5);
+    }
+  }
 
   return (
+    <>
+     <Grid
+        container
+        spacing={0}
+        direction="row"
+        alignItems="center"
+      >
+        <Grid
+          item
+          lg={10}
+          sm={10}
+          xs={10}
+        >   
+        </Grid>
+        <Grid
+          item
+          lg={2}
+          sm={2}
+          xs={2}
+        >
+          <span >Hide the sidebar</span>
+            <Checkbox
+              checked={sidebarStatus}
+              onChange={() => showHideSidebar(sidebarStatus)}
+              inputProps={{ 'aria-label': 'controlled' }}
+          />
+        </Grid>
+    </Grid>
     <Grid
       sx={{ px: 4 }}
       container
@@ -161,7 +233,7 @@ const EditContent: FC<ResultsProps> = ({ content }) => {
       spacing={3}
     >
 
-      <Grid item xs={8}>
+      <Grid item xs={12} sm={9} lg={lgEditorSize}>
         <Card
           sx={{
             p: 1,
@@ -326,7 +398,9 @@ const EditContent: FC<ResultsProps> = ({ content }) => {
           
         </Card>  
       </Grid>
-      <Grid item xs={4}>
+
+      {(sidebarStatus === true) &&
+       <Grid item xs={12} sm={9} lg={lgTabSize}>
         <Card
             sx={{
               p: 1,
@@ -396,7 +470,7 @@ const EditContent: FC<ResultsProps> = ({ content }) => {
                           <TextField
                             className={classes.myTextField}
                             variant='outlined'
-                            label={t('Titless ')}
+                            label={t('Title ')}
                             name={contentTitle}
                             value={contentTitle}
                             defaultValue={contentTitle}
@@ -441,13 +515,14 @@ const EditContent: FC<ResultsProps> = ({ content }) => {
                           <Select
                             fullWidth
                             value={workspace} 
-                            onChange={(e)=>{setWorkspace(e.target.value);setValidateMessage('');}}
+                            onChange={(e)=>{setWorkspace(e.target.value);console.log(e.target.value);setValidateMessage('');}}
                             label={t('Workspace')}
+                            onBlur={editworkspace}
                             id="workspace-label"
                           >
                                   {workspaces.map((workspaceOption: any) =>{ 
                                     return (
-                                      <MenuItem key={workspaceOption.id} value={workspaceOption.id}>
+                                      <MenuItem key={workspaceOption.id} value={workspaceOption}>
                                       {workspaceOption.name}
                                       </MenuItem>
                                   )} )}
@@ -496,7 +571,7 @@ const EditContent: FC<ResultsProps> = ({ content }) => {
                                   >
                                           {knowledgebases.map((knowledgebaseOption: any) =>{ 
                                             return (
-                                              <MenuItem key={knowledgebaseOption.id} value={knowledgebaseOption.id}>
+                                              <MenuItem key={knowledgebaseOption.id} value={knowledgebaseOption}>
                                               {knowledgebaseOption.name}
                                               </MenuItem>
                                           )} )}
@@ -516,12 +591,182 @@ const EditContent: FC<ResultsProps> = ({ content }) => {
                   </Box>}
 
                   {sidebarValue === 3 && <Box>
+                    <Grid container spacing={1} sx={{ pt: 3 }}>
+                    <Grid
+                      item
+                      xs={3}
+                      sm={3}
+                      md={3}
+                      justifyContent="flex-end"
+                      textAlign={{ sm: 'right' }}
+                    >
+                      <Box
+                        pr={3}
+                        sx={{
+                          pt: `${theme.spacing(2)}`,
+                          pb: { xs: 1, md: 0 }
+                        }}
+                        alignSelf="center"
+                      >
+                        <b>{t('File Name')}:</b>
+                      </Box>
+                    </Grid>
+                    <Grid
+                      sx={{
+                        mb: `${theme.spacing(3)}`
+                      }}
+                      item
+                      xs={8}
+                      sm={8}
+                      md={8}
+                      >
+                          <TextField
+                            disabled
+                            className={classes.myTextField}
+                            variant='outlined'
+                            label={t('File Name')}
+                            name={contentTitle}
+                            value={contentTitle}
+                            defaultValue={contentTitle}
+                            onChange={e => setContentTitle(e.target.value)}
+                            onBlur={editContent}
+                        />
+                    </Grid>
+                    </Grid>
+                    <Grid container spacing={1} sx={{ pt: 3 }}>
+                    <Grid
+                      item
+                      xs={3}
+                      sm={3}
+                      md={3}
+                      justifyContent="flex-end"
+                      textAlign={{ sm: 'right' }}
+                    >
+                      <Box
+                        pr={3}
+                        sx={{
+                          pt: `${theme.spacing(2)}`,
+                          pb: { xs: 1, md: 0 }
+                        }}
+                        alignSelf="center"
+                      >
+                        <b>{t('File Type')}:</b>
+                      </Box>
+                    </Grid>
+                    <Grid
+                      sx={{
+                        mb: `${theme.spacing(3)}`
+                      }}
+                      item
+                      xs={8}
+                      sm={8}
+                      md={8}
+                      >
+                          <TextField
+                            disabled
+                            className={classes.myTextField}
+                            variant='outlined'
+                            label={t('File Type')}
+                            name={content.fileContentType}
+                            value={content.fileContentType}
+                            defaultValue={content.fileContentType}
+                            onChange={e => setContentTitle(e.target.value)}
+                            onBlur={editContent}
+                        />
+                    </Grid>
+                    </Grid>
+                    <Grid container spacing={1} sx={{ pt: 3 }}>
+                    <Grid
+                      item
+                      xs={3}
+                      sm={3}
+                      md={3}
+                      justifyContent="flex-end"
+                      textAlign={{ sm: 'right' }}
+                    >
+                      <Box
+                        pr={3}
+                        sx={{
+                          pt: `${theme.spacing(2)}`,
+                          pb: { xs: 1, md: 0 }
+                        }}
+                        alignSelf="center"
+                      >
+                        <b>{t('File Size KB')}:</b>
+                      </Box>
+                    </Grid>
+                    <Grid
+                      sx={{
+                        mb: `${theme.spacing(3)}`
+                      }}
+                      item
+                      xs={8}
+                      sm={8}
+                      md={8}
+                      >
+                          <TextField
+                            disabled
+                            className={classes.myTextField}
+                            variant='outlined'
+                            label={t('File Size')}
+                            name={contentTitle}
+                            value={content.fileSize}
+                            defaultValue={contentTitle}
+                            onChange={e => setContentTitle(e.target.value)}
+                            onBlur={editContent}
+                        />
+                    </Grid>
+                    </Grid>
+                    <Grid container spacing={1} sx={{ pt: 3 }}>
+                    <Grid
+                      item
+                      xs={3}
+                      sm={3}
+                      md={3}
+                      justifyContent="flex-end"
+                      textAlign={{ sm: 'right' }}
+                    >
+                      <Box
+                        pr={3}
+                        sx={{
+                          pt: `${theme.spacing(2)}`,
+                          pb: { xs: 1, md: 0 }
+                        }}
+                        alignSelf="center"
+                      >
+                        <b>{t('File Date Time')}:</b>
+                      </Box>
+                    </Grid>
+                    <Grid
+                      sx={{
+                        mb: `${theme.spacing(3)}`
+                      }}
+                      item
+                      xs={8}
+                      sm={8}
+                      md={8}
+                      >
+                          <TextField
+                            disabled
+                            className={classes.myTextField}
+                            variant='outlined'
+                            label={t('File Date Time')}
+                            value={moment(content.fileDateTime).format("YYYY-MM-DD hh:mm A Z")}
+                            defaultValue={content.fileDateTime}
+                            onChange={e => setContentTitle(e.target.value)}
+                            onBlur={editContent}
+                        />
+                    </Grid>
+                    </Grid>
                     
                   </Box>}
                               
             </Card> 
           </Grid>
+           }
+            {(sidebarStatus === false) && <div></div>}
         </Grid>
+        </>
       );
     }
 
