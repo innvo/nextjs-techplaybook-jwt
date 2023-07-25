@@ -111,11 +111,44 @@ export const getContent =
 };
 
 export const createContent =  
+  (content: Content,enqueueSnackbar,router): AppThunk =>
+  async (dispatch): Promise<void> => {
+    console.log('In content.ts:createContent');
+    try {
+      const data = await axiosInt.post('/api/contents', content)
+
+      dispatch(slice.actions.getContents(data.data));
+
+      enqueueSnackbar('The content account was created successfully', {
+        variant: 'success',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        },
+        TransitionComponent: Zoom
+      });
+      router.push('/techplaybook/content/edit/'+ data.data.id);
+
+    
+    } catch (err) {
+      enqueueSnackbar('Error in creating the content', {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right'
+        },
+        TransitionComponent: Zoom
+      });
+    }
+
+  };
+
+export const importCreateContent =  
   (formData: FormData,enqueueSnackbar): AppThunk =>
   async (dispatch): Promise<void> => {
     console.log('In content.ts:createContent');
     try {
-      const data = await axiosInt.post('/api/contents', formData)
+      const data = await axiosInt.post('/api/contents/import', formData)
 
       dispatch(slice.actions.getContents(data.data));
 

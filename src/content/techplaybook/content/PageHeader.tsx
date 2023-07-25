@@ -32,7 +32,8 @@ import {
   Avatar,
   Autocomplete,
   Button,
-  useTheme
+  useTheme,
+  Stack
 } from '@mui/material';
 import DatePicker from '@mui/lab/DatePicker';
 import { useDropzone } from 'react-dropzone';
@@ -194,9 +195,13 @@ function PageHeader() {
     setOpen(false);
   };
 
+  const newContent = () => {
+    router.push('/techplaybook/content/new');
+  };
+
   const importContent = () => {
     router.push('/techplaybook/content/importcontent');
- };
+  };
 
   return (
     <>
@@ -210,16 +215,28 @@ function PageHeader() {
           </Typography>
         </Grid>
         <Grid item>
-          <Button
-            sx={{
-              mt: { xs: 2, sm: 0 }
-            }}
-            onClick={importContent}
-            variant="contained"
-            startIcon={<AddTwoToneIcon fontSize="small" />}
-          >
-            {t('Import and transform data')}
-          </Button>
+          <Stack direction='row' spacing={2}>
+            <Button
+              sx={{
+                mt: { xs: 2, sm: 0 }
+              }}
+              onClick={newContent}
+              variant="contained"
+              startIcon={<AddTwoToneIcon fontSize="small" />}
+            >
+              {t('New Content')}
+            </Button>
+            <Button
+              sx={{
+                mt: { xs: 2, sm: 0 }
+              }}
+              onClick={importContent}
+              variant="contained"
+              startIcon={<AddTwoToneIcon fontSize="small" />}
+            >
+              {t('Import and transform data')}
+            </Button>
+          </Stack>  
         </Grid>
       </Grid>
       <NewContentDialog open={open}  onClose={handleCreateContentClose}/>

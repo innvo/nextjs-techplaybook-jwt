@@ -21,12 +21,10 @@ import CloudUploadTwoToneIcon from '@mui/icons-material/CloudUploadTwoTone';
 import CloseTwoToneIcon from '@mui/icons-material/CloseTwoTone';
 import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
 import { useDispatch, useSelector } from '@/store';
-import { createContent } from '@/slices/content';
-import { DataGridPro, GridActionsCellItem } from '@mui/x-data-grid-pro';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { importCreateContent } from '@/slices/content';
+import { DataGridPro } from '@mui/x-data-grid-pro';
 import { getWorkspaces } from '@/slices/workspace';
 import { getKnowledgebases } from '@/slices/knowledgebase';
-import { resolve } from 'path';
 import { useRouter } from 'next/router';
 
 const BoxUploadWrapper = styled(Box)(
@@ -199,7 +197,7 @@ function ImportContentBody() {
 
         })
     }).then(() => {
-      dispatch(createContent(formData, enqueueSnackbar));
+      dispatch(importCreateContent(formData, enqueueSnackbar));
     });
 
   };
