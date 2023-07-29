@@ -388,7 +388,8 @@ const EditContent: FC<ResultsProps> = ({ content }) => {
                </Box>}
 
                {editorValue === 1 && <Box>
-                {content.content_txt}
+                
+                <div style={{whiteSpace: 'pre-line'}} dangerouslySetInnerHTML={{__html: content.content_txt }}></div>
                </Box>}
 
                {editorValue === 2 && <Box>
