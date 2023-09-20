@@ -100,7 +100,7 @@ const EditContent: FC<ResultsProps> = ({ content }) => {
   const dispatch = useDispatch();
   const { user }  = useAuth();
 
-  const tinyMCE_key = (process.env.REACT_APP_TINYMCE_KEY as string);
+  const tinyMCE_key = (process.env.NEXT_PUBLIC_TINYMCE_KEY as string);
 
   const [sidebarStatus, setSidebarStatus] = useState<boolean>(true);
   const [lgEditorSize, setLgEditorSize] = useState<GridSize>(7);
